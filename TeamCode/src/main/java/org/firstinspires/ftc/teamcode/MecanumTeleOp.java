@@ -300,13 +300,18 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import com.arcrobotics.ftclib.util.InterpLUT;
 
 import java.util.List;
 
 
 @TeleOp(name = "MecanumTeleop", group = "Concept")
 public class MecanumTeleOp extends OpMode {
-
+    decodeArm arm;
+    double y;
+    double x;
+    double rx;
+    boolean driveForward;
     // Motors for mecanum drive
     private DcMotor frontLeft, frontRight, backLeft, backRight;
     boolean clawPos = false;
@@ -339,6 +344,7 @@ public class MecanumTeleOp extends OpMode {
 
     @Override
     public void init() {
+        driveForward = true;
         // Initialize mecanum drive motors
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeftMotor");
         frontRight = hardwareMap.get(DcMotor.class, "frontRightMotor");
@@ -368,10 +374,6 @@ public class MecanumTeleOp extends OpMode {
 
     public void loop() {
         telemetryAprilTag();
-
-        // Push telemetry to the Driver Station.
-        telemetry.update();
-
         // Save CPU resources; can resume streaming when needed.
         if (gamepad1.dpad_down) {
             visionPortal.stopStreaming();
@@ -380,10 +382,19 @@ public class MecanumTeleOp extends OpMode {
         }
 
         // Mecanum drive control
-        double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-        double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-        double rx = gamepad1.right_stick_x;
 
+        if(driveForward) {
+            y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+            x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            rx = gamepad1.right_stick_x;
+        }else{
+            x = -gamepad1.left_stick_y * 1.1;
+            y = gamepad1.left_stick_x * 1.1;
+            rx = -gamepad1.right_stick_x;
+        }
+        if(gamepad1.dpad_down){
+            driveForward = !driveForward;
+        }
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,
         // but only if at least one is out of the range [-1, 1]
@@ -405,6 +416,7 @@ public class MecanumTeleOp extends OpMode {
         telemetry.addData("Back Left Power", backLeft.getPower());
         telemetry.addData("Back Right Power", backRight.getPower());
         telemetry.addData("left stick y pos", gamepad1.left_stick_y);
+        telemetry.addData("Drive forward is",driveForward);
         telemetry.update();  // Update telemetry
 
         // Control claw position with gamepad2.y button
