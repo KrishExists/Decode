@@ -1,8 +1,11 @@
+
+
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -10,11 +13,10 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name = "MecanumTeleop", group = "Concept")
-public class MecanumTeleOp extends OpMode {
+@TeleOp(name = "easyTele", group = "Concept")
+public class EasyMecanumTeleOP extends OpMode {
 
     // Drive motors
     private DcMotor frontLeft, frontRight, backLeft, backRight;
@@ -24,18 +26,15 @@ public class MecanumTeleOp extends OpMode {
     private VisionPortal visionPortal;
     private static final boolean USE_WEBCAM = true;
 
-    // States
-    public boolean autoAlignActive = false;
+    // Drive mode
     private boolean driveForward = true;
-    private String motif = "unknown"; // initialize
 
-    // Edge detection states
-    private boolean prevAPressed = false;
-    private boolean prevDpadDownPressed = false;
+    // Tag metadata
+    private String motif;
 
     @Override
     public void init() {
-        // Initialize motors
+        // Initialize drive motors
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeftMotor");
         frontRight = hardwareMap.get(DcMotor.class, "frontRightMotor");
         backLeft = hardwareMap.get(DcMotor.class, "backLeftMotor");
@@ -62,26 +61,14 @@ public class MecanumTeleOp extends OpMode {
     public void loop() {
         telemetryAprilTag();
 
-        // === RISING EDGE DETECTORS ===
-
-        // A Button → Toggle auto-align
-        boolean aPressed = gamepad1.a;
-        if (aPressed && !prevAPressed) {
-            autoAlignActive = !autoAlignActive;
-        }
-        prevAPressed = aPressed;
-
-        // D-Pad Down → Toggle drive direction
-        boolean dpadDownPressed = gamepad1.dpad_down;
-        if (dpadDownPressed && !prevDpadDownPressed) {
+        // Toggle drive direction
+        if (gamepad1.dpad_down) {
             driveForward = !driveForward;
         }
-        prevDpadDownPressed = dpadDownPressed;
 
-        // === AUTO-ALIGNMENT USING YAW ===
-        if (autoAlignActive) {
+        // Auto-align using AprilTag yaw when 'A' is pressed
+        if (gamepad1.a) {
             List<AprilTagDetection> detections = aprilTag.getDetections();
-            if (detections == null) detections = new ArrayList<>();
 
             if (!detections.isEmpty()) {
                 AprilTagDetection tag = detections.get(0);
@@ -89,40 +76,35 @@ public class MecanumTeleOp extends OpMode {
                 if (tag.ftcPose != null) {
                     double yaw = tag.ftcPose.yaw;  // Degrees
                     double kRotate = 0.01;
-
-                    // You can tune this value — higher = faster spin
                     double rotateCorrection = -yaw * kRotate;
 
-                    // Clamp rotation speed
-                    rotateCorrection = Math.max(-0.4, Math.min(0.4, rotateCorrection));
-
-                    // Deadband: Don't spin if we're close enough
+                    // Deadband and clamp
                     if (Math.abs(yaw) < 1.0) {
                         rotateCorrection = 0;
                     }
+                    rotateCorrection = Math.max(-0.4, Math.min(0.4, rotateCorrection));
 
-                    // Apply rotation only
-                    // NOTE: because frontRight/backRight are set to REVERSE above,
-                    // the sign you send to them may need flipping depending on real-world behavior.
-                    frontLeft.setPower(rotateCorrection);
-                    backLeft.setPower(rotateCorrection);
-                    frontRight.setPower(-rotateCorrection);
-                    backRight.setPower(-rotateCorrection);
+                    // Rotate only
+                    double fl = rotateCorrection;
+                    double bl = rotateCorrection;
+                    double fr = -rotateCorrection;
+                    double br = -rotateCorrection;
 
-                    telemetry.addLine("Auto-aligning to tag...");
+                    frontLeft.setPower(fl);
+                    backLeft.setPower(bl);
+                    frontRight.setPower(fr);
+                    backRight.setPower(br);
+
+                    telemetry.addLine("Auto-aligning using yaw...");
                     telemetry.addData("Yaw (deg)", yaw);
                     telemetry.addData("Rotate Correction", rotateCorrection);
-                } else {
-                    telemetry.addLine("Tag detected, but no pose available.");
-                    stopMotors();
                 }
             } else {
                 telemetry.addLine("No AprilTag detected.");
-                stopMotors();
             }
 
         } else {
-            // === STANDARD MANUAL DRIVE ===
+            // Standard mecanum drive
             double y = driveForward ? -gamepad1.left_stick_y : gamepad1.left_stick_y;
             double x = (driveForward ? 1 : -1) * gamepad1.left_stick_x * 1.1;
             double rx = (driveForward ? 1 : -1) * gamepad1.right_stick_x;
@@ -140,15 +122,7 @@ public class MecanumTeleOp extends OpMode {
         }
 
         telemetry.addData("Drive Direction", driveForward ? "Forward" : "Reverse");
-        telemetry.addData("Auto Align Active", autoAlignActive);
         telemetry.update();
-    }
-
-    private void stopMotors() {
-        frontLeft.setPower(0);
-        backLeft.setPower(0);
-        frontRight.setPower(0);
-        backRight.setPower(0);
     }
 
     private void initAprilTag() {
@@ -161,32 +135,17 @@ public class MecanumTeleOp extends OpMode {
             visionPortal = VisionPortal.easyCreateWithDefaults(
                     BuiltinCameraDirection.BACK, aprilTag);
         }
-
-        // If you have issues with the preview not starting, check if visionPortal has a .start() you must call:
-        // try { visionPortal.start(); } catch (Exception e) { /* docs may start it automatically */ }
     }
 
     private void telemetryAprilTag() {
         List<AprilTagDetection> detections = aprilTag.getDetections();
-        if (detections == null) {
-            telemetry.addData("# Tags Detected", 0);
-            telemetry.addData("Motif", motif);
-            return;
-        }
-
         telemetry.addData("# Tags Detected", detections.size());
 
         for (AprilTagDetection tag : detections) {
             if (tag.metadata != null) {
                 telemetry.addLine(String.format("ID %d: %s", tag.id, tag.metadata.name));
-
-                // CHECK ftcPose before using it
-                if (tag.ftcPose != null) {
-                    telemetry.addLine(String.format("XYZ: (%.1f, %.1f, %.1f)", tag.ftcPose.x, tag.ftcPose.y, tag.ftcPose.z));
-                    telemetry.addLine(String.format("YAW: %.1f deg", tag.ftcPose.yaw));
-                } else {
-                    telemetry.addLine("Pose: unavailable");
-                }
+                telemetry.addLine(String.format("XYZ: (%.1f, %.1f, %.1f)", tag.ftcPose.x, tag.ftcPose.y, tag.ftcPose.z));
+                telemetry.addLine(String.format("YAW: %.1f deg", tag.ftcPose.yaw));
 
                 if (tag.id == 21) motif = "gpp";
                 if (tag.id == 22) motif = "pgp";
