@@ -22,7 +22,7 @@ import com.arcrobotics.ftclib.util.InterpLUT;
 import java.util.List;
 
 
-@TeleOp(name = "MecanumTeleop", group = "Concept")
+@TeleOp(name = "MecanumTeleopraw", group = "Concept")
 public class MecanumRawCode extends OpMode {
     decodeArm arm;
     double y;
@@ -70,7 +70,7 @@ public class MecanumRawCode extends OpMode {
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
-        backLeft.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -102,11 +102,11 @@ public class MecanumRawCode extends OpMode {
 
         if(driveForward) {
             y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            x = -gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             rx = gamepad1.right_stick_x;
         }else{
             y = gamepad1.left_stick_y * 1.1;
-            x = -gamepad1.left_stick_x * 1.1;
+            x = gamepad1.left_stick_x * 1.1;
             rx = -gamepad1.right_stick_x;
         }
         if(gamepad1.dpad_down){

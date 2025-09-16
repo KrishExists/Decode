@@ -350,10 +350,10 @@ public class RobotAutoDriveToAprilTagTank extends LinearOpMode {
         backRightDrive = hardwareMap.get(DcMotor.class, "backRightMotor");
 
         // Motor direction setup
-        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
-        backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
 
         if (USE_WEBCAM) setManualExposure(6, 250);
 

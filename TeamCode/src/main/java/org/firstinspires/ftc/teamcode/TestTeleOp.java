@@ -289,12 +289,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.sfdev.assembly.state.StateMachine;
-@TeleOp(name = "oldTeleopclassical")
-public class MecanumTeleOp extends OpMode {
+
+@TeleOp(name = "TestTeleop")
+public class TestTeleOp extends OpMode {
 
     // Motors for mecanum drive
     private DcMotor frontLeft, frontRight, backLeft, backRight, slidesMotor;
@@ -363,10 +362,10 @@ public class MecanumTeleOp extends OpMode {
         double frontRightPower = (y - x - rx) / denominator;
         double backRightPower = (y + x - rx) / denominator;
 
-        frontLeft.setPower(frontLeftPower);
-        backLeft.setPower(backLeftPower);
+        frontLeft.setPower(/*frontLeftPower*/0.0);
+        backLeft.setPower(/*backLeftPower*/0.0);
         frontRight.setPower(frontRightPower);
-        backRight.setPower(backRightPower);
+        backRight.setPower(/*backRightPower*/0.0);
 
         // Update the arm state machine
         armStateMachine.update();
