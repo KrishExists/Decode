@@ -867,7 +867,7 @@ public class ArmController{
     }
     public void setClawServo(double i){clawServo.setPosition(i);}
     public void setArmPosition(double targetPosition) {
-        TARGET_POSITION = (int)targetPosition;
+        TARGET_POSITION = -(int)targetPosition;
         /*int currentPosition = armControllerLeft.getCurrentPosition();
         double output = pidController.calculate(targetPosition, currentPosition);
 

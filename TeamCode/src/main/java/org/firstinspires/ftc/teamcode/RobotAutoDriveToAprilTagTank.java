@@ -331,7 +331,7 @@ public class RobotAutoDriveToAprilTagTank extends LinearOpMode {
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
 
     private static final boolean USE_WEBCAM = true;
-    private static final int DESIRED_TAG_ID = -1; // -1 means detect any tag
+    private static final int DESIRED_TAG_ID = 24; // -1 means detect any tag
     private VisionPortal visionPortal;
     private AprilTagProcessor aprilTag;
     private AprilTagDetection desiredTag = null;
@@ -355,7 +355,7 @@ public class RobotAutoDriveToAprilTagTank extends LinearOpMode {
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        if (USE_WEBCAM) setManualExposure(6, 250);
+        if (USE_WEBCAM) setManualExposure(2, 250);
 
         telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
@@ -365,11 +365,13 @@ public class RobotAutoDriveToAprilTagTank extends LinearOpMode {
         while (opModeIsActive()) {
             targetFound = false;
             desiredTag = null;
-
+            boolean obelisk = false;
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
             for (AprilTagDetection detection : currentDetections) {
                 if (detection.metadata != null) {
-                    if ((DESIRED_TAG_ID < 50) || (detection.id == DESIRED_TAG_ID)) {
+                    if(detection.id == 23 || detection.id == 21 ||detection.id == 22 )
+                        obelisk = true;
+                    if ((detection.id == DESIRED_TAG_ID)) {
                         targetFound = true;
                         desiredTag = detection;
                         break;
