@@ -293,7 +293,9 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.sfdev.assembly.state.StateMachine;
-@TeleOp(name = "oldTeleopclassical")
+
+
+@TeleOp(name = "oldTeleClassical", group = "Concept")
 public class MecanumTeleOp extends OpMode {
 
     // Motors for mecanum drive
@@ -317,6 +319,7 @@ public class MecanumTeleOp extends OpMode {
 
 
     @Override
+
     public void init() {
         // Initialize mecanum drive motors
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeftMotor");
@@ -331,7 +334,8 @@ public class MecanumTeleOp extends OpMode {
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setDirection(DcMotor.Direction.FORWARD);
+
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -348,6 +352,7 @@ public class MecanumTeleOp extends OpMode {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
+
         // Initialize the arm controller and state machine
         armController = new ArmController(hardwareMap, false);
         armStateMachine = armController.armMachine(gamepad1, gamepad2);  // Pass gamepad1 and gamepad2 to arm state machine
@@ -356,6 +361,8 @@ public class MecanumTeleOp extends OpMode {
     }
 
     @Override
+
+
     public void loop() {
         // Mecanum drive control
         double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed

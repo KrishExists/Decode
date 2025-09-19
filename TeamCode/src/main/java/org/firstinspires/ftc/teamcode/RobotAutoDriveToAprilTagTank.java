@@ -324,8 +324,8 @@ public class RobotAutoDriveToAprilTagTank extends LinearOpMode {
     final double TURN_GAIN  = 0.01;
 
     // Max motor speeds during auto mode
-    final double MAX_AUTO_SPEED = 0.5;
-    final double MAX_AUTO_TURN  = 0.25;
+    final double MAX_AUTO_SPEED = 1;
+    final double MAX_AUTO_TURN  = 1;
 
     // Mecanum drive motors
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
@@ -399,22 +399,23 @@ public class RobotAutoDriveToAprilTagTank extends LinearOpMode {
                 drive = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
                 turn  = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
                 strafe = 0; // optional: add strafe based on tag's lateral offset if needed
+                moveRobot(drive, strafe, turn);
 
                 telemetry.addData("Auto", "Drive %5.2f, Turn %5.2f", drive, turn);
             } else {
                 // Manual mecanum control
-                double y = -gamepad1.left_stick_y / 2.0;  // Forward/backward
-                double x = gamepad1.left_stick_x / 2.0;   // Strafe
-                double rx = gamepad1.right_stick_x / 4.0; // Rotate
+                double y = -gamepad1.left_stick_y;
+                double x = gamepad1.left_stick_x;
+                double rx = gamepad1.right_stick_x;
                 drive = y;
                 strafe = x;
                 turn = rx;
-
+                moveRobot(drive, strafe, turn);
                 telemetry.addData("Manual", "Drive %5.2f, Strafe %5.2f, Turn %5.2f", drive, strafe, turn);
             }
             telemetry.update();
 
-            moveRobot(drive, strafe, turn);
+
             sleep(10);
         }
     }
