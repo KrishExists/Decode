@@ -25,6 +25,7 @@ public class BallShooterProto extends LinearOpMode {
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
         shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
+
         double speed = 0.0;
         waitForStart();
 
@@ -43,38 +44,38 @@ public class BallShooterProto extends LinearOpMode {
             double backLeftPower = (y - x + rx) / denominator;
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
-            if(gamepad1.dpad_down){
+            if(gamepad1.dpadDownWasReleased()){
                 if(speed<0.05){
-                    continue;
+
                 }else{
                     speed-=0.05;
                 }
             }
-            if(gamepad1.dpad_up){
+            if(gamepad1.dpadUpWasReleased()){
                 if(speed>0.096){
-                    continue;
+
                 }else{
                     speed+=0.05;
                 }
             }
-            if(gamepad1.dpad_left){
+            if(gamepad1.dpadLeftWasReleased()){
                 if(speed>0.91){
-                    continue;
+
                 }else{
                     speed +=0.1;
                 }
             }
-            if(gamepad1.dpad_right){
+            if(gamepad1.dpadRightWasReleased()){
                 if(speed<0.09){
-                    continue;
+
                 }else{
                     speed -=0.1;
                 }
             }
-            if(gamepad1.a){
+            if(gamepad1.aWasReleased()){
                 speed = 0.8;
             }
-            if(gamepad1.b){
+            if(gamepad1.bWasReleased()){
                 speed = 0;
             }
             frontLeftMotor.setPower(frontLeftPower);
@@ -83,6 +84,8 @@ public class BallShooterProto extends LinearOpMode {
             backRightMotor.setPower(backRightPower);
             shooter2.setPower(speed);
             shooter1.setPower(speed);
+            telemetry.addData("Speed: ", speed);
+            telemetry.update();
         }
     }
 }
