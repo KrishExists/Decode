@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp
@@ -15,16 +16,21 @@ public class BallShooterProto extends LinearOpMode {
         DcMotor backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
-        DcMotor shooter1 = hardwareMap.dcMotor.get("armMotorLeft");
-        DcMotor shooter2 = hardwareMap.dcMotor.get("armMotorRight");
+        DcMotorEx shooter1 = hardwareMap.get(DcMotorEx.class, "armMotorLeft");
+        DcMotorEx shooter2 = hardwareMap.get(DcMotorEx.class, "armMotorRight");
        // Reverse the right side motors. This may be wrong for your setup.
         // If your robot moves backwards when commanded to go forwards,
         // reverse the left side instead.
         // See the note about this earlier on this page.
-      frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
         shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        shooter1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        shooter2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        shooter1.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        shooter2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         double speed = 0.0;
         waitForStart();
@@ -85,6 +91,8 @@ public class BallShooterProto extends LinearOpMode {
             shooter2.setPower(speed);
             shooter1.setPower(speed);
             telemetry.addData("Speed: ", speed);
+            telemetry.addData("Current Motor 1 Pos: ", (shooter1.getVelocity()/28) * 60);
+            telemetry.addData("Current Motor 2 Pos: ", (shooter2.getVelocity()/28) *60);
             telemetry.update();
         }
     }

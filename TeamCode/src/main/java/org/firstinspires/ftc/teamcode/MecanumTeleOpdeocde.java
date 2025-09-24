@@ -1053,6 +1053,7 @@ public class MecanumTeleOpdeocde extends OpMode {
     boolean driveForward;
     // Motors for mecanum drive
     private DcMotor frontLeft, frontRight, backLeft, backRight;
+    private Servo moveRamp1, moveRamp2;
     boolean clawPos = false;
     boolean slidesExtend = false;  // Toggle flag for slide movement
     // Arm controller and state machine
@@ -1071,6 +1072,7 @@ public class MecanumTeleOpdeocde extends OpMode {
     double clawOpen = 0.4;
     private Servo clawServo;
 
+    private DcMotor shooter1, shooter2;
     private Servo pivotServo;
     public double slidesPos;
     public String motif;
@@ -1089,10 +1091,16 @@ public class MecanumTeleOpdeocde extends OpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRightMotor");
         backLeft = hardwareMap.get(DcMotor.class, "backLeftMotor");
         backRight = hardwareMap.get(DcMotor.class, "backRightMotor");
+        moveRamp1 = hardwareMap.get(Servo.class, "moveRamp1");
+        moveRamp2 = hardwareMap.get(Servo.class, "moveRamp2");
+        shooter1 = hardwareMap.dcMotor.get("armMotorLeft");
+        shooter2 = hardwareMap.dcMotor.get("armMotorRight");
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
+        moveRamp2.setDirection(Servo.Direction.REVERSE);
+        shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -1141,7 +1149,15 @@ public class MecanumTeleOpdeocde extends OpMode {
             telemetry.addData("\n>", "Drive using joysticks to find valid target\n");
         }
 
+        if(gamepad2.dpad_up) {
+            if(desiredTag.ftcPose.range >=80) {
+                moveRamp1.setPosition(0.6);
+                moveRamp2.setPosition(0.6);
+                shooter1.setPower(0.6);
+                shooter2.setPower(0.6);
+            }
 
+        }
         // Save CPU resources; can resume streaming when needed.
         if (gamepad1.dpad_left) {
             visionPortal.stopStreaming();
