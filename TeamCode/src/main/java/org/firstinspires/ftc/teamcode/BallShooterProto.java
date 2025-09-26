@@ -71,6 +71,12 @@ public class BallShooterProto extends LinearOpMode {
                     speed +=0.1;
                 }
             }
+            if(gamepad1.rightBumperWasReleased()){
+                speed +=0.1;
+            }
+            if(gamepad1.leftBumperWasReleased()){
+                speed -=0.1;
+            }
             if(gamepad1.dpadRightWasReleased()){
                 if(speed<0.09){
 
@@ -93,6 +99,13 @@ public class BallShooterProto extends LinearOpMode {
             telemetry.addData("Speed: ", speed);
             telemetry.addData("Current Motor 1 Pos: ", (shooter1.getVelocity()/28) * 60);
             telemetry.addData("Current Motor 2 Pos: ", (shooter2.getVelocity()/28) *60);
+            double motor1pos = shooter1.getVelocity()/28 * 60;
+            double motor2pos = shooter2.getVelocity()/28 * 60;
+            if(Math.abs(motor1pos-motor2pos)<50){
+                telemetry.addData("Equal", "true");
+            }else{
+                telemetry.addData("Equal", "false");
+            }
             telemetry.update();
         }
     }

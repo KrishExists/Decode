@@ -1149,19 +1149,40 @@ public class MecanumTeleOpdeocde extends OpMode {
             telemetry.addData("\n>", "Drive using joysticks to find valid target\n");
         }
 
-        if(gamepad2.dpad_up) {
+        if(gamepad2.dpadUpWasPressed()) {
             if(desiredTag.ftcPose.range >=80) {
+                moveRamp1.setPosition(0.4);
+                moveRamp2.setPosition(0.4);
+                shooter1.setPower(0.4);
+                shooter2.setPower(0.4);
+            }
+
+            else if(desiredTag.ftcPose.range >= 70 ) {
                 moveRamp1.setPosition(0.6);
                 moveRamp2.setPosition(0.6);
                 shooter1.setPower(0.6);
                 shooter2.setPower(0.6);
             }
 
+            else if(desiredTag.ftcPose.range >= 40) {
+                moveRamp1.setPosition(0.8);
+                moveRamp2.setPosition(0.8);
+                shooter1.setPower(0.8);
+                shooter2.setPower(0.8);
+            }
+
+            else if(desiredTag.ftcPose.range >= 0) {
+                moveRamp1.setPosition(1.0);
+                moveRamp2.setPosition(1.0);
+                shooter1.setPower(1.0);
+                shooter2.setPower(1.0);
+            }
+
         }
         // Save CPU resources; can resume streaming when needed.
         if (gamepad1.dpad_left) {
             visionPortal.stopStreaming();
-        } else if (gamepad1.dpad_up) {
+        } else if (gamepad1.right_bumper) {
             visionPortal.resumeStreaming();
         }
 
