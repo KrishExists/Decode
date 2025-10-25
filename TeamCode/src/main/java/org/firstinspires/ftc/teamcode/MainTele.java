@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.sfdev.assembly.state.StateMachine;
 
 @TeleOp(name = "MecanumTeleopMain", group = "Main")
 public class MainTele extends LinearOpMode {
@@ -16,10 +17,12 @@ public class MainTele extends LinearOpMode {
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
         DcMotor intake = hardwareMap.dcMotor.get("Intake");
+        DcMotor outtake = hardwareMap.dcMotor.get("Outtake");
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         // Reverse the right side motors. This may be wrong for your setup.
         // If your robot moves backwards when commanded to go forwards,
@@ -27,12 +30,14 @@ public class MainTele extends LinearOpMode {
         // See the note about this earlier on this page.
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
+       DecodeController decodeController = new DecodeController(hardwareMap);
+       StateMachine shooterMech = decodeController.shooterMachine(gamepad1, gamepad2);
         waitForStart();
 
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
+            shooterMech.update();
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
@@ -45,11 +50,7 @@ public class MainTele extends LinearOpMode {
             double backLeftPower = (y - x + rx) / denominator;
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
-            if(gamepad1.bWasPressed()){
-                intake.setPower(1);
-            } else if (gamepad1.aWasPressed()) {
-                intake.setPower(-1);
-            }
+
             frontLeftMotor.setPower(frontLeftPower);
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);

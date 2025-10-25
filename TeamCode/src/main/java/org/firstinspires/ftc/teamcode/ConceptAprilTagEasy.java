@@ -100,7 +100,6 @@ public class ConceptAprilTagEasy extends LinearOpMode {
                 if (gamepad1.dpad_down) {
                     visionPortal.stopStreaming();
                 } else if (gamepad1.dpad_up) {
-                    visionPortal.resumeStreaming();
                 }
 
                 // Share the CPU.
