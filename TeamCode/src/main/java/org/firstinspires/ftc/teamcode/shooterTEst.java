@@ -67,6 +67,8 @@ public class shooterTEst extends LinearOpMode {
         while (opModeIsActive()) {
 
             telemetryAprilTag();
+            telemetry.addData("OutakeSpeed",power);
+            telemetry.addData("IntakeSpeed",intkePower);
 
             // Push telemetry to the Driver Station.
             telemetry.update();
@@ -102,21 +104,31 @@ public class shooterTEst extends LinearOpMode {
             }if(gamepad1.leftBumperWasReleased()){
                 power-=0.01;
             }
-            //servo
+            if(gamepad1.aWasPressed()){
+                power = 0;
+            }if(gamepad1.backWasPressed()){
+                power = 0.8;
+            }
+            //intake
             if(gamepad2.dpadUpWasPressed()){
-                linkagePos+=0.1;
+                intkePower+=0.1;
             }
             if(gamepad2.dpadDownWasReleased()){
-                linkagePos-=0.1;
+                intkePower-=0.1;
             }
             if(gamepad2.dpadLeftWasPressed()){
-                linkagePos+=0.05;
+                intkePower+=0.05;
             }if(gamepad2.dpadRightWasPressed()){
-                linkagePos-=0.05;
+                intkePower-=0.05;
             }if(gamepad2.rightBumperWasPressed()){
-                linkagePos+=0.01;
+                intkePower+=0.01;
             }if(gamepad2.leftBumperWasReleased()){
-                linkagePos-=0.01;
+                intkePower-=0.01;
+            }
+            if(gamepad2.aWasPressed()){
+                intkePower = 0;
+            }if(gamepad2.backWasPressed()){
+                intkePower = 0.8;
             }
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio,

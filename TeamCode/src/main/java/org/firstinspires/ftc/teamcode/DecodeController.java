@@ -29,7 +29,7 @@ public class DecodeController {
     private VisionPortal visionPortal;
     InterpLUT lut;
     public DecodeController(HardwareMap hardwareMap) {
-        intake = hardwareMap.get(DcMotorEx.class,"intake");
+        intake = hardwareMap.get(DcMotorEx.class,"Intake");
         shooter = hardwareMap.get(DcMotorEx.class,"shooter");
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -79,7 +79,7 @@ public class DecodeController {
                             continue;
                         }else{
                             double range = detection.ftcPose.range;
-                            power = lut.get(range);
+                            //power = lut.get(range);
                         }
                     }
                         })
