@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
@@ -28,9 +29,11 @@ public class DecodeController {
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
     InterpLUT lut;
+    Servo linkage;
     public DecodeController(HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotorEx.class,"Intake");
-        shooter = hardwareMap.get(DcMotorEx.class,"shooter");
+        shooter = hardwareMap.get(DcMotorEx.class,"Outtake");
+        linkage = hardwareMap.get(Servo.class, "Linkage");
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lut = new InterpLUT();
@@ -59,6 +62,7 @@ public class DecodeController {
         return new StateMachineBuilder()
                 .state(States.Intake)
                 .loop(()->{
+
                     intake.setPower(1);
                     shooter.setPower(0.01);
                 })
@@ -88,7 +92,9 @@ public class DecodeController {
                 })
                 .states(States.Outake)
                 .loop(()->{
-                    intake.setPower(0.5);
+                    intake.setPower(0.25);
+
+
                     //shooter.setPower(power); use this when we actually can
                     shooter.setPower(0.65);
                 })

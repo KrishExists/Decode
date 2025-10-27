@@ -38,7 +38,7 @@ public class shooterTEst extends LinearOpMode {
         DcMotor backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
         DcMotor intake = hardwareMap.dcMotor.get("Intake");
         DcMotor outtake = hardwareMap.dcMotor.get("Outtake");
-        Servo linkage = hardwareMap.get(Servo.class, "Linkage");
+        //Servo linkage = hardwareMap.get(Servo.class, "Linkage");
         double linkagePos = 0;
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -88,7 +88,7 @@ public class shooterTEst extends LinearOpMode {
             telemetry.update();
             intake.setPower(intkePower);
             outtake.setPower(power);
-            linkage.setPosition(linkagePos);
+            //linkage.setPosition(linkagePos);
             if(gamepad1.dpadUpWasPressed()){
                 power+=0.1;
             }
