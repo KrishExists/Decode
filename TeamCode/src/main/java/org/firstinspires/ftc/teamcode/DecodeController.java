@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import com.arcrobotics.ftclib.util.InterpLUT;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -19,109 +17,104 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-
 public class DecodeController {
+
     private DcMotorEx shooter;
     private DcMotorEx intake;
-    public States state;
+    private Servo linkage;
     private double power;
+
     private static final boolean USE_WEBCAM = true;
+
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
-    InterpLUT lut;
-    Servo linkage;
-    public DecodeController(HardwareMap hardwareMap) {
-        intake = hardwareMap.get(DcMotorEx.class,"Intake");
-        shooter = hardwareMap.get(DcMotorEx.class,"Outtake");
-        linkage = hardwareMap.get(Servo.class, "Linkage");
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lut = new InterpLUT();
+    private InterpLUT lut;
 
-//Adding each val with a key
-        lut.add(30, 1);
-        lut.add(2.7, .5);
-        lut.add(3.6, 0.75);
-        lut.add(4.1, 0.9);
-        lut.add(5, 1);
-//generating final equation
-        lut.createLUT();
-        initAprilTag();
+    private HardwareMap hardwareMap; // ✅ store reference for later use
+    public States state;
 
-    }
-    public void controllerInit(){
-        state= States.Intake;
-    }
-    public enum States{
+    public enum States {
         Intake,
         Rest,
         Outake,
         Calculate
     }
-    public StateMachine shooterMachine(Gamepad gamepad1, Gamepad gamepad2){
+
+    // Constructor
+    public DecodeController(HardwareMap hardwareMap) {
+        this.hardwareMap = hardwareMap; // ✅ fix: save it for later
+        init(hardwareMap);
+        initAprilTag();
+        // setupLUT(); // optional lookup table
+    }
+
+    private void init(HardwareMap hardwareMap) {
+        intake = hardwareMap.get(DcMotorEx.class, "Intake");
+        shooter = hardwareMap.get(DcMotorEx.class, "Outtake");
+        linkage = hardwareMap.get(Servo.class, "Linkage");
+
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        state = States.Rest; // ✅ ensure default state
+    }
+
+    public void controllerInit() {
+        state = States.Intake;
+    }
+
+    public StateMachine shooterMachine(Gamepad gamepad1, Gamepad gamepad2) {
         return new StateMachineBuilder()
+
+                // ====== Intake ======
                 .state(States.Intake)
-                .loop(()->{
+                .onEnter(() -> visionPortal.resumeStreaming())
+                .loop(() -> {
+                    intake.setPower(0.5);
+                    shooter.setPower(0.0);
+                    linkage.setPosition(1.0);
+                })
+                .transition(() -> gamepad2.b, States.Calculate)
 
-                    intake.setPower(1);
-                    shooter.setPower(0.01);
-                })
-                .transition(() -> {
-                    boolean fallingEdge = gamepad2.backWasPressed();
-                    return fallingEdge;
-                }, States.Calculate)
-                .onEnter(()->{
-                    visionPortal.resumeStreaming();
-                })
+                // ====== Calculate ======
                 .state(States.Calculate)
-                .loop(()->{
-                    List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+                .loop(() -> {
+                    List<AprilTagDetection> detections = aprilTag.getDetections();
 
-                    // Step through the list of detections and display info for each one.
-                    for (AprilTagDetection detection : currentDetections) {
-                        if(detection.id <=23){
-                            continue;
-                        }else{
-                            double range = detection.ftcPose.range;
-                            //power = lut.get(range);
-                        }
+                    for (AprilTagDetection detection : detections) {
+                        if (detection.id <= 23) continue; // filter if needed
+
+                        double range = detection.ftcPose.range;
+                        // power = lut != null ? lut.get(range) : 1.0;
+                        power = 1.0; // default if LUT not used
                     }
-                        })
-                .onExit(()->{
-                    visionPortal.stopStreaming();
                 })
-                .states(States.Outake)
-                .loop(()->{
+                .onExit(() -> visionPortal.stopStreaming())
+                .transition(() -> gamepad2.b, States.Outake)
+
+                // ====== Outake ======
+                .state(States.Outake)
+                .loop(() -> {
+                    linkage.setPosition(0.3);
                     intake.setPower(0.25);
-
-
-                    //shooter.setPower(power); use this when we actually can
-                    shooter.setPower(0.65);
+                    shooter.setPower(power);
                 })
-                .transition(()->{
-                    boolean fallingEdge = gamepad2.backWasPressed();
-                    return fallingEdge;
-                },States.Rest)
-                .states(States.Rest)
-                .loop(()->{
+                .transition(() -> gamepad2.b, States.Rest)
+
+                // ====== Rest ======
+                .state(States.Rest)
+                .loop(() -> {
                     intake.setPower(0);
                     shooter.setPower(0);
                 })
-                .transition(()->{
-                    boolean fallingEdge = gamepad2.backWasPressed();
-                    return fallingEdge;
-                },States.Intake)
+                .transition(() -> gamepad2.b, States.Intake)
 
                 .build();
-
-
     }
-    private void initAprilTag() {
 
-        // Create the AprilTag processor the easy way.
+    private void initAprilTag() {
         aprilTag = AprilTagProcessor.easyCreateWithDefaults();
 
-        // Create the vision portal the easy way.
         if (USE_WEBCAM) {
             visionPortal = VisionPortal.easyCreateWithDefaults(
                     hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
@@ -129,7 +122,16 @@ public class DecodeController {
             visionPortal = VisionPortal.easyCreateWithDefaults(
                     BuiltinCameraDirection.BACK, aprilTag);
         }
+    }
 
-    }   // end method initAprilTag()
-
+    /*
+    private void setupLUT() {
+        lut = new InterpLUT();
+        lut.add(2.7, 0.5);
+        lut.add(3.6, 0.75);
+        lut.add(4.1, 0.9);
+        lut.add(5.0, 1.0);
+        lut.createLUT();
+    }
+    */
 }

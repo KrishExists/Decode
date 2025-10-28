@@ -8,44 +8,57 @@ import com.sfdev.assembly.state.StateMachine;
 
 @TeleOp(name = "MecanumTeleopMain", group = "Main")
 public class MainTele extends LinearOpMode {
+
+    private DcMotor frontLeftMotor;
+    private DcMotor backLeftMotor;
+    private DcMotor frontRightMotor;
+    private DcMotor backRightMotor;
+    private DcMotor intake;
+    private DcMotor outtake;
+
     @Override
     public void runOpMode() throws InterruptedException {
-        // Declare our motors
-        // Make sure your ID's match your configuration
-        DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
-        DcMotor backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
-        DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
-        DcMotor backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
-        DcMotor intake = hardwareMap.dcMotor.get("Intake");
-        DcMotor outtake = hardwareMap.dcMotor.get("Outtake");
+        // ====== Initialize Motors ======
+        frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeftMotor");
+        backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
+        frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
+        backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
+        intake = hardwareMap.get(DcMotor.class, "Intake");
+        outtake = hardwareMap.get(DcMotor.class, "Outtake");
+
+        // ====== Motor Config ======
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
-        // Reverse the right side motors. This may be wrong for your setup.
-        // If your robot moves backwards when commanded to go forwards,
-        // reverse the left side instead.
-        // See the note about this earlier on this page.
+        // Reverse the left side (common for mecanum)
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-       DecodeController decodeController = new DecodeController(hardwareMap);
-       StateMachine shooterMech = decodeController.shooterMachine(gamepad1, gamepad2);
+
+        // ====== Initialize DecodeController ======
+        DecodeController decodeController = new DecodeController(hardwareMap);
+        decodeController.controllerInit(); // ✅ ensures proper initial state setup
+        StateMachine shooterMachine = decodeController.shooterMachine(gamepad1, gamepad2);
+
+        telemetry.addLine("Initialized — Waiting for start");
+        telemetry.update();
+
         waitForStart();
 
         if (isStopRequested()) return;
 
+        // ====== Main Control Loop ======
         while (opModeIsActive()) {
-            shooterMech.update();
-            double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-            double rx = gamepad1.right_stick_x;
+            // Update the shooter/intake state machine
+            shooterMachine.update();
 
-            // Denominator is the largest motor power (absolute value) or 1
-            // This ensures all the powers maintain the same ratio,
-            // but only if at least one is out of the range [-1, 1]
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            // Mecanum drive control
+            double y = -gamepad1.left_stick_y; // forward/back
+            double x = gamepad1.left_stick_x * 1.1; // strafe, with small correction
+            double rx = gamepad1.right_stick_x; // rotation
+
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1.0);
             double frontLeftPower = (y + x + rx) / denominator;
             double backLeftPower = (y - x + rx) / denominator;
             double frontRightPower = (y - x - rx) / denominator;
@@ -55,6 +68,14 @@ public class MainTele extends LinearOpMode {
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
+
+            // Optional telemetry feedback
+            telemetry.addData("State", decodeController.state);
+            telemetry.addData("Front Left", frontLeftPower);
+            telemetry.addData("Front Right", frontRightPower);
+            telemetry.addData("Back Left", backLeftPower);
+            telemetry.addData("Back Right", backRightPower);
+            telemetry.update();
         }
     }
 }
