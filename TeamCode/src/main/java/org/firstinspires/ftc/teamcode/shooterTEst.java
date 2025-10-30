@@ -39,7 +39,7 @@ public class shooterTEst extends LinearOpMode {
         DcMotor intake = hardwareMap.dcMotor.get("Intake");
         DcMotor outtake = hardwareMap.dcMotor.get("Outtake");
         //Servo linkage = hardwareMap.get(Servo.class, "Linkage");
-        double linkagePos = 0;
+        double linkagePos = 1;
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

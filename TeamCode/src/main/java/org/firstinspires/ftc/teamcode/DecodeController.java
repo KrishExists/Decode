@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -19,19 +21,24 @@ import java.util.List;
 
 public class DecodeController {
 
+    // Hardware
     private DcMotorEx shooter;
     private DcMotorEx intake;
     private Servo linkage;
     private double power;
 
+    // Vision
     private static final boolean USE_WEBCAM = true;
-
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
-    private InterpLUT lut;
 
-    private HardwareMap hardwareMap; // ✅ store reference for later use
+    private InterpLUT lut;
+    private HardwareMap hardwareMap;
+
     public States state;
+
+    // Button edge detection
+    private boolean wasBButtonPressed = false;
 
     public enum States {
         Intake,
@@ -42,13 +49,12 @@ public class DecodeController {
 
     // Constructor
     public DecodeController(HardwareMap hardwareMap) {
-        this.hardwareMap = hardwareMap; // ✅ fix: save it for later
-        init(hardwareMap);
+        this.hardwareMap = hardwareMap;
+        initHardware(hardwareMap);
         initAprilTag();
-        // setupLUT(); // optional lookup table
     }
 
-    private void init(HardwareMap hardwareMap) {
+    private void initHardware(HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotorEx.class, "Intake");
         shooter = hardwareMap.get(DcMotorEx.class, "Outtake");
         linkage = hardwareMap.get(Servo.class, "Linkage");
@@ -56,7 +62,7 @@ public class DecodeController {
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        state = States.Rest; // ✅ ensure default state
+        state = States.Rest;
     }
 
     public void controllerInit() {
@@ -68,46 +74,63 @@ public class DecodeController {
 
                 // ====== Intake ======
                 .state(States.Intake)
-                .onEnter(() -> visionPortal.resumeStreaming())
-                .loop(() -> {
-                    intake.setPower(0.5);
-                    shooter.setPower(0.0);
-                    linkage.setPosition(1.0);
+                .onEnter(() -> {
+                    state = States.Intake;
+                    if (visionPortal != null) visionPortal.resumeStreaming();
                 })
-                .transition(() -> gamepad2.b, States.Calculate)
+                .loop(() -> {
+                    intake.setPower(0.8);
+                    shooter.setPower(0.0);
+                    linkage.setPosition(0.0);
+                })
+                .transition(() -> isBPressed(gamepad2), States.Calculate)
 
                 // ====== Calculate ======
                 .state(States.Calculate)
                 .loop(() -> {
-                    List<AprilTagDetection> detections = aprilTag.getDetections();
+                    state = States.Calculate;
+                    if (aprilTag != null) {
+                        List<AprilTagDetection> detections = aprilTag.getDetections();
 
-                    for (AprilTagDetection detection : detections) {
-                        if (detection.id <= 23) continue; // filter if needed
-
-                        double range = detection.ftcPose.range;
-                        // power = lut != null ? lut.get(range) : 1.0;
-                        power = 1.0; // default if LUT not used
+                        if (detections != null && !detections.isEmpty()) {
+                            for (AprilTagDetection detection : detections) {
+                                if (detection.id <= 23) continue;
+                                double range = detection.ftcPose.range;
+                                power = (lut != null) ? lut.get(range) : 1.0;
+                            }
+                        } else {
+                            power = 1.0;
+                        }
                     }
                 })
-                .onExit(() -> visionPortal.stopStreaming())
-                .transition(() -> gamepad2.b, States.Outake)
+                .onExit(() -> {
+                    if (visionPortal != null) visionPortal.stopStreaming();
+                })
+                .transition(() -> isBPressed(gamepad2), States.Outake)
 
                 // ====== Outake ======
                 .state(States.Outake)
+                .onEnter(() -> {
+                    state = States.Outake;
+                    intake.setPower(-0.25);
+                    shooter.setPower(-0.1);
+                })
                 .loop(() -> {
-                    linkage.setPosition(0.3);
+                    linkage.setPosition(0.2);
                     intake.setPower(0.25);
                     shooter.setPower(power);
                 })
-                .transition(() -> gamepad2.b, States.Rest)
+                .transition(() -> isBPressed(gamepad2), States.Rest)
 
                 // ====== Rest ======
                 .state(States.Rest)
                 .loop(() -> {
+                    state = States.Rest;
                     intake.setPower(0);
                     shooter.setPower(0);
+                    linkage.setPosition(0.0);
                 })
-                .transition(() -> gamepad2.b, States.Intake)
+                .transition(() -> isBPressed(gamepad2), States.Intake)
 
                 .build();
     }
@@ -122,6 +145,14 @@ public class DecodeController {
             visionPortal = VisionPortal.easyCreateWithDefaults(
                     BuiltinCameraDirection.BACK, aprilTag);
         }
+    }
+
+    // === Utility: falling edge detection (like ArmController) ===
+    private boolean isBPressed(Gamepad gamepad2) {
+        boolean isPressed = gamepad2.b;
+        boolean fallingEdge = !wasBButtonPressed && isPressed;
+        wasBButtonPressed = isPressed;
+        return fallingEdge;
     }
 
     /*
