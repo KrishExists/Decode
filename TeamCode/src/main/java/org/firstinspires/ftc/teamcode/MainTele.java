@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,7 +18,7 @@ public class MainTele extends LinearOpMode {
     private DcMotor backRightMotor;
 
     private DcMotor intake;
-    private DcMotor outtake;
+    private DcMotorEx outtake;
     private Servo linkage;
 
     // ====== Timer ======
@@ -27,6 +28,7 @@ public class MainTele extends LinearOpMode {
     private enum IntakeState {
         INTAKE,
         OUTTAKE,
+        RUNSLOW,
         REST
     }
 
@@ -42,7 +44,7 @@ public class MainTele extends LinearOpMode {
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
 
         intake = hardwareMap.get(DcMotor.class, "Intake");
-        outtake = hardwareMap.get(DcMotor.class, "Outtake");
+        outtake = hardwareMap.get(DcMotorEx.class, "Outtake");
         linkage = hardwareMap.get(Servo.class, "Linkage");
 
         // ====== Motor Config ======
@@ -56,6 +58,9 @@ public class MainTele extends LinearOpMode {
 
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        outtake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        outtake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
 
         linkage.setPosition(0.0);
 
@@ -73,9 +78,22 @@ public class MainTele extends LinearOpMode {
                 currentState = IntakeState.INTAKE;
             } else if (gamepad2.left_trigger > 0.2) {
                 currentState = IntakeState.OUTTAKE;
-            } else {
+            }
+            else if(gamepad2.left_bumper == true) {
+                currentState = IntakeState.RUNSLOW;
+            }
+            else {
                 currentState = IntakeState.REST;
             }
+
+            int x23 = 0;
+
+            if(gamepad2.a) {
+                x23+=0.05;
+                linkage.setPosition(x23);
+            }
+
+
 
             // ====== Detect state change ======
             if (currentState != previousState) {
@@ -94,18 +112,38 @@ public class MainTele extends LinearOpMode {
                 case OUTTAKE:
                     if (timer.milliseconds() < 750) {
                         // First 750ms — run outtake motor
+                        outtake.setPower(-0.8);
+                        intake.setPower(-0.5);
+                        linkage.setPosition(0.0);
+                    }
+
+                    else if(timer.milliseconds() < 3500) {
                         outtake.setPower(1.0);
                         intake.setPower(0.0);
                         linkage.setPosition(0.0);
-                    } else {
+                    }
+
+                    else if (timer.milliseconds() < 4000){
                         // After 750ms — stop outtake, maybe reverse intake
-                        outtake.setPower(1.0);
-                        intake.setPower(0.8); // optional: reverse briefly
-                        linkage.setPosition(0.5);
+                        outtake.setVelocity(6000);
+                        telemetry.addData("Speed of Shooter: ", outtake.getVelocity());// optional: reverse briefly
+                        linkage.setPosition(0.28);
+                        intake.setPower(0.0);
+                    }
+
+                    else {
+                        outtake.setVelocity(6000);
+                        linkage.setPosition(0.28);
+                        intake.setPower(0.8);
                     }
                     break;
 
-                case REST:
+                case RUNSLOW:
+                    intake.setPower(-1.0);
+                    outtake.setPower(-0.8);
+                    linkage.setPosition(0);
+                    break;
+
                 default:
                     intake.setPower(0.0);
                     outtake.setPower(0.0);

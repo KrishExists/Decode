@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -17,7 +18,7 @@ public class clawTelemetry extends OpMode {
 
 
     private Servo linkage;
-    private DcMotor shooter;
+    private DcMotorEx shooter;
     private DcMotor intake;
 
 
@@ -33,8 +34,10 @@ public class clawTelemetry extends OpMode {
     public void init() {
         // Initialize the hardware variables. The strings must match the names in the configuration
         linkage = hardwareMap.get(Servo.class, "Linkage");
-        shooter = hardwareMap.get(DcMotor.class, "Outtake");
+        shooter = hardwareMap.get(DcMotorEx.class, "Outtake");
         intake = hardwareMap.get(DcMotor.class, "Intake");
+        shooter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         // Initialize the dashboard
         // Initialize telemetry with both Driver Station and Dashboard telemetry
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -54,7 +57,7 @@ public class clawTelemetry extends OpMode {
         //armController.update();
         // Add servo positions to telemetry
         telemetry.addData("Linkage Position", linkage.getPosition());
-        telemetry.addData("Shooter Power", shooter.getPower());
+        telemetry.addData("Shooter Power", shooter.getVelocity()/28);
         telemetry.addData("Intake Power", intake.getPower());
         telemetry.update();
 
