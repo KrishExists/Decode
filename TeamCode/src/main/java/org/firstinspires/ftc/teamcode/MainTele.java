@@ -8,7 +8,14 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "MecanumTeleopMain_Switch", group = "Main")
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.List;
+
+@TeleOp(name = "MecanumTeleopMain_Switch_AutoAlign", group = "Main")
 public class MainTele extends LinearOpMode {
 
     // ====== Hardware ======
@@ -21,10 +28,14 @@ public class MainTele extends LinearOpMode {
     private DcMotorEx outtake;
     private Servo linkage;
 
+    // ====== Camera ======
+    private VisionPortal visionPortal;
+    private AprilTagProcessor aprilTag;
+    private double kP = 0.03;  // Proportional constant for alignment
+
     // ====== Timer ======
     private final ElapsedTime timer = new ElapsedTime();
 
-    // ====== Intake System State ======
     private enum IntakeState {
         INTAKE,
         OUTTAKE,
@@ -47,7 +58,6 @@ public class MainTele extends LinearOpMode {
         outtake = hardwareMap.get(DcMotorEx.class, "Outtake");
         linkage = hardwareMap.get(Servo.class, "Linkage");
 
-        // ====== Motor Config ======
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -61,8 +71,14 @@ public class MainTele extends LinearOpMode {
         outtake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         outtake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-
         linkage.setPosition(0.0);
+
+        // ====== Initialize Camera ======
+        aprilTag = new AprilTagProcessor.Builder().build();
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .addProcessor(aprilTag)
+                .build();
 
         telemetry.addLine("Initialized — Waiting for start");
         telemetry.update();
@@ -70,104 +86,70 @@ public class MainTele extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        // ====== MAIN LOOP ======
         while (opModeIsActive()) {
-
-            // ====== Determine Intake State ======
+            // ====== Intake Logic ======
             if (gamepad2.right_trigger > 0.2) {
                 currentState = IntakeState.INTAKE;
             } else if (gamepad2.left_trigger > 0.2) {
                 currentState = IntakeState.OUTTAKE;
-            }
-            else if(gamepad2.left_bumper == true) {
+            } else if (gamepad2.left_bumper) {
                 currentState = IntakeState.RUNSLOW;
-            }
-            else {
+            } else {
                 currentState = IntakeState.REST;
             }
 
-            int x23 = 0;
-
-            if(gamepad2.a) {
-                x23+=0.05;
-                linkage.setPosition(x23);
-            }
-
-
-
-            // ====== Detect state change ======
             if (currentState != previousState) {
-                timer.reset(); // reset timer only once when switching states
+                timer.reset();
                 previousState = currentState;
             }
 
-            // ====== Handle Intake State ======
             switch (currentState) {
                 case INTAKE:
                     intake.setPower(0.8);
                     outtake.setPower(-0.2);
-                    linkage.setPosition(0.0);
+                    linkage.setPosition(1.0);
                     break;
 
                 case OUTTAKE:
                     if (timer.milliseconds() < 750) {
-                        // First 750ms — run outtake motor
                         outtake.setPower(-0.8);
                         intake.setPower(-0.5);
-                        linkage.setPosition(0.0);
-                    }
-
-                    else if(timer.milliseconds() < 3500) {
+                        linkage.setPosition(1.0);
+                    } else if (timer.milliseconds() < 3500) {
                         outtake.setPower(1.0);
                         intake.setPower(0.0);
-                        linkage.setPosition(0.0);
-                    }
-
-                    else if (timer.milliseconds() < 4000){
-                        // After 750ms — stop outtake, maybe reverse intake
+                        linkage.setPosition(1.0);
+                    } else if (timer.milliseconds() < 4000) {
                         outtake.setVelocity(6000);
-                        telemetry.addData("Speed of Shooter: ", outtake.getVelocity());// optional: reverse briefly
-                        linkage.setPosition(0.28);
+                        linkage.setPosition(0.37);
                         intake.setPower(0.0);
-                    }
-
-                    else {
+                    } else {
                         outtake.setVelocity(6000);
-                        linkage.setPosition(0.28);
-                        intake.setPower(0.8);
+                        linkage.setPosition(0.37);
+                        intake.setPower(0.5);
                     }
                     break;
 
                 case RUNSLOW:
                     intake.setPower(-1.0);
                     outtake.setPower(-0.8);
-                    linkage.setPosition(0);
+                    linkage.setPosition(1.0);
                     break;
 
                 default:
                     intake.setPower(0.0);
                     outtake.setPower(0.0);
-                    linkage.setPosition(0.0);
+                    linkage.setPosition(1.0);
                     break;
             }
 
-            // ====== Mecanum Drive ======
-            double y = -gamepad1.left_stick_y; // forward/back
-            double x = gamepad1.left_stick_x * 1.1; // strafe (tuned)
-            double rx = gamepad1.right_stick_x; // rotation
+            // ====== Drive Control ======
+            if (gamepad2.right_bumper) {
+                autoAlignToTag();
+            } else {
+                manualDrive();
+            }
 
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1.0);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
-
-            frontLeftMotor.setPower(frontLeftPower);
-            backLeftMotor.setPower(backLeftPower);
-            frontRightMotor.setPower(frontRightPower);
-            backRightMotor.setPower(backRightPower);
-
-            // ====== Telemetry ======
             telemetry.addData("State", currentState);
             telemetry.addData("Timer (ms)", timer.milliseconds());
             telemetry.addData("Intake Power", intake.getPower());
@@ -175,5 +157,54 @@ public class MainTele extends LinearOpMode {
             telemetry.addData("Linkage Pos", linkage.getPosition());
             telemetry.update();
         }
+    }
+
+    // ====== Helper Methods ======
+
+    private void manualDrive() {
+        double y = -gamepad1.left_stick_y;
+        double x = gamepad1.left_stick_x * 1.1;
+        double rx = gamepad1.right_stick_x;
+
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1.0);
+        double frontLeftPower = (y + x + rx) / denominator;
+        double backLeftPower = (y - x + rx) / denominator;
+        double frontRightPower = (y - x - rx) / denominator;
+        double backRightPower = (y + x - rx) / denominator;
+
+        frontLeftMotor.setPower(frontLeftPower);
+        backLeftMotor.setPower(backLeftPower);
+        frontRightMotor.setPower(frontRightPower);
+        backRightMotor.setPower(backRightPower);
+    }
+
+    private void autoAlignToTag() {
+        List<AprilTagDetection> detections = aprilTag.getDetections();
+        if (detections.isEmpty()) {
+            telemetry.addLine("No Tag Detected");
+            stopDrive();
+            return;
+        }
+
+        // Just pick the first visible tag
+        AprilTagDetection tag = detections.get(0);
+        double error = tag.ftcPose.x; // x-offset from center
+        double turnPower = error * kP;
+
+        frontLeftMotor.setPower(turnPower);
+        backLeftMotor.setPower(turnPower);
+        frontRightMotor.setPower(-turnPower);
+        backRightMotor.setPower(-turnPower);
+
+        telemetry.addData("Tag ID", tag.id);
+        telemetry.addData("Error", error);
+        telemetry.addData("Turn Power", turnPower);
+    }
+
+    private void stopDrive() {
+        frontLeftMotor.setPower(0);
+        backLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backRightMotor.setPower(0);
     }
 }
