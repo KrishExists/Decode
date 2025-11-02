@@ -107,25 +107,25 @@ public class MainTele extends LinearOpMode {
                 case INTAKE:
                     intake.setPower(0.8);
                     outtake.setPower(-0.2);
-                    linkage.setPosition(1.0);
+                    linkage.setPosition(0.8);
                     break;
 
                 case OUTTAKE:
                     if (timer.milliseconds() < 700) {
                         outtake.setPower(-0.8);
                         intake.setPower(-0.5);
-                        linkage.setPosition(1.0);
+                        linkage.setPosition(0.8);
                     } else if (timer.milliseconds() < 3500) {
                         outtake.setPower(1.0);
                         intake.setPower(0.0);
-                        linkage.setPosition(1.0);
+                        linkage.setPosition(0.8);
                     } else if (timer.milliseconds() < 4000) {
                         outtake.setVelocity(6000);
-                        linkage.setPosition(0.37);
+                        linkage.setPosition(0.6);
                         intake.setPower(0.0);
                     } else {
                         outtake.setVelocity(6000);
-                        linkage.setPosition(0.37);
+                        linkage.setPosition(0.6);
                         intake.setPower(0.5);
                     }
                     break;
@@ -133,13 +133,13 @@ public class MainTele extends LinearOpMode {
                 case RUNSLOW:
                     intake.setPower(-1.0);
                     outtake.setPower(-0.8);
-                    linkage.setPosition(1.0);
+                    linkage.setPosition(0.8);
                     break;
 
                 default:
                     intake.setPower(0.0);
                     outtake.setPower(0.0);
-                    linkage.setPosition(1.0);
+                    linkage.setPosition(0.8);
                     break;
             }
 

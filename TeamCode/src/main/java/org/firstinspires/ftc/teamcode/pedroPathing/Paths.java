@@ -14,11 +14,6 @@ public class Paths {
     public PathChain Path4;
 
     public Paths(Follower follower) {
-        Path1 = follower
-                .pathBuilder()
-                .addPath(
-                .new BezierLine(follower)
-                )
         Path2 = follower
                 .pathBuilder()
                 .addPath(

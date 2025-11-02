@@ -17,6 +17,7 @@ public class newPaths extends OpMode {
     Pose pose2 = new Pose(34.120, 83.277);
     Pose pose3 = new Pose(16.578, 84.434);
     Pose pose4 = new Pose(70.000, 80.000);
+    Pose startPose = new Pose(130,127);
     // Lowest (Third Set) of Artifacts from the Spike Mark.
     private Path scorePreload;
     private PathChain Path1, Path2, Path3,start;
@@ -47,8 +48,8 @@ public class newPaths extends OpMode {
                 .build();
         start = follower
                 .pathBuilder()
-                .addPath(new BezierLine(follower::getPose,pose1))
-                .setLinearHeadingInterpolation(follower.getHeading(),Math.toRadians(67))
+                .addPath(new BezierLine(startPose,pose1))
+                .setLinearHeadingInterpolation(Math.toRadians(270),Math.toRadians(67))
                 .build();
 // Define paths
 
@@ -134,7 +135,7 @@ public class newPaths extends OpMode {
 
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
-        follower.setStartingPose(follower.getPose());
+        follower.setStartingPose(startPose);
 
     }
 
