@@ -92,7 +92,7 @@ public class MainTele extends LinearOpMode {
                 currentState = IntakeState.INTAKE;
             } else if (gamepad2.left_trigger > 0.2) {
                 currentState = IntakeState.OUTTAKE;
-            } else if (gamepad2.left_bumper) {
+            } else if (gamepad2.right_bumper) {
                 currentState = IntakeState.RUNSLOW;
             } else {
                 currentState = IntakeState.REST;
@@ -111,7 +111,7 @@ public class MainTele extends LinearOpMode {
                     break;
 
                 case OUTTAKE:
-                    if (timer.milliseconds() < 750) {
+                    if (timer.milliseconds() < 700) {
                         outtake.setPower(-0.8);
                         intake.setPower(-0.5);
                         linkage.setPosition(1.0);
@@ -144,7 +144,7 @@ public class MainTele extends LinearOpMode {
             }
 
             // ====== Drive Control ======
-            if (gamepad2.right_bumper) {
+            if (gamepad2.left_bumper) {
                 autoAlignToTag();
             } else {
                 manualDrive();
