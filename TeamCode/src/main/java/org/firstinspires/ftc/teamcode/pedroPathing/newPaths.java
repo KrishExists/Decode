@@ -49,7 +49,7 @@ public class newPaths extends OpMode {
         start = follower
                 .pathBuilder()
                 .addPath(new BezierLine(startPose,pose1))
-                .setLinearHeadingInterpolation(Math.toRadians(270),Math.toRadians(67))
+                .setLinearHeadingInterpolation(Math.toRadians(215),Math.toRadians(67))
                 .build();
 // Define paths
 
@@ -61,6 +61,8 @@ public class newPaths extends OpMode {
             case 0:
                 follower.followPath(start);
                 setPathState(1);
+                telemetry.addData("Doing start",follower::getPose);
+                telemetry.update();
                 break;
             case 1:
 
@@ -131,7 +133,8 @@ public class newPaths extends OpMode {
      **/
     @Override
     public void init() {
-
+        telemetry.addData("followerPOs",follower::getPose);
+        telemetry.update();
 
         follower = Constants.createFollower(hardwareMap);
         buildPaths();

@@ -14,6 +14,15 @@ public class Paths {
     public PathChain Path4;
 
     public Paths(Follower follower) {
+        Path1 = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(127.51619870410367,124.4060475161987)
+,new Pose(70.0,80.0))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(215),Math.toRadians(67))
+                .build();
+
         Path2 = follower
                 .pathBuilder()
                 .addPath(
