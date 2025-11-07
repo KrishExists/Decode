@@ -149,7 +149,7 @@ public class MainTele extends LinearOpMode {
                         intake.setPower(-0.5);
                         linkage.setPosition(0.92);
                     } else if (timer.milliseconds() < 3500) {
-                        outtake.setPower(1.0);
+                        outtake.setVelocity(2400);
                         intake.setPower(0.0);
                         linkage.setPosition(0.92);
                     } else if (timer.milliseconds() < 4000) {
@@ -158,27 +158,27 @@ public class MainTele extends LinearOpMode {
                             intake.setPower(0.0);
 
                     } else {
-                        if(outtake.getVelocity() < 2400) {
-                            outtake.setVelocity(2400);
-                            linkage.setPosition(0.92);
-                            intake.setPower(0.0);
-                        }
+//                        if(outtake.getVelocity() < 2400) {
+//                            outtake.setVelocity(2400);
+//                            linkage.setPosition(0.92);
+//                            intake.setPower(0.0);
+//                        }
                         outtake.setVelocity(2400);
                         linkage.setPosition(0.25);
-                        intake.setPower(0.8);
+                        intake.setPower(0.6);
                     }
                     break;
 
                 case RUNSLOW:
                     intake.setPower(-1.0);
                     outtake.setPower(-0.8);
-                    linkage.setPosition(0.8);
+                    linkage.setPosition(0.92);
                     break;
 
                 default:
                     intake.setPower(0.0);
                     outtake.setPower(0.0);
-                    linkage.setPosition(0.8);
+                    linkage.setPosition(0.92);
                     break;
             }
 
@@ -194,6 +194,7 @@ public class MainTele extends LinearOpMode {
             telemetry.addData("Intake Power", intake.getPower());
             telemetry.addData("Outtake Power", outtake.getPower());
             telemetry.addData("Linkage Pos", linkage.getPosition());
+            telemetry.addData("Outtake Shooter: ", outtake.getVelocity());
             telemetry.update();
         }
     }
