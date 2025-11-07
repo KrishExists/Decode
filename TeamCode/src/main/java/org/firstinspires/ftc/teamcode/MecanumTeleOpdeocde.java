@@ -1135,7 +1135,7 @@ public class MecanumTeleOpdeocde extends OpMode {
                     telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
                 }
             } else {
-                telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+                telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary ", detection.id);
             }
         }
 
