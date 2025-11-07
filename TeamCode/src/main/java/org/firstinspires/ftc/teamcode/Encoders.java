@@ -26,16 +26,17 @@ public class Encoders extends LinearOpMode {
         robot.startEncoder();
         robot.encoderDriveBackwardInches(32);
         turnLeft(1, 300);
-        sleep(250);
         robot.encoderDriveBackwardInches(10);
         robot.outtake1();
-        sleep(10000);
+        sleep(7000);
         robot.rest();
         robot.encoderDriveForwardInches(15);
         turnLeft(1, 100);
-        sleep(100);
         robot.encoderDriveForwardInches(6);
         robot.encoderDriveRightInches(10);
+        turnLeft(1, 300);
+        robot.intake();
+        robot.encoderDriveBackwardInches(5);
         // Example: Run intake and outtake sequence autonomously
 //        robot.intake();
 //        sleep(2000);
