@@ -120,14 +120,14 @@ public class MainTele extends LinearOpMode {
                 case INTAKE:
                     intake.setPower(0.8);
                     outtake.setPower(-0.2);
-                    linkage.setPosition(0.8);
+                    linkage.setPosition(0.92);
                     break;
 
                 case OUTTAKE1:
-                    if(timer.milliseconds() < 2800) {
-                        outtake.setVelocity(2400);
+                    if(timer.milliseconds() < 1500) {
+                        outtake.setVelocity(2000);
                         intake.setPower(0.0);
-                        linkage.setPosition(0.8);
+                        linkage.setPosition(0.92);
                     }
 
                     else if(timer.milliseconds() < 3300) {
@@ -147,16 +147,22 @@ public class MainTele extends LinearOpMode {
                     if (timer.milliseconds() < 700) {
                         outtake.setPower(-0.8);
                         intake.setPower(-0.5);
-                        linkage.setPosition(0.8);
+                        linkage.setPosition(0.92);
                     } else if (timer.milliseconds() < 3500) {
                         outtake.setPower(1.0);
                         intake.setPower(0.0);
-                        linkage.setPosition(0.8);
+                        linkage.setPosition(0.92);
                     } else if (timer.milliseconds() < 4000) {
-                        outtake.setVelocity(2400);
-                        linkage.setPosition(0.25);
-                        intake.setPower(0.0);
+                            outtake.setVelocity(2400);
+                            linkage.setPosition(0.25);
+                            intake.setPower(0.0);
+
                     } else {
+                        if(outtake.getVelocity() < 2400) {
+                            outtake.setVelocity(2400);
+                            linkage.setPosition(0.92);
+                            intake.setPower(0.0);
+                        }
                         outtake.setVelocity(2400);
                         linkage.setPosition(0.25);
                         intake.setPower(0.8);
