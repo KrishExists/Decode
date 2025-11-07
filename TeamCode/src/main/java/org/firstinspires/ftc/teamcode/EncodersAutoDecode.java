@@ -61,15 +61,15 @@ public class EncodersAutoDecode extends LinearOpMode {
 
         if (opModeIsActive()) {
             // Example autonomous sequence with synced intake/outtake
-            runIntake(true);               // start intake
-            moveForward(12);               // move forward 12 inches while intaking
-            runIntake(false);              // stop intake
-
-            runOuttakeSequence();          // perform full outtake sequence
-
-            strafeRight(8);
-            turnRight(90);
-            moveBackward(10);
+           // runIntake(true);               // start intake
+            moveForward(1);               // move forward 12 inches while intaking
+//            runIntake(false);              // stop intake
+//
+//            runOuttakeSequence();          // perform full outtake sequence
+//
+//            strafeRight(8);
+//            turnRight(90);
+//            moveBackward(10);
         }
     }
 

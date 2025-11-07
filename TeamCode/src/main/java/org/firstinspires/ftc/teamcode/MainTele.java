@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -28,6 +30,9 @@ public class MainTele extends LinearOpMode {
     private DcMotorEx outtake;
     private Servo linkage;
 
+    PIDController rpmPID;
+
+
     // ====== Camera ======
     private VisionPortal visionPortal;
     private AprilTagProcessor aprilTag;
@@ -40,7 +45,7 @@ public class MainTele extends LinearOpMode {
         INTAKE,
         OUTTAKE,
         RUNSLOW,
-        REST
+        OUTTAKE1, REST
     }
 
     private IntakeState currentState = IntakeState.REST;
@@ -63,11 +68,14 @@ public class MainTele extends LinearOpMode {
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        rpmPID = new PIDController(ShooterConstants.kp, ShooterConstants.ki, ShooterConstants.kd);
+        rpmPID.setTolerance(10);
+
+
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         outtake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         outtake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -94,7 +102,12 @@ public class MainTele extends LinearOpMode {
                 currentState = IntakeState.OUTTAKE;
             } else if (gamepad2.right_bumper) {
                 currentState = IntakeState.RUNSLOW;
-            } else {
+            }
+            else if(gamepad2.a) {
+                currentState = IntakeState.OUTTAKE1;
+            }
+
+            else {
                 currentState = IntakeState.REST;
             }
 
@@ -110,6 +123,26 @@ public class MainTele extends LinearOpMode {
                     linkage.setPosition(0.8);
                     break;
 
+                case OUTTAKE1:
+                    if(timer.milliseconds() < 2800) {
+                        outtake.setVelocity(2400);
+                        intake.setPower(0.0);
+                        linkage.setPosition(0.8);
+                    }
+
+                    else if(timer.milliseconds() < 3300) {
+                            outtake.setVelocity(2400);
+                            linkage.setPosition(0.25);
+                            intake.setPower(0.0);
+                        }
+
+                    else {
+                        outtake.setVelocity(2400);
+                        linkage.setPosition(0.25);
+                        intake.setPower(0.8);
+                    }
+                    break;
+
                 case OUTTAKE:
                     if (timer.milliseconds() < 700) {
                         outtake.setPower(-0.8);
@@ -120,13 +153,13 @@ public class MainTele extends LinearOpMode {
                         intake.setPower(0.0);
                         linkage.setPosition(0.8);
                     } else if (timer.milliseconds() < 4000) {
-                        outtake.setVelocity(6000);
-                        linkage.setPosition(0.6);
+                        outtake.setVelocity(2400);
+                        linkage.setPosition(0.25);
                         intake.setPower(0.0);
                     } else {
-                        outtake.setVelocity(6000);
-                        linkage.setPosition(0.6);
-                        intake.setPower(0.5);
+                        outtake.setVelocity(2400);
+                        linkage.setPosition(0.25);
+                        intake.setPower(0.8);
                     }
                     break;
 
@@ -158,6 +191,35 @@ public class MainTele extends LinearOpMode {
             telemetry.update();
         }
     }
+
+    public boolean atRPM(){
+        return rpmPID.atSetPoint();
+    }
+
+/*    public void setPIDPower(double targetRPM){
+        double topVelocity = Math.abs(outtake.getVelocity());
+
+        double currentRPM = (ticksPerSecToRPM(topVelocity)) / 2;
+        telemetry.addData("Shooter Current RPM", currentRPM);
+        rpmPID.setPID(ShooterConstants.kp, ShooterConstants.ki, ShooterConstants.kd);
+        double power = rpmPID.calculate(currentRPM, targetRPM);
+        power += (targetRPM > 0) ? (ShooterConstants.kf * (targetRPM / ShooterConstants.MAX_RPM)) : 0.0;
+        power = Range.clip(power, 0, 1);
+        telemetry.addData("Power", power);
+        outtake.setPower(power);
+    }
+*/
+
+
+    public double ticksPerSecToRPM(double tps){
+        return tps * 60.0 / ShooterConstants.TICKS_PER_REV;
+    }
+
+    public void periodic() {
+        rpmPID.setPID(ShooterConstants.kp, ShooterConstants.ki, ShooterConstants.kd);
+    }
+
+
 
     // ====== Helper Methods ======
 
