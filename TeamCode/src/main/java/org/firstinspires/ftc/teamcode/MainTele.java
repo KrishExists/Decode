@@ -71,7 +71,7 @@ public class MainTele extends LinearOpMode {
         rpmPID = new PIDController(ShooterConstants.kp, ShooterConstants.ki, ShooterConstants.kd);
         rpmPID.setTolerance(10);
 
-
+        outtake.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -80,6 +80,7 @@ public class MainTele extends LinearOpMode {
         outtake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         linkage.setPosition(0.0);
+        boolean firstShotHappend = false;
 
         // ====== Initialize Camera ======
         aprilTag = new AprilTagProcessor.Builder().build();
@@ -144,16 +145,24 @@ public class MainTele extends LinearOpMode {
                     break;
                 case OUTTAKE:
                     if (timer.milliseconds() < 700) {
+                        firstShotHappend = false;
                         outtake.setPower(-0.8);
                         intake.setPower(-0.5);
                         linkage.setPosition(0.92);
                     }else{
-                        outtake.setVelocity(2400);
-                        if(outtake.getVelocity()>=1500){
+                        outtake.setVelocity(2200);
+                        if(outtake.getVelocity()>=2200){
+                            // telemetry.addData("HI","HI");
+                            telemetry.update();
+                            firstShotHappend = true;
                             linkage.setPosition(0.25);
                             intake.setPower(0.8);
                         }else{
-                            linkage.setPosition(0.25);
+                            if(firstShotHappend){
+                                linkage.setPosition(0.25);
+                            }else{
+                                linkage.setPosition(0.92);
+                            }
                             intake.setPower(0.0);
                         }
                     }
