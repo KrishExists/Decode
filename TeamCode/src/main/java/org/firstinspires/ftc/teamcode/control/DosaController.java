@@ -22,7 +22,7 @@ public class DosaController implements Control {
         OUTTAKE,
         RUNSLOW,
         OUTTAKE1,
-        REST
+        OuttakeAuto2, REST
     }
 
     private State currentState = State.REST;
@@ -84,6 +84,22 @@ public class DosaController implements Control {
                 } else {
                     outtake.spinToRpm(4000);
                     outtake.setLinkage(0.25);
+                    intake.setPower(0.8);
+                }
+                break;
+
+            case OuttakeAuto2:
+                if (timer.milliseconds() < 700) {
+                    outtake.spinToRpm(4000);
+                    intake.setPower(-0.5);
+                    outtake.setLinkage(0.92);
+                } else if (timer.milliseconds() < 3500) {
+                    outtake.spinToRpm(4000);
+                    outtake.setLinkage(0.55);
+                    intake.setPower(0.0);
+                } else {
+                    outtake.spinToRpm(4000);
+                    outtake.setLinkage(0.55);
                     intake.setPower(0.8);
                 }
                 break;

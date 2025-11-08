@@ -64,6 +64,8 @@ public class Outtake implements Subsystem {
         linkage.setPosition(pos);
     }
 
+    public double getVelocity() { return outtake.getVelocity();}
+
     @Override
     public void init() {
         setLinkage(0.92);
@@ -72,5 +74,8 @@ public class Outtake implements Subsystem {
     @Override
     public void update() {
 
+    }
+    public void setPower(double power){
+        outtake.setPower(power);
     }
 }
