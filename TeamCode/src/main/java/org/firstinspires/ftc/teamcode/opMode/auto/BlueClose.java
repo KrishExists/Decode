@@ -53,6 +53,7 @@ public class BlueClose extends LinearOpMode {
             if (isStopRequested()) return;
 
             robot.update();
+            update();
 
             telemetry.addData("State", state);
             telemetry.update();
@@ -106,6 +107,7 @@ public class BlueClose extends LinearOpMode {
 
         switch (state) {
             case PRELOAD:
+
                 currentAction = shootPre.run(packet);
 
                 if (!currentAction) {
