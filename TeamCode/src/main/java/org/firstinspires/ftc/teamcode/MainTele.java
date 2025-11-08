@@ -143,56 +143,56 @@ public class MainTele extends LinearOpMode {
                         intake.setPower(0.8);
                     }
                     break;
-                case OUTTAKE:
-                    if (timer.milliseconds() < 700) {
-                        firstShotHappend = false;
-                        outtake.setPower(-0.8);
-                        intake.setPower(-0.5);
-                        linkage.setPosition(0.92);
-                    }else{
-                        outtake.setVelocity(2200);
-                        if(outtake.getVelocity()>=2200){
-                            // telemetry.addData("HI","HI");
-                            telemetry.update();
-                            firstShotHappend = true;
-                            linkage.setPosition(0.25);
-                            intake.setPower(0.8);
-                        }else{
-                            if(firstShotHappend){
-                                linkage.setPosition(0.25);
-                            }else{
-                                linkage.setPosition(0.92);
-                            }
-                            intake.setPower(0.0);
-                        }
-                    }
-
-                    break;
 //                case OUTTAKE:
 //                    if (timer.milliseconds() < 700) {
+//                        firstShotHappend = false;
 //                        outtake.setPower(-0.8);
 //                        intake.setPower(-0.5);
 //                        linkage.setPosition(0.92);
-//                    } else if (timer.milliseconds() < 3500) {
-//                        outtake.setVelocity(2400);
-//                        intake.setPower(0.0);
-//                        linkage.setPosition(0.92);
-//                    } else if (timer.milliseconds() < 4000) {
-//                            outtake.setVelocity(2400);
+//                    }else{
+//                        outtake.setVelocity(2200);
+//                        if(outtake.getVelocity()>=2200){
+//                            // telemetry.addData("HI","HI");
+//                            telemetry.update();
+//                            firstShotHappend = true;
 //                            linkage.setPosition(0.25);
+//                            intake.setPower(0.8);
+//                        }else{
+//                            if(firstShotHappend){
+//                                linkage.setPosition(0.25);
+//                            }else{
+//                                linkage.setPosition(0.92);
+//                            }
 //                            intake.setPower(0.0);
-//
-//                    } else {
-//                        if(outtake.getVelocity() < 2400) {
-//                            outtake.setVelocity(2400);
-//                            linkage.setPosition(0.25);
-//                            intake.setPower(0.6);
 //                        }
-//                        outtake.setVelocity(2400);
-//                        linkage.setPosition(0.25);
-//                        intake.setPower(0.8);
 //                    }
+//
 //                    break;
+                case OUTTAKE:
+                    if (timer.milliseconds() < 700) {
+                        outtake.setPower(-0.8);
+                        intake.setPower(-0.5);
+                        linkage.setPosition(0.92);
+                    } else if (timer.milliseconds() < 3500) {
+                        outtake.setVelocity(2400);
+                        intake.setPower(0.0);
+                        linkage.setPosition(0.92);
+                    } else if (timer.milliseconds() < 4000) {
+                            outtake.setVelocity(2400);
+                            linkage.setPosition(0.25);
+                            intake.setPower(0.0);
+
+                    } else {
+                        if(outtake.getVelocity() < 2400) {
+                            outtake.setVelocity(2400);
+                            linkage.setPosition(0.25);
+                            intake.setPower(0.6);
+                        }
+                        outtake.setVelocity(2400);
+                        linkage.setPosition(0.25);
+                        intake.setPower(0.8);
+                    }
+                    break;
 
                 case RUNSLOW:
                     intake.setPower(-1.0);
