@@ -61,12 +61,12 @@ public class Outtake implements Subsystem {
 
     // -- linkage --
     public void setLinkage(double pos) {
-        linkage.setPosition(0.8);
+        linkage.setPosition(pos);
     }
 
     @Override
     public void init() {
-        setLinkage(0.8);
+        setLinkage(0.92);
     }
 
     @Override
