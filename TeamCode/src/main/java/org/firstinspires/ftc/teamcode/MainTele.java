@@ -148,7 +148,7 @@ public class MainTele extends LinearOpMode {
                         intake.setPower(-0.5);
                         linkage.setPosition(0.92);
                     }else{
-                        outtake.setVelocity(1500);
+                        outtake.setVelocity(2400);
                         if(outtake.getVelocity()>=1500){
                             linkage.setPosition(0.25);
                             intake.setPower(0.8);
