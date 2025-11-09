@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.subsystem.Outtake.targetRpm;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
@@ -26,6 +28,8 @@ public class Outtaketesttwo extends LinearOpMode {
     private double ki = 0;
     private double kd = 0.001;
 
+
+
     private static final double rpmThresh = 50;
     private final ElapsedTime timer = new ElapsedTime();
     private double timeToReachRPM = 0;
@@ -47,6 +51,8 @@ public class Outtaketesttwo extends LinearOpMode {
         outtake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outtake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        DcMotor intake = hardwareMap.get(DcMotor.class, "Intake");
+
         rpmPID = new PIDController(kp, ki, kd);
         linkage.setPosition(0.92); // default init position
 
@@ -60,18 +66,18 @@ public class Outtaketesttwo extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            // Spin up to 5000 rpm target
-            spinToRpm(5000);
+            spinToRpm(targetRpm);
 
-            if (upToRpm(5000) && !reachedOnce) {
+            if (upToRpm(targetRpm) && !reachedOnce) {
                 timeToReachRPM = timer.milliseconds();
                 reachedOnce = true;
             }
-
-            // Telemetry display
-            telemetry.addData("Time to reach RPM (ms)", timeToReachRPM);
+            //intake.setPower(1);
+//
+//            // Telemetry display
+//            telemetry.addData("Time to reach RPM (ms)", timeToReachRPM);
             telemetry.addData("Velocity (ticks/s)", getVelocity());
-            telemetry.addData("At target RPM?", upToRpm(5000));
+            telemetry.addData("At target RPM?", upToRpm(targetRpm));
             telemetry.addData("Current RPM", currentRPM());
             telemetry.addData("Motor Power", outtake.getPower());
             telemetry.update();

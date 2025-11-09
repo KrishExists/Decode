@@ -20,11 +20,13 @@ public class Outtake implements Subsystem {
     public Servo linkage;
 
     public PIDController rpmPID;
-    public double kp = 0.00625;
-    public double ki = 0;
-    public double kd = 0.001;
+    public static double kp = 0.00625;
+    public static double ki = 0;
+    public static double kd = 0.001;
 
     public static double rpmThresh = 50;
+    public static double targetRpm = 0;
+
 
     public Outtake(HardwareMap h, Telemetry t) {
         this.hardwareMap = h;
