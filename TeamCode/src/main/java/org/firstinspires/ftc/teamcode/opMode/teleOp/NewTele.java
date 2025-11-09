@@ -5,9 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.control.DosaController;
 import org.firstinspires.ftc.teamcode.control.DriveControl;
 import org.firstinspires.ftc.teamcode.control.IntakeControl;
 import org.firstinspires.ftc.teamcode.control.OuttakeControl;
+import org.firstinspires.ftc.teamcode.subsystem.Intake;
+import org.firstinspires.ftc.teamcode.subsystem.Outtake;
 import org.firstinspires.ftc.teamcode.subsystem.Robot;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -22,6 +25,8 @@ public class NewTele extends LinearOpMode {
 
     private VisionPortal visionPortal;
     private AprilTagProcessor aprilTag;
+
+    private DosaController dosaController;
     private double kP = 0.03;  // Proportional constant for alignment
 
     private final ElapsedTime timer = new ElapsedTime();
@@ -50,7 +55,6 @@ public class NewTele extends LinearOpMode {
             dc.update();
             ic.update();
             oc.update();
-
             // TODO: add state machine either here or in robot class
         }
 

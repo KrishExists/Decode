@@ -23,6 +23,6 @@ public class IntakeControl implements Control {
     @Override
     public void update() {
         double power = gp2.right_trigger - (gp2.right_bumper ? 1 : 0);
-        intake.setPower(power);
+        intake.setPower(0.8);
     }
 }
