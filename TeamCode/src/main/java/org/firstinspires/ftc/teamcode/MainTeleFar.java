@@ -17,8 +17,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@TeleOp(name = "MecanumTeleopMain_Switch_AutoAlign", group = "Main")
-public class MainTele extends LinearOpMode {
+@TeleOp(name = "MecanumTeleopfar", group = "Main")
+public class MainTeleFar extends LinearOpMode {
     // Krish is Gay!!!:)
     // ====== Hardware ======
     private DcMotor frontLeftMotor;
@@ -92,6 +92,11 @@ public class MainTele extends LinearOpMode {
         telemetry.addLine("Initialized — Waiting for start");
         telemetry.update();
 
+        int outtakeRPMThreshold = 2000; // Target RPM threshold for outtake motor
+        int outtakeRPM = 0; // Current RPM of outtake motor
+        boolean outtakeSpin = false;
+        boolean ballShot = false;
+
         waitForStart();
         if (isStopRequested()) return;
 
@@ -132,10 +137,10 @@ public class MainTele extends LinearOpMode {
                     }
 
                     else if(timer.milliseconds() < 3300) {
-                            outtake.setVelocity(2400);
-                            linkage.setPosition(0.25);
-                            intake.setPower(0.0);
-                        }
+                        outtake.setVelocity(2400);
+                        linkage.setPosition(0.25);
+                        intake.setPower(0.0);
+                    }
 
                     else {
                         outtake.setVelocity(2400);
@@ -174,25 +179,25 @@ public class MainTele extends LinearOpMode {
                         intake.setPower(-0.5);
                         linkage.setPosition(0.92);
                     } else if (timer.milliseconds() < 2500) {
-                        outtake.setVelocity(1350);
+                        outtake.setVelocity(3000);
                         intake.setPower(0.0);
                         linkage.setPosition(0.92);
                     } else if (timer.milliseconds() < 3000) {
-                            outtake.setVelocity(1350);
-                            linkage.setPosition(0.25);
-                            intake.setPower(0.0);
+                        outtake.setVelocity(3000);
+                        linkage.setPosition(0.6);
+                        intake.setPower(0.0);
                     } else if(timer.milliseconds()<4000){
-                        outtake.setVelocity(1350);
-                        linkage.setPosition(0.25);
+                        outtake.setVelocity(3000);
+                        linkage.setPosition(0.6);
                         intake.setPower(0.8);
                     }
                     else if(timer.milliseconds()<5000){
                         intake.setPower(0);
-                        outtake.setVelocity(1350);
+                        outtake.setVelocity(3000);
                     }
                     else {
-                        outtake.setVelocity(1350);
-                        intake.setPower(0.8);
+                        outtake.setVelocity(3000);
+                        intake.setPower(0.6);
                     }
                     break;
 

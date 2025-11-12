@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.subsystem.Robot;
 
 @Autonomous
-public class RedClose extends LinearOpMode {
+public class SidRedWorks extends LinearOpMode {
     private final ElapsedTime timer = new ElapsedTime();
 
     final Pose2d START_POSE = new Pose2d(-51.5, 51.5, Math.toRadians(-144));
@@ -58,6 +58,7 @@ public class RedClose extends LinearOpMode {
         robot.init();
 
         waitForStart();
+        timer.reset();
         timer.startTime();
         while(opModeIsActive()) {
             if (isStopRequested()) return;
@@ -68,7 +69,7 @@ public class RedClose extends LinearOpMode {
             telemetry.addData("State", state);
             telemetry.addData("Outtake", robot.outtake.getVelocity());
             telemetry.addData("Timer",timer.milliseconds());
-           // telemetry.addData("Current Action" , currentAction);
+            // telemetry.addData("Current Action" , currentAction);
             telemetry.update();
         }
     }
@@ -123,7 +124,7 @@ public class RedClose extends LinearOpMode {
         switch (state) {
             case PRELOAD:
                 if(timer.milliseconds() < 3000) {
-                    robot.outtake.spinToRpm(3000);
+                    robot.outtake.spinToRpm(2500);
                 }
 
                 else if(timer.milliseconds() < 3500) {
@@ -139,7 +140,7 @@ public class RedClose extends LinearOpMode {
 
                 else if(timer.milliseconds()<5500){
                     robot.intake.setPower(0);
-                    robot.outtake.spinToRpm(2000);
+                    robot.outtake.spinToRpm(2500);
                 }else{
                     robot.intake.setPower(0.8);
                 }
@@ -147,7 +148,7 @@ public class RedClose extends LinearOpMode {
                 currentAction = shootPre.run(packet);
 
                 if (!currentAction && timer.milliseconds() > 6000) {
-                    state = RedClose.ShootStates.CYCLE_3;
+                    state = SidRedWorks.ShootStates.CYCLE_3;
                     timer.reset();
                     timer.startTime();
                     robot.outtake.setLinkage(0.92);
@@ -160,7 +161,7 @@ public class RedClose extends LinearOpMode {
                 robot.intake.setPower(0.8);
                 currentAction = toSpike3.run(packet);
                 if (!currentAction) {
-                    state = RedClose.ShootStates.SHOOT_3;
+                    state = SidRedWorks.ShootStates.SHOOT_3;
                     timer.reset();
                     timer.startTime();
                 }
@@ -171,7 +172,7 @@ public class RedClose extends LinearOpMode {
                     robot.intake.setPower(-0.6);
                 }
                 if(timer.milliseconds() < 2000) {
-                    robot.outtake.spinToRpm(3000);
+                    robot.outtake.spinToRpm(2500);
                 }
 
                 else if(timer.milliseconds() < 2500) {
@@ -186,14 +187,14 @@ public class RedClose extends LinearOpMode {
 
                 else if(timer.milliseconds()<4000){
                     robot.intake.setPower(0);
-                    robot.outtake.spinToRpm(2000);
+                    robot.outtake.spinToRpm(2500);
                 }else{
                     robot.intake.setPower(0.8);
                 }
                 currentAction = toShootFrom3.run(packet);
 
                 if (!currentAction&&timer.milliseconds()>6000) {
-                    state = RedClose.ShootStates.CYCLE_2;
+                    state = SidRedWorks.ShootStates.CYCLE_2;
                     timer.reset();
                     timer.startTime();
                     robot.outtake.setLinkage(0.92);
@@ -209,7 +210,7 @@ public class RedClose extends LinearOpMode {
                 currentAction = toSpike2.run(packet);
 
                 if (!currentAction) {
-                    state = RedClose.ShootStates.SHOOT_2;
+                    state = SidRedWorks.ShootStates.SHOOT_2;
                     timer.reset();
                     timer.startTime();
 
@@ -221,7 +222,7 @@ public class RedClose extends LinearOpMode {
                     robot.intake.setPower(-0.2);
                 }
                 if(timer.milliseconds() < 2000) {
-                    robot.outtake.spinToRpm(3000);
+                    robot.outtake.spinToRpm(2500);
                 }
 
                 else if(timer.milliseconds() < 2500) {
@@ -237,14 +238,14 @@ public class RedClose extends LinearOpMode {
 
                 else if(timer.milliseconds()<4000){
                     robot.intake.setPower(0);
-                    robot.outtake.spinToRpm(2000);
+                    robot.outtake.spinToRpm(2500);
                 }else{
                     robot.intake.setPower(0.8);
                 }
                 currentAction = toShootFrom2.run(packet);
 
                 if (!currentAction&&timer.milliseconds()>6000) {
-                    state = RedClose.ShootStates.CYCLE_1;
+                    state = SidRedWorks.ShootStates.CYCLE_1;
                     timer.reset();
                     timer.startTime();
                     robot.outtake.setLinkage(0.92);
@@ -259,7 +260,7 @@ public class RedClose extends LinearOpMode {
                 currentAction = toSpike1.run(packet);
 
                 if (!currentAction) {
-                    state = RedClose.ShootStates.SHOOT_1;
+                    state = SidRedWorks.ShootStates.SHOOT_1;
 
                     timer.reset();
                     timer.startTime();
@@ -271,7 +272,7 @@ public class RedClose extends LinearOpMode {
                     robot.intake.setPower(-0.2);
                 }
                 if(timer.milliseconds() < 2000) {
-                    robot.outtake.spinToRpm(3000);
+                    robot.outtake.spinToRpm(2500);
                 }
 
                 else if(timer.milliseconds() < 2500) {
@@ -287,14 +288,14 @@ public class RedClose extends LinearOpMode {
 
                 else if(timer.milliseconds()<4000){
                     robot.intake.setPower(0);
-                    robot.outtake.spinToRpm(2000);
+                    robot.outtake.spinToRpm(2500);
                 }else{
                     robot.intake.setPower(0.8);
                 }
                 currentAction = toShootFrom1.run(packet);
 
                 if (!currentAction&&timer.milliseconds()>5000) {
-                    state = RedClose.ShootStates.LEAVE;
+                    state = SidRedWorks.ShootStates.LEAVE;
                     timer.reset();
                     timer.startTime();
                 }
@@ -303,7 +304,7 @@ public class RedClose extends LinearOpMode {
                 currentAction = leave.run(packet);
 
                 if (!currentAction) {
-                    state = RedClose.ShootStates.END;
+                    state = SidRedWorks.ShootStates.END;
                 }
                 break;
             case END:
@@ -311,5 +312,6 @@ public class RedClose extends LinearOpMode {
         }
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
+
 
 }
