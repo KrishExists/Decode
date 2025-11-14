@@ -28,6 +28,8 @@ public class MainTele extends LinearOpMode {
 
     private DcMotor intake;
     private DcMotorEx outtake;
+
+    private DcMotorEx outtake2;
     private Servo linkage;
 
     PIDController rpmPID;
@@ -67,17 +69,22 @@ public class MainTele extends LinearOpMode {
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        outtake2 = hardwareMap.get(DcMotorEx.class, "Outtake2");
 
         rpmPID = new PIDController(ShooterConstants.kp, ShooterConstants.ki, ShooterConstants.kd);
         rpmPID.setTolerance(10);
 
         outtake.setDirection(DcMotorSimple.Direction.REVERSE);
+        outtake2.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         outtake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         outtake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        outtake2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        outtake2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         linkage.setPosition(0.0);
         boolean firstShotHappend = false;
@@ -121,6 +128,7 @@ public class MainTele extends LinearOpMode {
                 case INTAKE:
                     intake.setPower(0.8);
                     outtake.setPower(-0.2);
+                    outtake2.setPower(-0.2);
                     linkage.setPosition(0.92);
                     break;
 
@@ -171,17 +179,21 @@ public class MainTele extends LinearOpMode {
                 case OUTTAKE:
                     if (timer.milliseconds() < 700) {
                         outtake.setPower(-0.8);
+                        outtake2.setPower(-0.8);
                         intake.setPower(-0.5);
                         linkage.setPosition(0.92);
                     } else if (timer.milliseconds() < 2500) {
                         outtake.setVelocity(1350);
+                        outtake2.setVelocity(1350);
                         intake.setPower(0.0);
                         linkage.setPosition(0.92);
                     } else if (timer.milliseconds() < 3000) {
                             outtake.setVelocity(1350);
+                            outtake2.setVelocity(1350);
                             linkage.setPosition(0.25);
                             intake.setPower(0.0);
                     } else if(timer.milliseconds()<4000){
+                        outtake2.setVelocity(1350);
                         outtake.setVelocity(1350);
                         linkage.setPosition(0.25);
                         intake.setPower(0.8);
@@ -189,9 +201,11 @@ public class MainTele extends LinearOpMode {
                     else if(timer.milliseconds()<5000){
                         intake.setPower(0);
                         outtake.setVelocity(1350);
+                        outtake2.setVelocity(1350);
                     }
                     else {
                         outtake.setVelocity(1350);
+                        outtake2.setVelocity(1350);
                         intake.setPower(0.8);
                     }
                     break;
@@ -199,12 +213,14 @@ public class MainTele extends LinearOpMode {
                 case RUNSLOW:
                     intake.setPower(-1.0);
                     outtake.setPower(-0.8);
+                    outtake2.setPower(-0.8);
                     linkage.setPosition(0.92);
                     break;
 
                 default:
                     intake.setPower(0.0);
                     outtake.setPower(0.0);
+                    outtake2.setPower(0.0);
                     linkage.setPosition(0.92);
                     break;
             }

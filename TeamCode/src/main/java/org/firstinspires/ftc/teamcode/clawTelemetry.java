@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -29,6 +30,8 @@ public class clawTelemetry extends LinearOpMode {
     // === Hardware ===
     private Servo linkage;
     private DcMotorEx shooter;
+
+    private DcMotorEx shooter2;
     private DcMotor intake;
     private DcMotorEx leftFront, rightFront, leftRear, rightRear;
 
@@ -68,8 +71,14 @@ public class clawTelemetry extends LinearOpMode {
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setDirection(DcMotor.Direction.REVERSE);
 
+        shooter2 = hardwareMap.get(DcMotorEx.class, "Outtake2");
+        shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
+
         shooter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+        shooter2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        shooter2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         dashboard = FtcDashboard.getInstance();
@@ -85,6 +94,7 @@ public class clawTelemetry extends LinearOpMode {
         while (opModeIsActive()) {
             linkage.setPosition(linkagePos);
             shooter.setPower(shooterPower);
+            shooter2.setPower(shooterPower);
             intake.setPower(intakePower);
 
             List<AprilTagDetection> detections = aprilTagProcessor.getDetections();
