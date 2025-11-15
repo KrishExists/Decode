@@ -22,16 +22,13 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-
 @Config
 @TeleOp(name = "Static Servo Telemetry + Auto Align (VisionPortal)", group = "Telemetry")
 public class clawTelemetry extends LinearOpMode {
 
     // === Hardware ===
     private Servo linkage;
-    private DcMotorEx shooter;
-
-    private DcMotorEx shooter2;
+    private DcMotorEx shooter, shooter2;
     private DcMotor intake;
     private DcMotorEx leftFront, rightFront, leftRear, rightRear;
 
@@ -51,16 +48,27 @@ public class clawTelemetry extends LinearOpMode {
     private double lastError = 0;
     private double lastTime = 0;
 
-    // === Telemetry test variables ===
+    // === Dashboard Adjustable Settings ===
     public static double linkagePos = 0.0;
-    public static double shooterPower = 0.0;
+    public static double shooterPower = 0.0;   // <-- NOW interpreted as TARGET RPM
     public static double intakePower = 0.0;
 
     @Override
     public void runOpMode() {
-        // Initialize hardware
+
         linkage = hardwareMap.get(Servo.class, "Linkage");
+
         shooter = hardwareMap.get(DcMotorEx.class, "Outtake");
+        shooter2 = hardwareMap.get(DcMotorEx.class, "Outtake2");
+
+        shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        shooter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        shooter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        shooter2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        shooter2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
         intake = hardwareMap.get(DcMotor.class, "Intake");
 
         leftFront = hardwareMap.get(DcMotorEx.class, "frontLeftMotor");
@@ -71,45 +79,42 @@ public class clawTelemetry extends LinearOpMode {
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setDirection(DcMotor.Direction.REVERSE);
 
-        shooter2 = hardwareMap.get(DcMotorEx.class, "Outtake2");
-        shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        shooter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
-        shooter2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        shooter2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         dashboard = FtcDashboard.getInstance();
 
-        // Initialize VisionPortal and AprilTag
         initAprilTag();
 
-        telemetry.addLine("Initialization Complete — Ready to Start");
+        telemetry.addLine("Init Complete");
         telemetry.update();
-
         waitForStart();
 
+        lastTime = getRuntime();
+
         while (opModeIsActive()) {
+
+            // === SERVO ===
             linkage.setPosition(linkagePos);
-            shooter.setPower(shooterPower);
-            shooter2.setPower(shooterPower);
+
+            // === SHOOTER RPM CONTROL ===
+            spinToRpm(shooterPower);   // <-- shooterPower is TARGET RPM
+
+            // === INTAKE ===
             intake.setPower(intakePower);
 
+            // === APRILTAG ALIGN ===
             List<AprilTagDetection> detections = aprilTagProcessor.getDetections();
 
             if (detections != null && detections.size() > 0) {
                 AprilTagDetection tag = detections.get(0);
-                double error = tag.ftcPose.x; // lateral offset (inches or meters)
+                double error = tag.ftcPose.x;
+
                 double currentTime = getRuntime();
                 double dt = currentTime - lastTime;
 
                 integralSum += error * dt;
                 double derivative = (error - lastError) / dt;
-                double output = (kP * error) + (kI * integralSum) + (kD * derivative);
 
-                // Limit the power
+                double output = (kP * error) + (kI * integralSum) + (kD * derivative);
                 output = Range.clip(output, -0.4, 0.4);
 
                 leftFront.setPower(output);
@@ -117,31 +122,70 @@ public class clawTelemetry extends LinearOpMode {
                 rightFront.setPower(-output);
                 rightRear.setPower(-output);
 
-                lastError = error;
                 lastTime = currentTime;
+                lastError = error;
 
-                telemetry.addData("Tag ID", tag.id);
-                telemetry.addData("X Offset (error)", error);
-                telemetry.addData("PID Output", output);
+                telemetry.addData("ATag ID", tag.id);
+                telemetry.addData("Error", error);
             } else {
                 stopDrive();
-                telemetry.addLine("No AprilTags detected");
+                telemetry.addLine("No Tags");
             }
 
-            telemetry.addData("Linkage Pos", linkage.getPosition());
-            telemetry.addData("Shooter Power", shooterPower);
-            telemetry.addData("Intake Power", intakePower);
+            telemetry.addData("Target RPM", shooterPower);
+            telemetry.addData("Shooter RPM", currentRPM());
+            telemetry.addData("Shooter Power Output", shooter.getPower());
             telemetry.update();
         }
 
         visionPortal.close();
     }
 
+    // ════════════════════════════════
+    // SHOOTER RPM CONTROL METHODS
+    // ════════════════════════════════
+
+    public double currentRPM() {
+        // Your team uses *velocity * 2.2* in the main code
+        return shooter.getVelocity() * 2.2;
+    }
+
+    public void spinToRpm(double targetRPM) {
+        double currRPM = currentRPM();
+        double error = targetRPM - currRPM;
+
+        double currentTime = getRuntime();
+        double dt = currentTime - lastTime;
+
+        integralSum += error * dt;
+        double derivative = (error - lastError) / dt;
+
+        double output = (kP * error) + (kI * integralSum) + (kD * derivative);
+        output = Range.clip(output, 0, 1);
+
+        shooter.setPower(output);
+        shooter2.setPower(output);
+
+        lastError = error;
+        lastTime = currentTime;
+    }
+
+    // ════════════════════════════════
+    // Vision + Drive
+    // ════════════════════════════════
+
+    private void stopDrive() {
+        leftFront.setPower(0);
+        rightFront.setPower(0);
+        leftRear.setPower(0);
+        rightRear.setPower(0);
+    }
+
     private void initAprilTag() {
         aprilTagProcessor = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
-                .setDrawCubeProjection(true)
                 .setDrawTagOutline(true)
+                .setDrawCubeProjection(true)
                 .build();
 
         visionPortal = new VisionPortal.Builder()
@@ -149,37 +193,21 @@ public class clawTelemetry extends LinearOpMode {
                 .addProcessor(aprilTagProcessor)
                 .build();
 
-        telemetry.addLine("Opening camera...");
-        telemetry.update();
-
-        // Wait for the camera to start streaming before setting exposure/gain
         while (opModeInInit() && visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
-            telemetry.addData("Camera State", visionPortal.getCameraState());
+            telemetry.addData("Camera", visionPortal.getCameraState());
             telemetry.update();
             sleep(20);
         }
 
-        // Once streaming, THEN set exposure/gain
         ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
         GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
 
-        if (exposureControl != null && gainControl != null) {
+        if (exposureControl != null) {
             exposureControl.setMode(ExposureControl.Mode.Manual);
-            exposureControl.setExposure(15, TimeUnit.MILLISECONDS);  // adjust for brightness
-            gainControl.setGain(25); // max brightness, adjust if overexposed
-            telemetry.addLine("Exposure and gain set!");
-        } else {
-            telemetry.addLine("Exposure/Gain controls not available!");
+            exposureControl.setExposure(15, TimeUnit.MILLISECONDS);
         }
-
-        telemetry.update();
-    }
-
-
-    private void stopDrive() {
-        leftFront.setPower(0);
-        rightFront.setPower(0);
-        leftRear.setPower(0);
-        rightRear.setPower(0);
+        if (gainControl != null) {
+            gainControl.setGain(25);
+        }
     }
 }

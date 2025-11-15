@@ -85,7 +85,7 @@ public class MainTeleNewLogic extends LinearOpMode {
         rpmPID.setTolerance(10);
 
         outtake.setDirection(DcMotorSimple.Direction.REVERSE);
-        outtake2.setDirection(DcMotorSimple.Direction.REVERSE);
+        //outtake2.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -201,22 +201,23 @@ public class MainTeleNewLogic extends LinearOpMode {
                     break;
                 case SHOOT:
                     spinToRpm(3000);
-                    if(upToRpm(3000)){
-                        telemetry.addData("It works","it works");
-                        intake.setPower(1);
-                       ball1Shot = true;
-                    }else{
-                        telemetry.addData("Why isnt it up there",currentRPM());
-                        intake.setPower(0);
-                    }
-                    if(!upToRpm(3000)){
-                        if(ball1Shot&&b2shot){
-                            b3shot = true;
-                            currentState = IntakeState.REST;
-                        } else if (ball1Shot) {
-                            b2shot = true;
-                        }
-                    }
+                    intake.setPower(0.8);
+//                    if(upToRpm(3000)){
+//                        telemetry.addData("It works","it works");
+//                        intake.setPower(0.8);
+//                       ball1Shot = true;
+//                    }else{
+//                        telemetry.addData("Why isnt it up there",currentRPM());
+//                        intake.setPower(0.8);
+//                    }
+//                    if(!upToRpm(3000)){
+//                        if(ball1Shot&&b2shot){
+//                            b3shot = true;
+//                            currentState = IntakeState.REST;
+//                        } else if (ball1Shot) {
+//                            b2shot = true;
+//                        }
+//                    }
                     break;
                 case RUNSLOW:
                     intake.setPower(-1.0);
@@ -307,6 +308,7 @@ public class MainTeleNewLogic extends LinearOpMode {
         double output = rpmPID.calculate(currentRPM(), rpm);
         output = Range.clip(output, 0, 1);
         outtake.setPower(output);
+        outtake2.setPower(output);
     }
 
     public boolean upToRpm(double rpm) {
