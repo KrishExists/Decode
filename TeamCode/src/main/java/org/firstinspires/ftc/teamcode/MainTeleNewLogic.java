@@ -11,17 +11,19 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@TeleOp(name = "MecanumTeleopMain_Switch_AutoAlign", group = "Main")
-public class MainTele extends LinearOpMode {
+@TeleOp(name = "NewTopic", group = "Main")
+public class MainTeleNewLogic extends LinearOpMode {
     // Krish is Gay!!!:)
     // ====== Hardware ======
     private DcMotor frontLeftMotor;
+
     private DcMotor backLeftMotor;
     private DcMotor frontRightMotor;
     private DcMotor backRightMotor;
@@ -33,6 +35,7 @@ public class MainTele extends LinearOpMode {
     private Servo linkage;
 
     PIDController rpmPID;
+    private Double rpmThresh;
 
 
     // ====== Camera ======
@@ -46,12 +49,17 @@ public class MainTele extends LinearOpMode {
     private enum IntakeState {
         INTAKE,
         OUTTAKE,
+        SHOOT,
         RUNSLOW,
         OUTTAKE1, REST
     }
 
     private IntakeState currentState = IntakeState.REST;
     private IntakeState previousState = IntakeState.REST;
+    boolean ball1Shot = false;
+    boolean b2shot = false;
+    boolean b3shot = false;
+    boolean bwasPressed =false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -70,12 +78,14 @@ public class MainTele extends LinearOpMode {
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         outtake2 = hardwareMap.get(DcMotorEx.class, "Outtake2");
+        rpmThresh = 100.0;
+
 
         rpmPID = new PIDController(ShooterConstants.kp, ShooterConstants.ki, ShooterConstants.kd);
         rpmPID.setTolerance(10);
 
         outtake.setDirection(DcMotorSimple.Direction.REVERSE);
-        //outtake2.setDirection(DcMotorSimple.Direction.REVERSE);
+        outtake2.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -140,10 +150,10 @@ public class MainTele extends LinearOpMode {
                     }
 
                     else if(timer.milliseconds() < 3300) {
-                            outtake.setVelocity(2400);
-                            linkage.setPosition(0.25);
-                            intake.setPower(0.0);
-                        }
+                        outtake.setVelocity(2400);
+                        linkage.setPosition(0.25);
+                        intake.setPower(0.0);
+                    }
 
                     else {
                         outtake.setVelocity(2400);
@@ -177,39 +187,37 @@ public class MainTele extends LinearOpMode {
 //
 //                    break;
                 case OUTTAKE:
-                    if (timer.milliseconds() < 700) {
-                        outtake.setPower(-0.8);
-                        outtake2.setPower(-0.8);
-                        intake.setPower(-0.5);
-                        linkage.setPosition(0.92);
-                    } else if (timer.milliseconds() < 2500) {
-                        outtake.setVelocity(1350);
-                        outtake2.setVelocity(1350);
-                        intake.setPower(0.0);
-                        linkage.setPosition(0.92);
-                    } else if (timer.milliseconds() < 3000) {
-                            outtake.setVelocity(1350);
-                            outtake2.setVelocity(1350);
-                            linkage.setPosition(0.25);
-                            intake.setPower(0.0);
-                    } else if(timer.milliseconds()<4000){
-                        outtake2.setVelocity(1350);
-                        outtake.setVelocity(1350);
+
+                    spinToRpm(3000);
+                    intake.setPower(0);
+                    if(gamepad2.bWasPressed()){
+                        timer.reset();
                         linkage.setPosition(0.25);
-                        intake.setPower(0.8);
+                        bwasPressed = true;
                     }
-                    else if(timer.milliseconds()<5000){
-                        intake.setPower(0);
-                        outtake.setVelocity(1350);
-                        outtake2.setVelocity(1350);
-                    }
-                    else {
-                        outtake.setVelocity(1350);
-                        outtake2.setVelocity(1350);
-                        intake.setPower(0.8);
+                    if(timer.milliseconds()>500&&bwasPressed){
+                        currentState = IntakeState.SHOOT;
                     }
                     break;
-
+                case SHOOT:
+                    spinToRpm(3000);
+                    if(upToRpm(3000)){
+                        telemetry.addData("It works","it works");
+                        intake.setPower(1);
+                       ball1Shot = true;
+                    }else{
+                        telemetry.addData("Why isnt it up there",currentRPM());
+                        intake.setPower(0);
+                    }
+                    if(!upToRpm(3000)){
+                        if(ball1Shot&&b2shot){
+                            b3shot = true;
+                            currentState = IntakeState.REST;
+                        } else if (ball1Shot) {
+                            b2shot = true;
+                        }
+                    }
+                    break;
                 case RUNSLOW:
                     intake.setPower(-1.0);
                     outtake.setPower(-0.8);
@@ -222,6 +230,8 @@ public class MainTele extends LinearOpMode {
                     outtake.setPower(0.0);
                     outtake2.setPower(0.0);
                     linkage.setPosition(0.92);
+                    resetBooleans();
+                    bwasPressed = false;
                     break;
             }
 
@@ -238,37 +248,10 @@ public class MainTele extends LinearOpMode {
             telemetry.addData("Outtake Power", outtake.getPower());
             telemetry.addData("Linkage Pos", linkage.getPosition());
             telemetry.addData("Outtake Shooter: ", outtake.getVelocity());
+            telemetry.addData("Outtake rpm",currentRPM());
             telemetry.update();
         }
     }
-
-    public boolean atRPM(){
-        return rpmPID.atSetPoint();
-    }
-
-/*    public void setPIDPower(double targetRPM){
-        double topVelocity = Math.abs(outtake.getVelocity());
-
-        double currentRPM = (ticksPerSecToRPM(topVelocity)) / 2;
-        telemetry.addData("Shooter Current RPM", currentRPM);
-        rpmPID.setPID(ShooterConstants.kp, ShooterConstants.ki, ShooterConstants.kd);
-        double power = rpmPID.calculate(currentRPM, targetRPM);
-        power += (targetRPM > 0) ? (ShooterConstants.kf * (targetRPM / ShooterConstants.MAX_RPM)) : 0.0;
-        power = Range.clip(power, 0, 1);
-        telemetry.addData("Power", power);
-        outtake.setPower(power);
-    }
-*/
-
-
-    public double ticksPerSecToRPM(double tps){
-        return tps * 60.0 / ShooterConstants.TICKS_PER_REV;
-    }
-
-    public void periodic() {
-        rpmPID.setPID(ShooterConstants.kp, ShooterConstants.ki, ShooterConstants.kd);
-    }
-
 
 
     // ====== Helper Methods ======
@@ -318,5 +301,36 @@ public class MainTele extends LinearOpMode {
         backLeftMotor.setPower(0);
         frontRightMotor.setPower(0);
         backRightMotor.setPower(0);
+    }
+    public void spinToRpm(double rpm) {
+        rpmPID.setPID(ShooterConstants.kp, ShooterConstants.ki, ShooterConstants.kd);
+        double output = rpmPID.calculate(currentRPM(), rpm);
+        output = Range.clip(output, 0, 1);
+        outtake.setPower(output);
+    }
+
+    public boolean upToRpm(double rpm) {
+        double curr = currentRPM();
+        return curr > rpm - rpmThresh && curr < rpm + rpmThresh;
+    }
+
+    public double currentRPM() {
+        return outtake.getVelocity() * 2.2;
+    }
+    public void resetBooleans(){
+        ball1Shot = false;
+        b2shot = false;
+        b3shot = false;
+    }
+
+    // -- linkage --
+    public void setLinkage(double pos) {
+        linkage.setPosition(pos);
+    }
+
+    public double getVelocity() { return outtake.getVelocity();}
+
+    public void setPower(double power){
+        outtake.setPower(power);
     }
 }
