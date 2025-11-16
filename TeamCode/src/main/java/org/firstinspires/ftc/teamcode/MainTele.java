@@ -99,6 +99,7 @@ public class MainTele extends LinearOpMode {
             else if (gamepad2.right_bumper) currentState = IntakeState.RUNSLOW;
             else if (gamepad2.a) currentState = IntakeState.OUTTAKE1;
             else if (gamepad2.x) currentState = IntakeState.OuttakeFar;
+            else if (gamepad2.y) currentState = IntakeState.OuttakeMid;
             else currentState = IntakeState.REST;
 
             if (currentState != previousState) {

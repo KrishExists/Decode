@@ -1,6 +1,6 @@
-//plugins {
-//    id 'java-library'
-//}
+plugins {
+    id 'java-library'
+}
 //java {
 //    sourceCompatibility JavaVersion.VERSION_11
 //    targetCompatibility JavaVersion.VERSION_11
@@ -13,3 +13,10 @@
 //dependencies {
 //    implementation 'com.github.NoahBres:MeepMeep:1.0.0'
 //}
+repositories {
+    maven { url = 'https://maven.brott.dev/' }
+}
+
+dependencies {
+    implementation 'com.acmerobotics.roadrunner:MeepMeep:0.1.7'
+}
