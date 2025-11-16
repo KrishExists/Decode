@@ -36,7 +36,7 @@ public class MainTele extends LinearOpMode {
 
     private final ElapsedTime timer = new ElapsedTime();
 
-    private enum IntakeState { INTAKE, OUTTAKE, RUNSLOW, OUTTAKE1, OuttakeFar, REST }
+    private enum IntakeState { INTAKE, OUTTAKE, RUNSLOW, OUTTAKE1, OuttakeFar, OuttakeMid, REST }
     private IntakeState currentState = IntakeState.REST;
     private IntakeState previousState = IntakeState.REST;
 
@@ -155,7 +155,7 @@ public class MainTele extends LinearOpMode {
                     }
                     break;
 
-                case OuttakeFar:
+                case OuttakeMid:
                     if (timer.milliseconds() < 700) {
                         outtake.setPower(-0.8);
                         outtake2.setPower(-0.8);
@@ -178,6 +178,31 @@ public class MainTele extends LinearOpMode {
                         intake.setPower(0.8);
                     }
                     break;
+
+                case OuttakeFar:
+                    if (timer.milliseconds() < 700) {
+                        outtake.setPower(-0.8);
+                        outtake2.setPower(-0.8);
+                        intake.setPower(-0.5);
+                        linkage.setPosition(0.92);
+                    } else if (timer.milliseconds() < 2500) {
+                        spinToRpm(6000); // working target RPM
+                        intake.setPower(0);
+                        linkage.setPosition(0.92);
+                    } else if (timer.milliseconds() < 3000) {
+                        spinToRpm(6000);
+                        intake.setPower(0);
+                        linkage.setPosition(0.47);
+                    } else if (timer.milliseconds() < 4000) {
+                        spinToRpm(6000);
+                        intake.setPower(0.8);
+                        linkage.setPosition(0.47);
+                    } else {
+                        spinToRpm(6000);
+                        intake.setPower(0.7);
+                    }
+                    break;
+
 
                 case RUNSLOW:
                     intake.setPower(-1.0);
