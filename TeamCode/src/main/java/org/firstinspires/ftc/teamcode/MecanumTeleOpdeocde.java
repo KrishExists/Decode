@@ -1024,14 +1024,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
-@TeleOp(name = "MecanumTeleop", group = "Concept")
 public class MecanumTeleOpdeocde extends OpMode {
     decodeArm arm;
     final double DESIRED_DISTANCE = 12.0; // inches
 
     // Gain constants
-    final double SPEED_GAIN = 0.02;
-    final double TURN_GAIN  = 0.01;
+    final double SPEED_GAIN = 0.5;
+    final double TURN_GAIN  = 0.5;
 
     // Max motor speeds during auto mode
     final double MAX_AUTO_SPEED = 1;
@@ -1136,7 +1135,7 @@ public class MecanumTeleOpdeocde extends OpMode {
                     telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
                 }
             } else {
-                telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+                telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary ", detection.id);
             }
         }
 
