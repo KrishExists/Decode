@@ -29,6 +29,7 @@ public class MainTeleNewLogic extends LinearOpMode {
     private DcMotor backRightMotor;
 
     private DcMotor intake;
+    private boolean shootState;
     private DcMotorEx outtake;
 
     private DcMotorEx outtake2;
@@ -95,7 +96,7 @@ public class MainTeleNewLogic extends LinearOpMode {
 
         outtake2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         outtake2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
+        shootState = false;
         linkage.setPosition(0.0);
         boolean firstShotHappend = false;
 
@@ -116,7 +117,7 @@ public class MainTeleNewLogic extends LinearOpMode {
             // ====== Intake Logic ======
             if (gamepad2.right_trigger > 0.2) {
                 currentState = IntakeState.INTAKE;
-            } else if (gamepad2.left_trigger > 0.2) {
+            } else if (gamepad2.left_trigger > 0.2&&!bwasPressed) {
                 currentState = IntakeState.OUTTAKE;
             } else if (gamepad2.right_bumper) {
                 currentState = IntakeState.RUNSLOW;
@@ -124,9 +125,12 @@ public class MainTeleNewLogic extends LinearOpMode {
             else if(gamepad2.a) {
                 currentState = IntakeState.OUTTAKE1;
             }
+            else if(!shootState){
+                currentState = IntakeState.REST;
+            }
 
             else {
-                currentState = IntakeState.REST;
+                currentState = IntakeState.SHOOT;
             }
 
             if (currentState != previousState) {
@@ -136,6 +140,7 @@ public class MainTeleNewLogic extends LinearOpMode {
 
             switch (currentState) {
                 case INTAKE:
+                    shootState = false;
                     intake.setPower(0.8);
                     outtake.setPower(-0.2);
                     outtake2.setPower(-0.2);
@@ -187,7 +192,9 @@ public class MainTeleNewLogic extends LinearOpMode {
 //
 //                    break;
                 case OUTTAKE:
-
+                    shootState = true;
+                    resetBooleans();
+                    bwasPressed = false;
                     spinToRpm(3000);
                     intake.setPower(0);
                     if(gamepad2.bWasPressed()){
@@ -200,24 +207,28 @@ public class MainTeleNewLogic extends LinearOpMode {
                     }
                     break;
                 case SHOOT:
+                    telemetry.addData("State","Shoot2.0");
+                    telemetry.addData("Up to rpm",upToRpm(2500));
                     spinToRpm(3000);
-                    intake.setPower(0.8);
-//                    if(upToRpm(3000)){
-//                        telemetry.addData("It works","it works");
-//                        intake.setPower(0.8);
-//                       ball1Shot = true;
-//                    }else{
-//                        telemetry.addData("Why isnt it up there",currentRPM());
-//                        intake.setPower(0.8);
-//                    }
-//                    if(!upToRpm(3000)){
-//                        if(ball1Shot&&b2shot){
-//                            b3shot = true;
-//                            currentState = IntakeState.REST;
-//                        } else if (ball1Shot) {
-//                            b2shot = true;
-//                        }
-//                    }
+                    if(upToRpm(2500)){
+                        telemetry.addData("It works","it works");
+                        intake.setPower(0.8);
+                       ball1Shot = true;
+                    }else{
+                        telemetry.addData("Why isnt it up there",currentRPM());
+                        telemetry.addData("Up to rpm",upToRpm(2500));
+                        intake.setPower(0.8);
+                    }
+                    if(!upToRpm(3000)){
+                        if(ball1Shot&&b2shot){
+                            b3shot = true;
+                            currentState = IntakeState.REST;
+                            shootState = false;
+                        } else if (ball1Shot) {
+                            b2shot = true;
+                        }
+                    }
+
                     break;
                 case RUNSLOW:
                     intake.setPower(-1.0);
@@ -227,12 +238,12 @@ public class MainTeleNewLogic extends LinearOpMode {
                     break;
 
                 default:
+                    shootState = false;
                     intake.setPower(0.0);
                     outtake.setPower(0.0);
                     outtake2.setPower(0.0);
                     linkage.setPosition(0.92);
-                    resetBooleans();
-                    bwasPressed = false;
+
                     break;
             }
 
@@ -250,6 +261,7 @@ public class MainTeleNewLogic extends LinearOpMode {
             telemetry.addData("Linkage Pos", linkage.getPosition());
             telemetry.addData("Outtake Shooter: ", outtake.getVelocity());
             telemetry.addData("Outtake rpm",currentRPM());
+            telemetry.addData("Ball3 shot",b3shot);
             telemetry.update();
         }
     }
@@ -313,7 +325,11 @@ public class MainTeleNewLogic extends LinearOpMode {
 
     public boolean upToRpm(double rpm) {
         double curr = currentRPM();
-        return curr > rpm - rpmThresh && curr < rpm + rpmThresh;
+        if(curr>rpm-rpmThresh){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public double currentRPM() {

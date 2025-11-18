@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -17,6 +18,7 @@ public class Outtake implements Subsystem {
     private Telemetry telemetry;
 
     public DcMotorEx outtake;
+    public DcMotorEx outtake2;
     public Servo linkage;
 
     public PIDController rpmPID;
@@ -33,11 +35,15 @@ public class Outtake implements Subsystem {
         this.telemetry = t;
 
         outtake = hardwareMap.get(DcMotorEx.class, "Outtake");
+        outtake2 = hardwareMap.get(DcMotorEx.class, "Outtake2");
         outtake.setDirection(DcMotorEx.Direction.REVERSE);
+
         outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         outtake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         outtake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
+        //outtake.setDirection(DcMotorSimple.Direction.REVERSE);
+        outtake2.setDirection(DcMotorSimple.Direction.REVERSE);
         linkage = hardwareMap.get(Servo.class, "Linkage");
 
         rpmPID = new PIDController(kp, ki, kd);
@@ -49,6 +55,7 @@ public class Outtake implements Subsystem {
         double output = rpmPID.calculate(currentRPM(), rpm);
         output = Range.clip(output, 0, 1);
         outtake.setPower(output);
+        outtake2.setPower(output);
     }
 
     public boolean upToRpm(double rpm) {
