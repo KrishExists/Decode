@@ -11,7 +11,7 @@ public class MeepMeepTesting {
         MeepMeep meepMeep = new MeepMeep(800);
 
         final Pose2d START_POSE = new Pose2d(-51.5, 51.5, Math.toRadians(-144));
-        final Pose2d LSHOOT = new Pose2d(-18, -2.5, Math.toRadians(-225));
+        final Pose2d LSHOOT = new Pose2d(-22, 13, Math.toRadians(-235));
         final Pose2d SPIKE1 = new Pose2d(37, 51, Math.toRadians(-270));
         final Pose2d SPIKE2 = new Pose2d(12,    54, Math.toRadians(-270));
         final Pose2d SPIKE3 = new Pose2d(-11.6,     42, Math.toRadians(-270));

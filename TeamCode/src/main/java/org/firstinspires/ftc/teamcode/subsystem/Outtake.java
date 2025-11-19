@@ -41,7 +41,7 @@ public class Outtake implements Subsystem {
         outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         outtake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         outtake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
+        outtake.setDirection(DcMotorSimple.Direction.FORWARD);
         //outtake.setDirection(DcMotorSimple.Direction.REVERSE);
         outtake2.setDirection(DcMotorSimple.Direction.REVERSE);
         linkage = hardwareMap.get(Servo.class, "Linkage");
