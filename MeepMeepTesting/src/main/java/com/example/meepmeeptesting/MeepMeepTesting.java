@@ -26,7 +26,7 @@ public class MeepMeepTesting {
         // -----------------------------
         //  START POSE → CHANGE THIS
         // -----------------------------
-        Pose2d START = new Pose2d(60, 20, rad(-180));
+        Pose2d START = new Pose2d(60, 10, rad(-180));
 
         RoadRunnerBotEntity bot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(60, 60, rad(180), rad(180), 15)
@@ -41,17 +41,26 @@ public class MeepMeepTesting {
                         // ------------------------------------------------
 
                         // go(x, y, heading)
-                        .strafeToLinearHeading(pos(54, 20), rad(-200))
+                        .strafeToLinearHeading(pos(54, 10), rad(-200))
 
                         // turn(degrees)
                         .turnTo(rad(70))
 
                         // go(x, y, heading)
-                        .strafeToLinearHeading(pos(56, 60), rad(-270))
+                       //.strafeToLinearHeading(pos(56, 60), rad(-270))
                         //.turnTo(rad(-70))
                         // go(x, y, heading)
-                        .strafeToLinearHeading(pos(54, 20), rad(-200))
-                        .strafeToLinearHeading(pos(50, 20), rad(-200))
+                       // .strafeToLinearHeading(pos(54, 20), rad(-200))
+                       // .strafeToLinearHeading(pos(54, 10), rad(-200))
+
+                        .strafeToLinearHeading(pos(34, 33), rad(-270))
+                        .strafeToLinearHeading(pos(34, 45), rad(-270))
+                        .strafeToLinearHeading(pos(54, 10), rad(-200))
+                        .strafeToLinearHeading(pos(25,60), rad(0))
+                        .strafeToLinearHeading(pos(58, 60), rad(0))
+                        .strafeToLinearHeading(pos(54, 10), rad(-200))
+                        .strafeToLinearHeading(pos(28, 10), rad(-200))
+
 
                         .build()
         );

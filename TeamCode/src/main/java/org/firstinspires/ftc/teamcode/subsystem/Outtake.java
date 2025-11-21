@@ -86,5 +86,6 @@ public class Outtake implements Subsystem {
     }
     public void setPower(double power){
         outtake.setPower(power);
+        outtake2.setPower(power);
     }
 }
