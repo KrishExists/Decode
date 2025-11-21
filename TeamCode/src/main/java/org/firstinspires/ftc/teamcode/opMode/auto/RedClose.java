@@ -20,9 +20,11 @@ public class RedClose extends LinearOpMode {
     // ---- UPDATED TO MATCH YOUR MEEPMEEP FILE EXACTLY ----
     final Pose2d START_POSE = new Pose2d(-51.5, 51.5, Math.toRadians(-144));
     final Pose2d LSHOOT = new Pose2d(-22, 3, Math.toRadians(-235));
+
+    final Pose2d GOSHOOT2 = new Pose2d(-23, 26, Math.toRadians(-235));
     final Pose2d SPIKE1 = new Pose2d(36, 51, Math.toRadians(-270));
     final Pose2d SPIKE2 = new Pose2d(14, 54, Math.toRadians(-270));
-    final Pose2d SPIKE3 = new Pose2d(-10, 42, Math.toRadians(-270));
+    final Pose2d SPIKE3 = new Pose2d(-10, 54, Math.toRadians(-270));
 
     Action shootPre, toSpike3, toShootFrom3, toSpike2, toShootFrom2, toSpike1, toShootFrom1, leave;
     boolean currentAction = true;
@@ -77,9 +79,13 @@ public class RedClose extends LinearOpMode {
         // PRELOAD → LSHOOT
         TrajectoryActionBuilder shootPrePath = robot.drive.drive.actionBuilder(START_POSE)
                 .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading);
+        //LShoot -> GOFORWARD
+
+        TrajectoryActionBuilder shootForward = robot.drive.drive.actionBuilder(LSHOOT)
+                .strafeToLinearHeading(GOSHOOT2.position, GOSHOOT2.heading);
 
         // LSHOOT → SPIKE 3
-        TrajectoryActionBuilder toSpike3Path = robot.drive.drive.actionBuilder(LSHOOT)
+        TrajectoryActionBuilder toSpike3Path = robot.drive.drive.actionBuilder(GOSHOOT2)
                 .turnTo(Math.toRadians(-255))
                 .setTangent(Math.toRadians(0))
                 .splineToLinearHeading(SPIKE3, Math.toRadians(90));
@@ -133,14 +139,17 @@ public class RedClose extends LinearOpMode {
     //                 STATE MACHINE
     //     (UNCHANGED — no edits to your timing logic)
     // ---------------------------------------------------
+
     public void update() {
         TelemetryPacket packet = new TelemetryPacket();
+        // TODO: add robot actuations in state machine
+        //timer.reset();
 
         switch (state) {
             case PRELOAD:
 
                 if(timer.milliseconds() < 3000) {
-                    robot.outtake.spinToRpm(1700);
+                    robot.outtake.spinToRpm(1500);
                 }
 
                 else if(timer.milliseconds() < 3500) {
@@ -151,19 +160,19 @@ public class RedClose extends LinearOpMode {
 
                 else if(timer.milliseconds() < 4500){
                     robot.outtake.setLinkage(0.6);
-                    robot.intake.setPower(0.9);
+                    robot.intake.setPower(0.6);
                 }
 
                 else if(timer.milliseconds()<5500){
                     robot.intake.setPower(0);
-                    robot.outtake.spinToRpm(2000);
+                    robot.outtake.spinToRpm(1500);
                 }else{
-                    robot.intake.setPower(0.9);
+                    robot.intake.setPower(0.8);
                 }
 
                 currentAction = shootPre.run(packet);
 
-                if (!currentAction && timer.milliseconds() > 7000) {
+                if (!currentAction && timer.milliseconds() > 8000) {
                     state = RedClose.ShootStates.CYCLE_3;
                     timer.reset();
                     timer.startTime();
@@ -188,7 +197,7 @@ public class RedClose extends LinearOpMode {
                     robot.intake.setPower(-0.6);
                 }
                 if(timer.milliseconds() < 2000) {
-                    robot.outtake.spinToRpm(3000);
+                    robot.outtake.spinToRpm(1500);
                 }
 
                 else if(timer.milliseconds() < 2500) {
@@ -198,14 +207,14 @@ public class RedClose extends LinearOpMode {
 
 
                 else if(timer.milliseconds() < 3500){
-                    robot.intake.setPower(1);
+                    robot.intake.setPower(0.6);
                 }
 
                 else if(timer.milliseconds()<4000){
                     robot.intake.setPower(0);
-                    robot.outtake.spinToRpm(2000);
+                    robot.outtake.spinToRpm(1500);
                 }else{
-                    robot.intake.setPower(1);
+                    robot.intake.setPower(0.8);
                 }
                 currentAction = toShootFrom3.run(packet);
 
@@ -246,7 +255,7 @@ public class RedClose extends LinearOpMode {
 //                    }
 //                }
                 else if(timer.milliseconds() < 2000) {
-                    robot.outtake.spinToRpm(3000);
+                    robot.outtake.spinToRpm(1500);
                 }
 
                 else if(timer.milliseconds() < 2500) {
@@ -257,14 +266,14 @@ public class RedClose extends LinearOpMode {
 
                 else if(timer.milliseconds() < 3500){
                     robot.outtake.setLinkage(0.6);
-                    robot.intake.setPower(1);
+                    robot.intake.setPower(0.6);
                 }
 
                 else if(timer.milliseconds()<4000){
                     robot.intake.setPower(0);
-                    robot.outtake.spinToRpm(2000);
+                    robot.outtake.spinToRpm(1500);
                 }else{
-                    robot.intake.setPower(1);
+                    robot.intake.setPower(0.8);
                 }
                 currentAction = toShootFrom2.run(packet);
 
@@ -296,23 +305,23 @@ public class RedClose extends LinearOpMode {
                     robot.intake.setPower(-0.2);
                 }
                 if(timer.milliseconds() < 2000) {
-                    robot.outtake.spinToRpm(3000);
+                    robot.outtake.spinToRpm(1500);
                 }
 
                 else if(timer.milliseconds() < 2500) {
-                    robot.outtake.setLinkage(0.5);
+                    robot.outtake.setLinkage(0.6);
                     robot.intake.setPower(0);
                 }
 
 
                 else if(timer.milliseconds() < 3500){
-                    robot.outtake.setLinkage(0.5);
+                    robot.outtake.setLinkage(0.6);
                     robot.intake.setPower(0.6);
                 }
 
                 else if(timer.milliseconds()<4000){
                     robot.intake.setPower(0);
-                    robot.outtake.spinToRpm(2000);
+                    robot.outtake.spinToRpm(1500);
                 }else{
                     robot.intake.setPower(0.8);
                 }

@@ -7,59 +7,51 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
+
+    // -------------------------------------------------
+    //  SIMPLE FUNCTIONS YOU CAN CALL
+    // -------------------------------------------------
+    public static Vector2d pos(double x, double y) {
+        return new Vector2d(x, y);
+    }
+
+    public static double rad(double deg) {
+        return Math.toRadians(deg);
+    }
+
     public static void main(String[] args) {
+
         MeepMeep meepMeep = new MeepMeep(800);
 
-        final Pose2d START_POSE = new Pose2d(-51.5, 51.5, Math.toRadians(-144));
-        final Pose2d LSHOOT = new Pose2d(-22, 13, Math.toRadians(-235));
-        final Pose2d SPIKE1 = new Pose2d(37, 51, Math.toRadians(-270));
-        final Pose2d SPIKE2 = new Pose2d(12,    54, Math.toRadians(-270));
-        final Pose2d SPIKE3 = new Pose2d(-11.6,     42, Math.toRadians(-270));
+        // -----------------------------
+        //  START POSE → CHANGE THIS
+        // -----------------------------
+        Pose2d START = new Pose2d(60, 20, rad(-180));
 
         RoadRunnerBotEntity bot = new DefaultBotBuilder(meepMeep)
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                .setStartPose(START_POSE)
+                .setConstraints(60, 60, rad(180), rad(180), 15)
+                .setStartPose(START)
                 .build();
 
         bot.runAction(
-                bot.getDrive()
-                        .actionBuilder(START_POSE)
+                bot.getDrive().actionBuilder(START)
 
-                        // PRELOAD → LSHOOT
-                        .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
-//
-                        // LSHOOT → SPIKE 3
-                        .turnTo(Math.toRadians(-230))
-                        .setTangent(Math.toRadians(0))
-                        .splineToLinearHeading(SPIKE3, Math.toRadians(90))
-//
-                        // SPIKE 3 → Return to LSHOOT
-                        .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
-//
-                        // LSHOOT → SPIKE 2
-                        .setTangent(Math.toRadians(20))
-                        .splineToSplineHeading(
-                                new Pose2d(5, 20, Math.toRadians(-270)),
-                                Math.toRadians(-20)
-                        )
-                        .splineToLinearHeading(SPIKE2, Math.toRadians(-270))
+                        // ------------------------------------------------
+                        //  SUPER SIMPLE COMMANDS — JUST CHANGE NUMBERS
+                        // ------------------------------------------------
 
-                        .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
+                        // go(x, y, heading)
+                        .strafeToLinearHeading(pos(54, 20), rad(-200))
 
-//
-                        // LSHOOT → SPIKE 1
-                        .setTangent(Math.toRadians(15))
-                        .splineToSplineHeading(
-                                new Pose2d(27, 10, Math.toRadians(-270)),
-                                Math.toRadians(-15)
-                        )
-                        .splineToLinearHeading(SPIKE1, Math.toRadians(-270))
+                        // turn(degrees)
+                        .turnTo(rad(70))
 
-                        // SPIKE 1 → LSHOOT
-                        .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
-
-                        // LEAVE
-                        .strafeTo(new Vector2d(0, 18))
+                        // go(x, y, heading)
+                        .strafeToLinearHeading(pos(56, 60), rad(-270))
+                        //.turnTo(rad(-70))
+                        // go(x, y, heading)
+                        .strafeToLinearHeading(pos(54, 20), rad(-200))
+                        .strafeToLinearHeading(pos(50, 20), rad(-200))
 
                         .build()
         );
