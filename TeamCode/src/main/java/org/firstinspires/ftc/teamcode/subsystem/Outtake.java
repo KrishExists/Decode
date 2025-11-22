@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -26,6 +27,11 @@ public class Outtake implements Subsystem {
     public static double ki = 0;
     public static double kd = 0.001;
 
+    // ====== Shooter PID ======
+    ElapsedTime runtime;
+    public static double kP = 0.01, kI = 0.0, kD = 0.0;
+    private double integralSum = 0, lastError = 0, lastTime = 0;
+
     public static double rpmThresh = 50;
     public static double targetRpm = 0;
 
@@ -42,27 +48,52 @@ public class Outtake implements Subsystem {
         outtake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         outtake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         outtake.setDirection(DcMotorSimple.Direction.FORWARD);
+        //outtake.setDirection(DcMotorSimple.Direction.REVERSE);
         outtake2.setDirection(DcMotorSimple.Direction.REVERSE);
         linkage = hardwareMap.get(Servo.class, "Linkage");
 
-
         rpmPID = new PIDController(kp, ki, kd);
+
+        runtime = new ElapsedTime();
     }
 
     // -- outtake --
-    public void spinToRpm(double rpm) {
-        rpmPID.setPID(kp, ki, kd);
-        double output = rpmPID.calculate(currentRPM(), rpm);
+//    public void spinToRpm(double rpm) {
+//        rpmPID.setPID(kp, ki, kd);
+//        double output = rpmPID.calculate(currentRPM(), rpm);
+//        output = Range.clip(output, 0, 1);
+//        outtake.setPower(output);
+//        outtake2.setPower(output);
+//    }
+
+    public void spinToRpm(double targetRPM) {
+        double currRPM = currentRPM();
+        double error = targetRPM - currRPM;
+
+        double currentTime = runtime.seconds();
+        double dt = currentTime - lastTime;
+
+        integralSum += error * dt;
+        double derivative = (error - lastError) / dt;
+
+        double output = (kP * error) + (kI * integralSum) + (kD * derivative);
         output = Range.clip(output, 0, 1);
-        telemetry.addData("output",output);
+
         outtake.setPower(output);
         outtake2.setPower(output);
 
+        lastError = error;
+        lastTime = currentTime;
+    }
+
+    public void setVelocity(double rpm) {
+        outtake.setVelocity(rpm);
+        outtake2.setVelocity(rpm);
     }
 
     public boolean upToRpm(double rpm) {
         double curr = currentRPM();
-        return (curr > rpm - rpmThresh) && (curr < rpm + rpmThresh);
+        return curr > rpm - rpmThresh && curr < rpm + rpmThresh;
     }
 
     public double currentRPM() {
@@ -87,6 +118,5 @@ public class Outtake implements Subsystem {
     }
     public void setPower(double power){
         outtake.setPower(power);
-        outtake2.setPower(power);
     }
 }

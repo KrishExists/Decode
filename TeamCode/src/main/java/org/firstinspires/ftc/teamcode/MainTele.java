@@ -176,7 +176,7 @@ public class MainTele extends LinearOpMode {
                         linkage.setPosition(0.47);
                     }else {
                         spinToRpm(6000);
-                        if (currentRPM() > 3400&&currentRPM()<3600) {
+                        if (currentRPM() > 3700&&currentRPM()<6000) {
                             intake.setPower(1);
                         } else {
                             intake.setPower(0);

@@ -51,13 +51,13 @@ public class MainTeleNewLogic extends LinearOpMode {
     // ====== Timer ======
     private final ElapsedTime timer = new ElapsedTime();
 
-    private enum IntakeState {
-        INTAKE,
-        OUTTAKE,
-        SHOOT,
-        RUNSLOW,
-        OUTTAKE1, Outtake, REST
-    }
+//    private enum IntakeState {
+//        INTAKE,
+//        OUTTAKE,
+//        SHOOT,
+//        RUNSLOW,
+//        OUTTAKE1, Outtake, REST
+//    }
 
     private IntakeState currentState = IntakeState.REST;
     private IntakeState previousState = IntakeState.REST;
@@ -127,13 +127,19 @@ public class MainTeleNewLogic extends LinearOpMode {
             } else if (gamepad2.right_bumper) {
                 currentState = IntakeState.RUNSLOW;
             }
+
+            else if(gamepad2.y) {
+                currentState = IntakeState.OuttakeMid;
+            }
+
+            else if(gamepad2.x) {
+                currentState = IntakeState.OuttakeFar;
+            }
+
             else if(gamepad2.a) {
                 currentState = IntakeState.OUTTAKE1;
             }
 
-            else if(gamepad2.y) {
-
-            }
             else{
                 currentState = IntakeState.REST;
             }
@@ -213,7 +219,7 @@ public class MainTeleNewLogic extends LinearOpMode {
                         linkage.setPosition(0.47);
                     }else {
                         spinToRpm(6000);
-                        if (currentRPM() > 3400&&currentRPM()<3600) {
+                        if (currentRPM() > 3400&&currentRPM()<6000) {
                             intake.setPower(1);
                         } else {
                             intake.setPower(0);
@@ -221,12 +227,12 @@ public class MainTeleNewLogic extends LinearOpMode {
                     }
                     break;
 
-                case Outtake:
+                case OUTTAKE:
                     if(timer.milliseconds()<500){
                         linkage.setPosition(0.25);
                     }else {
                         spinToRpm(1500);
-                        if (currentRPM() > 3400&&currentRPM()<3600) {
+                        if (currentRPM() > 1000&&currentRPM()<2000) {
                             intake.setPower(1);
                         } else {
                             intake.setPower(0);

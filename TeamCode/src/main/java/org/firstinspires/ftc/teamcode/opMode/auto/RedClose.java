@@ -65,7 +65,6 @@ public class RedClose extends LinearOpMode {
             update();
 
             telemetry.addData("State", state);
-
             telemetry.addData("Outtake", robot.outtake.getVelocity());
             telemetry.addData("Timer", timer.milliseconds());
             telemetry.update();
@@ -150,7 +149,7 @@ public class RedClose extends LinearOpMode {
             case PRELOAD:
 
                 if(timer.milliseconds() < 3000) {
-                    robot.outtake.spinToRpm(4000);
+                    robot.outtake.setVelocity(1750);
                 }
 
                 else if(timer.milliseconds() < 3500) {
@@ -166,7 +165,7 @@ public class RedClose extends LinearOpMode {
 
                 else if(timer.milliseconds()<5500){
                     robot.intake.setPower(0);
-                    robot.outtake.spinToRpm(1500);
+                    robot.outtake.setVelocity(1750);
                 }else{
                     robot.intake.setPower(0.8);
                 }
@@ -193,12 +192,12 @@ public class RedClose extends LinearOpMode {
                 }
                 break;
             case SHOOT_3:
-                if(timer.milliseconds()<600){
+                if(timer.milliseconds()<300){
                     robot.outtake.setPower(-1);
                     robot.intake.setPower(-0.6);
                 }
                 if(timer.milliseconds() < 2000) {
-                    robot.outtake.spinToRpm(1500);
+                    robot.outtake.setVelocity(1750);
                 }
 
                 else if(timer.milliseconds() < 2500) {
@@ -213,7 +212,7 @@ public class RedClose extends LinearOpMode {
 
                 else if(timer.milliseconds()<4000){
                     robot.intake.setPower(0);
-                    robot.outtake.spinToRpm(1500);
+                    robot.outtake.setVelocity(1750);
                 }else{
                     robot.intake.setPower(0.8);
                 }
@@ -243,7 +242,7 @@ public class RedClose extends LinearOpMode {
                 }
                 break;
             case SHOOT_2:
-                if(timer.milliseconds()<600){
+                if(timer.milliseconds()<300){
                     robot.outtake.setPower(-0.6);
                     robot.intake.setPower(-0.2);
                 }
@@ -256,7 +255,7 @@ public class RedClose extends LinearOpMode {
 //                    }
 //                }
                 else if(timer.milliseconds() < 2000) {
-                    robot.outtake.spinToRpm(1500);
+                    robot.outtake.setVelocity(1750);
                 }
 
                 else if(timer.milliseconds() < 2500) {
@@ -272,7 +271,7 @@ public class RedClose extends LinearOpMode {
 
                 else if(timer.milliseconds()<4000){
                     robot.intake.setPower(0);
-                    robot.outtake.spinToRpm(1500);
+                    robot.outtake.setVelocity(1750);
                 }else{
                     robot.intake.setPower(0.8);
                 }
@@ -301,12 +300,12 @@ public class RedClose extends LinearOpMode {
                 }
                 break;
             case SHOOT_1:
-                if(timer.milliseconds()<600){
+                if(timer.milliseconds()<300){
                     robot.outtake.setPower(-0.6);
                     robot.intake.setPower(-0.2);
                 }
                 if(timer.milliseconds() < 2000) {
-                    robot.outtake.spinToRpm(1500);
+                    robot.outtake.setVelocity(1750);
                 }
 
                 else if(timer.milliseconds() < 2500) {
@@ -322,7 +321,7 @@ public class RedClose extends LinearOpMode {
 
                 else if(timer.milliseconds()<4000){
                     robot.intake.setPower(0);
-                    robot.outtake.spinToRpm(1500);
+                    robot.outtake.setVelocity(1750);
                 }else{
                     robot.intake.setPower(0.8);
                 }
