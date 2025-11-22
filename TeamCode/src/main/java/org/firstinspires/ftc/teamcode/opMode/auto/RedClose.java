@@ -65,6 +65,7 @@ public class RedClose extends LinearOpMode {
             update();
 
             telemetry.addData("State", state);
+
             telemetry.addData("Outtake", robot.outtake.getVelocity());
             telemetry.addData("Timer", timer.milliseconds());
             telemetry.update();
@@ -149,7 +150,7 @@ public class RedClose extends LinearOpMode {
             case PRELOAD:
 
                 if(timer.milliseconds() < 3000) {
-                    robot.outtake.spinToRpm(1500);
+                    robot.outtake.spinToRpm(4000);
                 }
 
                 else if(timer.milliseconds() < 3500) {

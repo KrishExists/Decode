@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.MainTele.IntakeState.OuttakeFar;
+import static org.firstinspires.ftc.teamcode.MainTele.IntakeState.OuttakeMid;
+
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -53,7 +56,7 @@ public class MainTeleNewLogic extends LinearOpMode {
         OUTTAKE,
         SHOOT,
         RUNSLOW,
-        OUTTAKE1, REST
+        OUTTAKE1, Outtake, REST
     }
 
     private IntakeState currentState = IntakeState.REST;
@@ -62,6 +65,7 @@ public class MainTeleNewLogic extends LinearOpMode {
     boolean b2shot = false;
     boolean b3shot = false;
     boolean bwasPressed =false;
+    public enum IntakeState { INTAKE, OUTTAKE, RUNSLOW, OUTTAKE1, OuttakeFar, OuttakeMid, REST }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -126,6 +130,10 @@ public class MainTeleNewLogic extends LinearOpMode {
             else if(gamepad2.a) {
                 currentState = IntakeState.OUTTAKE1;
             }
+
+            else if(gamepad2.y) {
+
+            }
             else{
                 currentState = IntakeState.REST;
             }
@@ -187,18 +195,38 @@ public class MainTeleNewLogic extends LinearOpMode {
 //                    }
 //
 //                    break;
-                case OUTTAKE:
-                    if(timer.milliseconds()<200){
-                        outtake.setPower(-0.8);
-                        outtake2.setPower(-0.8);
-                        intake.setPower(-0.5);
-                        linkage.setPosition(0.92);
-                    }
-                    else if(timer.milliseconds()<700){
-                        linkage.setPosition(0.6);
+                case OuttakeMid:
+                    if(timer.milliseconds()<500){
+                        linkage.setPosition(0.47);
                     }else {
-                        spinToRpm(3600);
-                        if (currentRPM() > 3300 && currentRPM() > 3300) {
+                        spinToRpm(3500);
+                        if (currentRPM() > 3400&&currentRPM()<3600) {
+                            intake.setPower(1);
+                        } else {
+                            intake.setPower(0);
+                        }
+                    }
+                    break;
+
+                case OuttakeFar:
+                    if(timer.milliseconds()<500){
+                        linkage.setPosition(0.47);
+                    }else {
+                        spinToRpm(6000);
+                        if (currentRPM() > 3400&&currentRPM()<3600) {
+                            intake.setPower(1);
+                        } else {
+                            intake.setPower(0);
+                        }
+                    }
+                    break;
+
+                case Outtake:
+                    if(timer.milliseconds()<500){
+                        linkage.setPosition(0.25);
+                    }else {
+                        spinToRpm(1500);
+                        if (currentRPM() > 3400&&currentRPM()<3600) {
                             intake.setPower(1);
                         } else {
                             intake.setPower(0);

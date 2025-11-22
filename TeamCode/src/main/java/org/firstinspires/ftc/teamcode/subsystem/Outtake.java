@@ -42,9 +42,9 @@ public class Outtake implements Subsystem {
         outtake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         outtake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         outtake.setDirection(DcMotorSimple.Direction.FORWARD);
-        //outtake.setDirection(DcMotorSimple.Direction.REVERSE);
         outtake2.setDirection(DcMotorSimple.Direction.REVERSE);
         linkage = hardwareMap.get(Servo.class, "Linkage");
+
 
         rpmPID = new PIDController(kp, ki, kd);
     }
@@ -54,18 +54,19 @@ public class Outtake implements Subsystem {
         rpmPID.setPID(kp, ki, kd);
         double output = rpmPID.calculate(currentRPM(), rpm);
         output = Range.clip(output, 0, 1);
+        telemetry.addData("output",output);
         outtake.setPower(output);
         outtake2.setPower(output);
+
     }
 
     public boolean upToRpm(double rpm) {
         double curr = currentRPM();
-        return curr > rpm - rpmThresh && curr < rpm + rpmThresh;
+        return (curr > rpm - rpmThresh) && (curr < rpm + rpmThresh);
     }
 
     public double currentRPM() {
-        double conversion = 60 / (2 * Math.PI);
-        return outtake.getVelocity(AngleUnit.RADIANS) * conversion;
+        return outtake.getVelocity() * 2.2;
     }
 
     // -- linkage --
