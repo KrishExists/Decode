@@ -43,14 +43,14 @@ public class RedFar extends LinearOpMode {
     boolean runningAction = true;
 
     public enum AutoState {
-        STEP_1,
-        STEP_2,
-        STEP_3,
-        STEP_4,
-        STEP_5,
-        STEP_6,
-        STEP_7,
-        STEP_8,
+        STEP_1, // Go to Shootpos
+        STEP_2, // Go from p1 to spike mark
+        STEP_3, // Run through spike marks
+        STEP_4, // Go from spikemark to shoot
+        STEP_5, // Go from shooting to triangular angular spot
+        STEP_6, // Run through balls in human zone
+        STEP_7, // Go to shooting pos
+        STEP_8, // Leave
         END
     }
 
@@ -106,14 +106,18 @@ public class RedFar extends LinearOpMode {
             case STEP_1:
                 runIntakeLogic(1);
                 runningAction = toP1.run(packet);
-                if (!runningAction) {
-                    timer.reset();
+
+                if (!runningAction && timer.milliseconds() > 8000) {
                     state = AutoState.STEP_2;
+                    timer.reset();
+                    timer.startTime();
+                    robot.outtake.setLinkage(0.92);
+                    robot.intake.setPower(0);
                 }
                 break;
 
             case STEP_2:
-                runIntakeLogic(2);
+                //runIntakeLogic(2);
                 runningAction = toP2.run(packet);
                 if (!runningAction) {
                     timer.reset();
@@ -175,7 +179,7 @@ public class RedFar extends LinearOpMode {
                 break;
 
             case END:
-                runIntakeLogic(999); // final stop
+                runIntakeLogic(6767); // final stop
                 break;
         }
 
@@ -192,8 +196,27 @@ public class RedFar extends LinearOpMode {
         // -----------------------------
         switch (step) {
             case 1:
-                robot.intake.setPower(0.5);
-                robot.outtake.setPower(0);
+                if(timer.milliseconds() < 3000) {
+                    robot.outtake.setVelocity(2500);
+                }
+
+                else if(timer.milliseconds() < 3500) {
+                    robot.outtake.setLinkage(0.6);
+                    robot.intake.setPower(0);
+                }
+
+
+                else if(timer.milliseconds() < 4500){
+                    robot.outtake.setLinkage(0.6);
+                    robot.intake.setPower(0.6);
+                }
+
+                else if(timer.milliseconds()<5500){
+                    robot.intake.setPower(0);
+                    robot.outtake.setVelocity(2500);
+                }else{
+                    robot.intake.setPower(0.8);
+                }
                 break;
 
             case 2:
@@ -202,25 +225,32 @@ public class RedFar extends LinearOpMode {
                 break;
 
             case 3:
-                robot.outtake.setLinkage(0.6);
+                robot.outtake.setLinkage(0.92);
                 robot.intake.setPower(0.8);
+                robot.outtake.setPower(-0.5);
                 break;
 
             case 4:
-                robot.intake.setPower(0);
+                robot.outtake.setVelocity(2500);
                 break;
 
             case 5:
-                robot.intake.setPower(1.0);
+                timer.reset();
+                if(timer.milliseconds() < 100)
+                    robot.outtake.setLinkage(0.6);
+                else if(timer.milliseconds() < 1000)
+                    robot.intake.setPower(1.0);
+                else
+                    robot.outtake.setLinkage(0.92);
                 break;
 
             case 6:
-                robot.intake.setPower(0);
+                robot.intake.setPower(1);
                 robot.outtake.setPower(-0.4);
                 break;
 
             case 7:
-                robot.outtake.spinToRpm(1500);
+                robot.outtake.setVelocity(2700);
                 break;
 
             case 8:
