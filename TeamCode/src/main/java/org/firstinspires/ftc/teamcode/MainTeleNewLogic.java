@@ -152,8 +152,8 @@ public class MainTeleNewLogic extends LinearOpMode {
             switch (currentState) {
                 case INTAKE:
                     intake.setPower(0.8);
-                    outtake.setPower(-0.2);
-                    outtake2.setPower(-0.2);
+                    outtake.setPower(-0.4);
+                    outtake2.setPower(-0.4);
                     linkage.setPosition(0.92);
                     break;
 
@@ -219,7 +219,7 @@ public class MainTeleNewLogic extends LinearOpMode {
                         linkage.setPosition(0.47);
                     }else {
                         spinToRpm(6000);
-                        if (currentRPM() > 3400&&currentRPM()<6000) {
+                        if (currentRPM() > 3700&&currentRPM()<6000) {
                             intake.setPower(1);
                         } else {
                             intake.setPower(0);
@@ -232,7 +232,7 @@ public class MainTeleNewLogic extends LinearOpMode {
                         linkage.setPosition(0.25);
                     }else {
                         spinToRpm(1500);
-                        if (currentRPM() > 1000&&currentRPM()<2000) {
+                        if (currentRPM() > 1300&&currentRPM()<1700) {
                             intake.setPower(1);
                         } else {
                             intake.setPower(0);
@@ -240,10 +240,16 @@ public class MainTeleNewLogic extends LinearOpMode {
                     }
                     break;
                 case RUNSLOW:
-                    intake.setPower(-1.0);
-                    outtake.setPower(-0.8);
-                    outtake2.setPower(-0.8);
                     linkage.setPosition(0.92);
+                    if(timer.milliseconds()<500){
+                        intake.setPower(-1.0);
+                        outtake.setPower(-0.8);
+                        outtake2.setPower(-0.8);
+                    }else {
+                        intake.setPower(0);
+                        outtake.setPower(-0.8);
+                        outtake2.setPower(-0.8);
+                    }
                     break;
 
                 default:

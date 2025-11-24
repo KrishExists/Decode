@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -25,6 +26,7 @@ public class MainTele extends LinearOpMode {
     private DcMotorEx outtake, outtake2;
     private Servo linkage;
 
+    private Servo blocker;
     // ====== Shooter PID ======
     public static double kP = 0.01, kI = 0.0, kD = 0.0;
     private double integralSum = 0, lastError = 0, lastTime = 0;
@@ -36,7 +38,7 @@ public class MainTele extends LinearOpMode {
 
     private final ElapsedTime timer = new ElapsedTime();
 
-    public enum IntakeState { INTAKE, OUTTAKE, RUNSLOW, OUTTAKE1, OuttakeFar, OuttakeMid, REST }
+    public enum IntakeState { INTAKE, OUTTAKE, RUNSLOW, OUTTAKE1, OuttakeFar, OuttakeMid, Transfer, REST }
     private IntakeState currentState = IntakeState.REST;
     private IntakeState previousState = IntakeState.REST;
 
@@ -50,6 +52,7 @@ public class MainTele extends LinearOpMode {
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
+        blocker = hardwareMap.get(Servo.class, "Blocker");
 
         intake = hardwareMap.get(DcMotor.class, "Intake");
         outtake = hardwareMap.get(DcMotorEx.class, "Outtake");
@@ -97,6 +100,7 @@ public class MainTele extends LinearOpMode {
 
             // ====== Intake State Machine ======
             if (gamepad2.right_trigger > 0.2) currentState = IntakeState.INTAKE;
+            else if(gamepad2.dpad_left) currentState = IntakeState.Transfer;
             else if (gamepad2.left_trigger > 0.2) currentState = IntakeState.OUTTAKE;
             else if (gamepad2.right_bumper) currentState = IntakeState.RUNSLOW;
             else if (gamepad2.a) currentState = IntakeState.OUTTAKE1;
@@ -116,9 +120,19 @@ public class MainTele extends LinearOpMode {
                     outtake.setPower(-0.2);
                     outtake2.setPower(-0.2);
                     linkage.setPosition(0.92);
+                    blocker.setPosition(0);
+
                     break;
 
+                case Transfer:
+                    blocker.setPosition(0.6);
+                    intake.setPower(-0.5);
+                    outtake.setPower(-0.2);
+                    outtake2.setPower(-0.2);
+
+
                 case OUTTAKE1:
+                    blocker.setPosition(0);
                     if (timer.milliseconds() < 1500) {
                         outtake.setVelocity(2000);
                         intake.setPower(0);
@@ -135,6 +149,7 @@ public class MainTele extends LinearOpMode {
                     break;
 
                 case OUTTAKE:
+                    blocker.setPosition(0);
                     if (timer.milliseconds() < 700) {
                         outtake.setPower(-0.8);
                         outtake2.setPower(-0.8);
@@ -159,6 +174,7 @@ public class MainTele extends LinearOpMode {
                     break;
 
                 case OuttakeMid:
+                    blocker.setPosition(0);
                     if(timer.milliseconds()<500){
                         linkage.setPosition(0.47);
                     }else {
@@ -172,6 +188,7 @@ public class MainTele extends LinearOpMode {
                     break;
 
                 case OuttakeFar:
+                    blocker.setPosition(0);
                     if(timer.milliseconds()<500){
                         linkage.setPosition(0.47);
                     }else {
@@ -194,6 +211,7 @@ public class MainTele extends LinearOpMode {
 
                 default:
                     intake.setPower(0.0);
+                    blocker.setPosition(0.6);
                     outtake.setPower(0.0);
                     outtake2.setPower(0.0);
                     linkage.setPosition(0.92);
