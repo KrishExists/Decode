@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -23,10 +24,10 @@ public class Robot implements Subsystem { //The Rhetorical Situation
         this.telemetry = t;
 
         drive = new Drivetrain(h, t, pose);
-        intake = new Intake(h, t);
+        intake = new Intake(h, t, outtake);
         outtake = new Outtake(h, t);
 
-        subsystems = List.of(drive, intake, outtake);
+        subsystems = List.of(drive, (Subsystem) intake, outtake);
     }
 
     public Robot(HardwareMap h, Telemetry t) {
@@ -41,9 +42,9 @@ public class Robot implements Subsystem { //The Rhetorical Situation
     }
 
     @Override
-    public void update() {
+    public void update(Gamepad gamepad2) {
         for(Subsystem s : subsystems){
-            s.update();
+            s.update(gamepad2);
         }
     }
 }

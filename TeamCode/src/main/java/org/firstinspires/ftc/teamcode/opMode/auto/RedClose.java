@@ -61,7 +61,7 @@ public class RedClose extends LinearOpMode {
         while (opModeIsActive()) {
             if (isStopRequested()) return;
 
-            robot.update();
+            robot.update(gamepad2);
             update();
 
             telemetry.addData("State", state);

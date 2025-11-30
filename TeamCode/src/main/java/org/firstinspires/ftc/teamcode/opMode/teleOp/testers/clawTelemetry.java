@@ -66,6 +66,7 @@ public class clawTelemetry extends LinearOpMode {
         shooter = hardwareMap.get(DcMotorEx.class, "Outtake");
         shooter2 = hardwareMap.get(DcMotorEx.class, "Outtake2");
 
+        shooter.setDirection(DcMotorSimple.Direction.FORWARD);
         shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         shooter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);

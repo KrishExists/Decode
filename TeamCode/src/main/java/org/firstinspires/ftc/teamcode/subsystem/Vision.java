@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystem;
 
 
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -41,7 +41,7 @@ public class Vision {
         return error * kP_align;
     }
 
-    public void autoAlignToTag(Drive drive) {
+    public void autoAlignToTag(Drivetrain drive) {
         List<AprilTagDetection> detections = aprilTag.getDetections();
         if (detections.isEmpty()) {
             drive.stop();

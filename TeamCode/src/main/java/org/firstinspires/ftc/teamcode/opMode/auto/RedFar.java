@@ -281,7 +281,7 @@ public class RedFar extends LinearOpMode {
         timer.reset();
 
         while (opModeIsActive() && !isStopRequested()) {
-            robot.update();
+            robot.update(gamepad2);
             update();
 
             telemetry.addData("State", state);

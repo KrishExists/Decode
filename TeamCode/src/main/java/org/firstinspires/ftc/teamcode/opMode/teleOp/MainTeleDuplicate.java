@@ -1,13 +1,13 @@
-package org.firstinspires.ftc.teamcode.opmode;
+package org.firstinspires.ftc.teamcode.opMode.teleOp;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Hardware;
-import org.firstinspires.ftc.teamcode.subsystems.Drive;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.Shooter;
-import org.firstinspires.ftc.teamcode.subsystems.Vision;
+import org.firstinspires.ftc.teamcode.subsystem.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystem.Intake;
+import org.firstinspires.ftc.teamcode.subsystem.Outtake;
+import org.firstinspires.ftc.teamcode.subsystem.Vision;
 
 
 @TeleOp(name = "MainTeleDuplicate", group = "Main")
@@ -15,8 +15,8 @@ public class MainTeleDuplicate extends LinearOpMode {
 
 
     private Hardware hw;
-    private Drive drive;
-    private Shooter shooter;
+    private Drivetrain drive;
+    private Outtake shooter;
     private Intake intake;
     private Vision vision;
 
@@ -27,9 +27,9 @@ public class MainTeleDuplicate extends LinearOpMode {
 
 // ===== Initialize Hardware & Subsystems =====
         hw = new Hardware(hardwareMap);
-        shooter = new Shooter(hardwareMap);
-        drive = new Drive(hw);
-        intake = new Intake(hw, shooter);
+        shooter = new Outtake(hardwareMap, telemetry);
+        drive = new Drivetrain(hardwareMap, telemetry);
+        intake = new Intake(hardwareMap, telemetry, shooter);
         vision = new Vision(hw);
 
 

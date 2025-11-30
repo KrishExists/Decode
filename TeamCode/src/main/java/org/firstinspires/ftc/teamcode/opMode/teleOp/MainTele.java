@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opMode.teleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -120,19 +119,19 @@ public class MainTele extends LinearOpMode {
                     outtake.setPower(-0.2);
                     outtake2.setPower(-0.2);
                     linkage.setPosition(0.92);
-                    blocker.setPosition(0);
+                   // blocker.setPosition(0);
 
                     break;
 
                 case Transfer:
-                    blocker.setPosition(0.6);
+                   // blocker.setPosition(0.6);
                     intake.setPower(-0.5);
                     outtake.setPower(-0.2);
                     outtake2.setPower(-0.2);
 
 
                 case OUTTAKE1:
-                    blocker.setPosition(0);
+                  //  blocker.setPosition(0);
                     if (timer.milliseconds() < 1500) {
                         outtake.setVelocity(2000);
                         intake.setPower(0);
@@ -149,7 +148,7 @@ public class MainTele extends LinearOpMode {
                     break;
 
                 case OUTTAKE:
-                    blocker.setPosition(0);
+                  //  blocker.setPosition(0.6);
                     if (timer.milliseconds() < 700) {
                         outtake.setPower(-0.8);
                         outtake2.setPower(-0.8);
@@ -174,7 +173,7 @@ public class MainTele extends LinearOpMode {
                     break;
 
                 case OuttakeMid:
-                    blocker.setPosition(0);
+                  //  blocker.setPosition(0.6);
                     if(timer.milliseconds()<500){
                         linkage.setPosition(0.47);
                     }else {
@@ -188,12 +187,12 @@ public class MainTele extends LinearOpMode {
                     break;
 
                 case OuttakeFar:
-                    blocker.setPosition(0);
+                 //   blocker.setPosition(0.6);
                     if(timer.milliseconds()<500){
                         linkage.setPosition(0.47);
                     }else {
                         spinToRpm(6000);
-                        if (currentRPM() > 3700&&currentRPM()<6000) {
+                        if (currentRPM() > 4000&&currentRPM()<6000) {
                             intake.setPower(1);
                         } else {
                             intake.setPower(0);
@@ -211,10 +210,10 @@ public class MainTele extends LinearOpMode {
 
                 default:
                     intake.setPower(0.0);
-                    blocker.setPosition(0.6);
+                   // blocker.setPosition(0.6);
                     outtake.setPower(0.0);
                     outtake2.setPower(0.0);
-                    linkage.setPosition(0.92);
+                    linkage.setPosition(0.47);
                     break;
             }
 
