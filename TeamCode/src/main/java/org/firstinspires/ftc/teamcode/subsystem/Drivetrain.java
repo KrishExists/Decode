@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystem;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -36,23 +37,17 @@ public class Drivetrain implements Subsystem {
     // ----------------------------------------
     // MANUAL DRIVE (converted from your old Drive.java)
     // ----------------------------------------
-    public void manualDrive(Gamepad g) {
-        double y = -g.left_stick_y;      // forward/back
-        double x = g.left_stick_x * 1.1; // strafe with 1.1 correction
-        double rx = g.right_stick_x;     // rotation
+    public void manualDrive(Gamepad gamepad1) {
+        double y = -gamepad1.left_stick_y;
+        double x = gamepad1.left_stick_x * 1.1;
+        double rx = gamepad1.right_stick_x;
 
-        double denom = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1.0);
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1.0);
 
-        double fl = (y + x + rx) / denom;
-        double bl = (y - x + rx) / denom;
-        double fr = (y - x - rx) / denom;
-        double br = (y + x - rx) / denom;
-
-        // Send directly to Road Runner's drive class
-        drive.setDrivePowers(new PoseVelocity2d(
-                new Vector2d(fl, fr),  // Road Runner interprets this correctly
-                rx                     // rotation
-        ));
+        drive.leftFront.setPower((y + x + rx) / denominator);
+        drive.leftBack.setPower((y - x + rx) / denominator);
+        drive.rightFront.setPower((y - x - rx) / denominator);
+        drive.rightBack.setPower((y + x - rx) / denominator);
     }
 
     // Set specific motor powers (custom feed)

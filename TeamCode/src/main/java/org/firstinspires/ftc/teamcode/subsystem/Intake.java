@@ -35,8 +35,8 @@ public class Intake implements Subsystem{
 
         // Map hardware
         intake = hw.get(DcMotor.class, "Intake");
-        blocker = hw.get(Servo.class, "blocker");
-        linkage = hw.get(Servo.class, "linkage");
+        blocker = hw.get(Servo.class, "Blocker");
+        linkage = hw.get(Servo.class, "Linkage");
 
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
@@ -160,7 +160,7 @@ public class Intake implements Subsystem{
                 } else {
                     shooter.spinToRpm(6000);
                     if (shooter.atSpeed(3700, 6000)) {
-                        intake.setPower(Constants.INTAKE_FEED_POWER);
+                          intake.setPower(Constants.INTAKE_FEED_POWER);
                     } else intake.setPower(0);
                 }
                 break;
@@ -177,5 +177,8 @@ public class Intake implements Subsystem{
         telemetry.addData("Intake State", sm.getState());
         telemetry.addData("Time in State", t);
         telemetry.update();
+    }
+    public void resetTime(){
+        shooter.resetTime();
     }
 }

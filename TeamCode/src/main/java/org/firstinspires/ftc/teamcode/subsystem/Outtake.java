@@ -140,4 +140,7 @@ public class Outtake implements Subsystem {
     public double currentRPM() {
         return outtake.getVelocity() * 2.2;
     }
+    public void resetTime(){
+        timer.reset();
+    }
 }

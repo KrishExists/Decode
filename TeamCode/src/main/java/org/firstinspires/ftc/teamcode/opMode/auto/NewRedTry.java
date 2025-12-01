@@ -54,7 +54,6 @@ public class NewRedTry extends LinearOpMode {
         robot = new Robot(hardwareMap, telemetry, START_POSE);
 
         build_paths();
-        robot.init();
 
         waitForStart();
         timer.reset();
@@ -62,7 +61,6 @@ public class NewRedTry extends LinearOpMode {
         while (opModeIsActive()) {
             if (isStopRequested()) return;
 
-            robot.update(gamepad2);
             update();
 
             telemetry.addData("State", state);

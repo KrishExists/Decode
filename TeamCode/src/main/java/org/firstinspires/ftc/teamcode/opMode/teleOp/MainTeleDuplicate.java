@@ -18,7 +18,8 @@ public class MainTeleDuplicate extends LinearOpMode {
     private Drivetrain drive;
     private Outtake shooter;
     private Intake intake;
-    private Vision vision;
+    //private Vision vision;
+    private boolean starts = true;
 
 
     @Override
@@ -30,7 +31,7 @@ public class MainTeleDuplicate extends LinearOpMode {
         shooter = new Outtake(hardwareMap, telemetry);
         drive = new Drivetrain(hardwareMap, telemetry);
         intake = new Intake(hardwareMap, telemetry, shooter);
-        vision = new Vision(hw);
+      //  vision = new Vision(hw);
 
 
         telemetry.addLine("Initialized — Waiting for Start");
@@ -41,15 +42,17 @@ public class MainTeleDuplicate extends LinearOpMode {
 
 // ===== Main Loop =====
         while (opModeIsActive()) {
-
-
+//            if(starts){
+//                intake.resetTime();
+//                starts = false;
+//            }//check if this is needed and works
 // Intake State Machine Update
             intake.update(gamepad2);
 
 
 // Drive: Auto Align OR Manual
             if (gamepad2.left_bumper) {
-                vision.autoAlignToTag(drive);
+              //  vision.autoAlignToTag(drive);
             } else {
                 drive.manualDrive(gamepad1);
             }

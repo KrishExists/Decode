@@ -131,7 +131,7 @@ public class MainTele extends LinearOpMode {
 
 
                 case OUTTAKE1:
-                  //  blocker.setPosition(0);
+                   blocker.setPosition(0);
                     if (timer.milliseconds() < 1500) {
                         outtake.setVelocity(2000);
                         intake.setPower(0);
@@ -148,7 +148,7 @@ public class MainTele extends LinearOpMode {
                     break;
 
                 case OUTTAKE:
-                  //  blocker.setPosition(0.6);
+                    blocker.setPosition(0.6);
                     if (timer.milliseconds() < 700) {
                         outtake.setPower(-0.8);
                         outtake2.setPower(-0.8);
@@ -173,7 +173,7 @@ public class MainTele extends LinearOpMode {
                     break;
 
                 case OuttakeMid:
-                  //  blocker.setPosition(0.6);
+                   blocker.setPosition(0.6);
                     if(timer.milliseconds()<500){
                         linkage.setPosition(0.47);
                     }else {
@@ -187,7 +187,7 @@ public class MainTele extends LinearOpMode {
                     break;
 
                 case OuttakeFar:
-                 //   blocker.setPosition(0.6);
+                    blocker.setPosition(0.6);
                     if(timer.milliseconds()<500){
                         linkage.setPosition(0.47);
                     }else {
