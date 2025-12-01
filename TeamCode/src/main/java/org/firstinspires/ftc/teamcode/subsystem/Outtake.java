@@ -1,83 +1,143 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.util.Constants;
 
 @Config
 public class Outtake implements Subsystem {
-    private HardwareMap hardwareMap;
-    private Telemetry telemetry;
+
+    // =======================
+    //  Hardware
+    // =======================
+    private final HardwareMap hardwareMap;
+    private final Telemetry telemetry;
 
     public DcMotorEx outtake;
+    public DcMotorEx outtake2;
     public Servo linkage;
 
-    public PIDController rpmPID;
-    public static double kp = 0.00625;
-    public static double ki = 0;
-    public static double kd = 0.001;
+    // Shooter PID variables (from Shooter class)
+    public static double kP = 0.01, kI = 0.0, kD = 0.0;
 
-    public static double rpmThresh = 50;
-    public static double targetRpm = 0;
+    private double integral = 0;
+    private double lastError = 0;
+    private double lastTime = 0;
 
+    private final ElapsedTime timer = new ElapsedTime();
 
-    public Outtake(HardwareMap h, Telemetry t) {
-        this.hardwareMap = h;
+    public Outtake(HardwareMap hw, Telemetry t) {
+        this.hardwareMap = hw;
         this.telemetry = t;
 
+        // Map motors
         outtake = hardwareMap.get(DcMotorEx.class, "Outtake");
-        outtake.setDirection(DcMotorEx.Direction.REVERSE);
-        outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        outtake.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        outtake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        outtake2 = hardwareMap.get(DcMotorEx.class, "Outtake2");
 
+        // Encoder + direction setup
+        outtake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        outtake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        outtake2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        outtake2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        outtake2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        outtake.setDirection(DcMotorSimple.Direction.FORWARD);
+        outtake2.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // Linkage servo
         linkage = hardwareMap.get(Servo.class, "Linkage");
 
-        rpmPID = new PIDController(kp, ki, kd);
+        lastTime = timer.seconds();
     }
 
-    // -- outtake --
-    public void spinToRpm(double rpm) {
-        rpmPID.setPID(kp, ki, kd);
-        double output = rpmPID.calculate(currentRPM(), rpm);
+    // =======================
+    //  Shooter RPM Functions
+    // =======================
+
+    public double getRPM() {
+        // identical to original Shooter logic
+        return outtake.getVelocity() * 2.2;
+    }
+
+    public void spinToRpm(double targetRPM) {
+        double current = getRPM();
+        double error = targetRPM - current;
+
+        double now = timer.seconds();
+        double dt = now - lastTime;
+
+        // PID calculations
+        integral += error * dt;
+        double derivative = (error - lastError) / dt;
+
+        double output = kP * error + kI * integral + kD * derivative;
         output = Range.clip(output, 0, 1);
+
         outtake.setPower(output);
+        outtake2.setPower(output);
+
+        lastError = error;
+        lastTime = now;
     }
 
-    public boolean upToRpm(double rpm) {
-        double curr = currentRPM();
-        return curr > rpm - rpmThresh && curr < rpm + rpmThresh;
+    public boolean atSpeed(double low, double high) {
+        double rpm = getRPM();
+        return rpm >= low && rpm <= high;
     }
 
-    public double currentRPM() {
-        double conversion = 60 / (2 * Math.PI);
-        return outtake.getVelocity(AngleUnit.RADIANS) * conversion;
+    public void stop() {
+        outtake.setPower(0);
+        outtake2.setPower(0);
     }
 
-    // -- linkage --
+    public void reverse() {
+        outtake.setPower(-0.8);
+        outtake2.setPower(-0.8);
+    }
+
+    // =======================
+    // Linkage control
+    // =======================
     public void setLinkage(double pos) {
         linkage.setPosition(pos);
     }
 
-    public double getVelocity() { return outtake.getVelocity();}
-
     @Override
     public void init() {
-        setLinkage(0.92);
+        setLinkage(Constants.LINKAGE_REST);
+        stop();
     }
 
     @Override
-    public void update() {
-
+    public void update(Gamepad gamepad2) {
+        // no-op (Shooter controlled by other subsystems)
     }
-    public void setPower(double power){
-        outtake.setPower(power);
+
+    public void setPower(double p) {
+        outtake.setPower(p);
+        outtake2.setPower(p);
+    }
+
+    public double getVelocity() {
+        return outtake.getVelocity();
+    }
+
+    public void setVelocity(int i) {
+        outtake.setVelocity(i);
+    }
+
+    public double currentRPM() {
+        return outtake.getVelocity() * 2.2;
     }
 }

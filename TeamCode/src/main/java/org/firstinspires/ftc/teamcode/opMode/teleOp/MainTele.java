@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opMode.teleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -25,6 +25,7 @@ public class MainTele extends LinearOpMode {
     private DcMotorEx outtake, outtake2;
     private Servo linkage;
 
+    private Servo blocker;
     // ====== Shooter PID ======
     public static double kP = 0.01, kI = 0.0, kD = 0.0;
     private double integralSum = 0, lastError = 0, lastTime = 0;
@@ -36,9 +37,11 @@ public class MainTele extends LinearOpMode {
 
     private final ElapsedTime timer = new ElapsedTime();
 
-    private enum IntakeState { INTAKE, OUTTAKE, RUNSLOW, OUTTAKE1, OuttakeFar, OuttakeMid, REST }
+    public enum IntakeState { INTAKE, OUTTAKE, RUNSLOW, OUTTAKE1, OuttakeFar, OuttakeMid, Transfer, REST }
     private IntakeState currentState = IntakeState.REST;
     private IntakeState previousState = IntakeState.REST;
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -48,6 +51,7 @@ public class MainTele extends LinearOpMode {
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
+        blocker = hardwareMap.get(Servo.class, "Blocker");
 
         intake = hardwareMap.get(DcMotor.class, "Intake");
         outtake = hardwareMap.get(DcMotorEx.class, "Outtake");
@@ -95,10 +99,12 @@ public class MainTele extends LinearOpMode {
 
             // ====== Intake State Machine ======
             if (gamepad2.right_trigger > 0.2) currentState = IntakeState.INTAKE;
+            else if(gamepad2.dpad_left) currentState = IntakeState.Transfer;
             else if (gamepad2.left_trigger > 0.2) currentState = IntakeState.OUTTAKE;
             else if (gamepad2.right_bumper) currentState = IntakeState.RUNSLOW;
             else if (gamepad2.a) currentState = IntakeState.OUTTAKE1;
             else if (gamepad2.x) currentState = IntakeState.OuttakeFar;
+            else if (gamepad2.y) currentState = IntakeState.OuttakeMid;
             else currentState = IntakeState.REST;
 
             if (currentState != previousState) {
@@ -113,9 +119,19 @@ public class MainTele extends LinearOpMode {
                     outtake.setPower(-0.2);
                     outtake2.setPower(-0.2);
                     linkage.setPosition(0.92);
+                   // blocker.setPosition(0);
+
                     break;
 
+                case Transfer:
+                   // blocker.setPosition(0.6);
+                    intake.setPower(-0.5);
+                    outtake.setPower(-0.2);
+                    outtake2.setPower(-0.2);
+
+
                 case OUTTAKE1:
+                  //  blocker.setPosition(0);
                     if (timer.milliseconds() < 1500) {
                         outtake.setVelocity(2000);
                         intake.setPower(0);
@@ -132,6 +148,7 @@ public class MainTele extends LinearOpMode {
                     break;
 
                 case OUTTAKE:
+                  //  blocker.setPosition(0.6);
                     if (timer.milliseconds() < 700) {
                         outtake.setPower(-0.8);
                         outtake2.setPower(-0.8);
@@ -156,50 +173,30 @@ public class MainTele extends LinearOpMode {
                     break;
 
                 case OuttakeMid:
-                    if (timer.milliseconds() < 700) {
-                        outtake.setPower(-0.8);
-                        outtake2.setPower(-0.8);
-                        intake.setPower(-0.5);
-                        linkage.setPosition(0.92);
-                    } else if (timer.milliseconds() < 2500) {
-                        spinToRpm(3700); // working target RPM
-                        intake.setPower(0);
-                        linkage.setPosition(0.92);
-                    } else if (timer.milliseconds() < 3000) {
-                        spinToRpm(3700);
-                        intake.setPower(0);
+                  //  blocker.setPosition(0.6);
+                    if(timer.milliseconds()<500){
                         linkage.setPosition(0.47);
-                    } else if (timer.milliseconds() < 4000) {
-                        spinToRpm(3700);
-                        intake.setPower(0.8);
-                        linkage.setPosition(0.47);
-                    } else {
-                        spinToRpm(3700);
-                        intake.setPower(0.8);
+                    }else {
+                        spinToRpm(3500);
+                        if (currentRPM() > 3400&&currentRPM()<3600) {
+                            intake.setPower(1);
+                        } else {
+                            intake.setPower(0);
+                        }
                     }
                     break;
 
                 case OuttakeFar:
-                    if (timer.milliseconds() < 700) {
-                        outtake.setPower(-0.8);
-                        outtake2.setPower(-0.8);
-                        intake.setPower(-0.5);
-                        linkage.setPosition(0.92);
-                    } else if (timer.milliseconds() < 2500) {
-                        spinToRpm(6000); // working target RPM
-                        intake.setPower(0);
-                        linkage.setPosition(0.92);
-                    } else if (timer.milliseconds() < 3000) {
-                        spinToRpm(6000);
-                        intake.setPower(0);
+                 //   blocker.setPosition(0.6);
+                    if(timer.milliseconds()<500){
                         linkage.setPosition(0.47);
-                    } else if (timer.milliseconds() < 4000) {
+                    }else {
                         spinToRpm(6000);
-                        intake.setPower(0.8);
-                        linkage.setPosition(0.47);
-                    } else {
-                        spinToRpm(6000);
-                        intake.setPower(0.7);
+                        if (currentRPM() > 4000&&currentRPM()<6000) {
+                            intake.setPower(1);
+                        } else {
+                            intake.setPower(0);
+                        }
                     }
                     break;
 
@@ -213,9 +210,10 @@ public class MainTele extends LinearOpMode {
 
                 default:
                     intake.setPower(0.0);
+                   // blocker.setPosition(0.6);
                     outtake.setPower(0.0);
                     outtake2.setPower(0.0);
-                    linkage.setPosition(0.92);
+                    linkage.setPosition(0.47);
                     break;
             }
 

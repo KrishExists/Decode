@@ -20,8 +20,8 @@ public class BlueClose extends LinearOpMode {
     final Pose2d START_POSE = new Pose2d(-51.5, -51.5, Math.toRadians(144));
     final Pose2d LSHOOT = new Pose2d(-18, -18, Math.toRadians(225));
     final Pose2d SPIKE1 = new Pose2d(36, -51, Math.toRadians(270));
-    final Pose2d SPIKE2 = new Pose2d(12, -54, Math.toRadians(270));
-    final Pose2d SPIKE3 = new Pose2d(-12, -54, Math.toRadians(270));
+    final Pose2d SPIKE2 = new Pose2d(12, -51, Math.toRadians(270));
+    final Pose2d SPIKE3 = new Pose2d(-12, -51, Math.toRadians(270));
 
     Action shootPre, toSpike3, toShootFrom3, toSpike2, toShootFrom2, toSpike1, toShootFrom1, leave;
     boolean currentAction = true;
@@ -59,7 +59,7 @@ public class BlueClose extends LinearOpMode {
         while(opModeIsActive()) {
             if (isStopRequested()) return;
 
-            robot.update();
+            robot.update(gamepad2);
             update();
 
             telemetry.addData("State", state);
@@ -119,8 +119,9 @@ public class BlueClose extends LinearOpMode {
 
         switch (state) {
             case PRELOAD:
+
                 if(timer.milliseconds() < 3000) {
-                    robot.outtake.spinToRpm(1700);
+                    robot.outtake.setVelocity(1650);
                 }
 
                 else if(timer.milliseconds() < 3500) {
@@ -136,14 +137,14 @@ public class BlueClose extends LinearOpMode {
 
                 else if(timer.milliseconds()<5500){
                     robot.intake.setPower(0);
-                    robot.outtake.spinToRpm(2000);
+                    robot.outtake.setVelocity(1650);
                 }else{
                     robot.intake.setPower(0.8);
                 }
 
                 currentAction = shootPre.run(packet);
 
-                if (!currentAction && timer.milliseconds() > 6000) {
+                if (!currentAction && timer.milliseconds() > 8000) {
                     state = ShootStates.CYCLE_3;
                     timer.reset();
                     timer.startTime();
@@ -163,12 +164,12 @@ public class BlueClose extends LinearOpMode {
                 }
                 break;
             case SHOOT_3:
-                if(timer.milliseconds()<600){
+                if(timer.milliseconds()<150){
                     robot.outtake.setPower(-1);
                     robot.intake.setPower(-0.6);
                 }
                 if(timer.milliseconds() < 2000) {
-                    robot.outtake.spinToRpm(3000);
+                    robot.outtake.setVelocity(1650);
                 }
 
                 else if(timer.milliseconds() < 2500) {
@@ -183,7 +184,7 @@ public class BlueClose extends LinearOpMode {
 
                 else if(timer.milliseconds()<4000){
                     robot.intake.setPower(0);
-                    robot.outtake.spinToRpm(2000);
+                    robot.outtake.setVelocity(1650);
                 }else{
                     robot.intake.setPower(0.8);
                 }
@@ -213,7 +214,7 @@ public class BlueClose extends LinearOpMode {
                 }
                 break;
             case SHOOT_2:
-                if(timer.milliseconds()<600){
+                if(timer.milliseconds()<150){
                     robot.outtake.setPower(-0.6);
                     robot.intake.setPower(-0.2);
                 }
@@ -226,7 +227,7 @@ public class BlueClose extends LinearOpMode {
 //                    }
 //                }
                 else if(timer.milliseconds() < 2000) {
-                    robot.outtake.spinToRpm(3000);
+                    robot.outtake.spinToRpm(3500);
                 }
 
                 else if(timer.milliseconds() < 2500) {
@@ -242,7 +243,7 @@ public class BlueClose extends LinearOpMode {
 
                 else if(timer.milliseconds()<4000){
                     robot.intake.setPower(0);
-                    robot.outtake.spinToRpm(2000);
+                    robot.outtake.setVelocity(1650);
                 }else{
                     robot.intake.setPower(0.8);
                 }
@@ -271,12 +272,12 @@ public class BlueClose extends LinearOpMode {
                 }
                 break;
             case SHOOT_1:
-                if(timer.milliseconds()<600){
+                if(timer.milliseconds()<150){
                     robot.outtake.setPower(-0.6);
                     robot.intake.setPower(-0.2);
                 }
                 if(timer.milliseconds() < 2000) {
-                    robot.outtake.spinToRpm(3000);
+                    robot.outtake.setVelocity(1650);
                 }
 
                 else if(timer.milliseconds() < 2500) {
@@ -292,7 +293,7 @@ public class BlueClose extends LinearOpMode {
 
                 else if(timer.milliseconds()<4000){
                     robot.intake.setPower(0);
-                    robot.outtake.spinToRpm(2000);
+                    robot.outtake.setVelocity(1650);
                 }else{
                     robot.intake.setPower(0.8);
                 }

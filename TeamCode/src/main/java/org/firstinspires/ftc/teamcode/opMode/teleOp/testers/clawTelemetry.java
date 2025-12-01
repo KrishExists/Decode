@@ -28,6 +28,8 @@ public class clawTelemetry extends LinearOpMode {
 
     // === Hardware ===
     private Servo linkage;
+
+    private Servo blocker;
     private DcMotorEx shooter, shooter2;
     private DcMotor intake;
     private DcMotorEx leftFront, rightFront, leftRear, rightRear;
@@ -50,6 +52,8 @@ public class clawTelemetry extends LinearOpMode {
 
     // === Dashboard Adjustable Settings ===
     public static double linkagePos = 0.0;
+
+    public static double blockerPos = 0.0;
     public static double shooterPower = 0.0;   // <-- NOW interpreted as TARGET RPM
     public static double intakePower = 0.0;
 
@@ -57,10 +61,12 @@ public class clawTelemetry extends LinearOpMode {
     public void runOpMode() {
 
         linkage = hardwareMap.get(Servo.class, "Linkage");
+        blocker = hardwareMap.get(Servo.class, "Blocker");
 
         shooter = hardwareMap.get(DcMotorEx.class, "Outtake");
         shooter2 = hardwareMap.get(DcMotorEx.class, "Outtake2");
 
+        shooter.setDirection(DcMotorSimple.Direction.FORWARD);
         shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         shooter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -94,6 +100,7 @@ public class clawTelemetry extends LinearOpMode {
 
             // === SERVO ===
             linkage.setPosition(linkagePos);
+            blocker.setPosition(blockerPos);
 
             // === SHOOTER RPM CONTROL ===
             spinToRpm(shooterPower);   // <-- shooterPower is TARGET RPM
