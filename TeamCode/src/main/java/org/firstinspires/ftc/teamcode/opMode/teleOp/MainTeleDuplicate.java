@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opMode.teleOp;
 
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Hardware;
@@ -56,6 +57,13 @@ public class MainTeleDuplicate extends LinearOpMode {
             } else {
                 drive.manualDrive(gamepad1);
             }
+
+            if (gamepad1.a) {
+                drive.alignToPose(new Pose2d(144, 144, Math.toRadians(90)));
+            } else {
+                drive.manualDrive(gamepad1);
+            }
+
 
 
 // Telemetry

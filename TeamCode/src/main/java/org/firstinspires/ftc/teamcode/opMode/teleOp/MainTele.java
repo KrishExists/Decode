@@ -119,12 +119,12 @@ public class MainTele extends LinearOpMode {
                     outtake.setPower(-0.2);
                     outtake2.setPower(-0.2);
                     linkage.setPosition(0.92);
-                   // blocker.setPosition(0);
+                   blocker.setPosition(0);
 
                     break;
 
                 case Transfer:
-                   // blocker.setPosition(0.6);
+                   blocker.setPosition(0.6);
                     intake.setPower(-0.5);
                     outtake.setPower(-0.2);
                     outtake2.setPower(-0.2);
@@ -210,7 +210,7 @@ public class MainTele extends LinearOpMode {
 
                 default:
                     intake.setPower(0.0);
-                   // blocker.setPosition(0.6);
+                   blocker.setPosition(0.6);
                     outtake.setPower(0.0);
                     outtake2.setPower(0.0);
                     linkage.setPosition(0.47);
