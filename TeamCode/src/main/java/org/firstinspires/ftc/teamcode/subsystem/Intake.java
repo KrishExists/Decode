@@ -21,6 +21,8 @@ public class Intake implements Subsystem{
     private Servo linkage;
 
     private final Outtake shooter;
+
+    public boolean AtRPM = false;
     private final Telemetry telemetry;
 
     // State machine
@@ -87,6 +89,7 @@ public class Intake implements Subsystem{
             case INTAKE:
                 intake.setPower(Constants.INTAKE_IN_POWER);
                 shooter.stop();
+                shooter.setPower(-1.0);
                 linkage.setPosition(Constants.LINKAGE_REST);
                 blocker.setPosition(Constants.BLOCKER_OPEN);
                 break;
@@ -146,8 +149,9 @@ public class Intake implements Subsystem{
                 if (t < 500) {
                     linkage.setPosition(Constants.LINKAGE_MID);
                 } else {
-                    shooter.spinToRpm(3500);
-                    if (shooter.atSpeed(3400, 3600)) {
+                    shooter.spinToRpm(4000);
+                    if (shooter.atSpeed(3800, 3600) || AtRPM) {
+                        AtRPM = true;
                         intake.setPower(Constants.INTAKE_FEED_POWER);
                     } else intake.setPower(0);
                 }

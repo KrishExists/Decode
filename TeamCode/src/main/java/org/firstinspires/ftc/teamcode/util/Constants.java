@@ -13,7 +13,7 @@ public class Constants {
 
     // ===== Blocker =====
     public static final double BLOCKER_OPEN = 0.0;
-    public static final double BLOCKER_CLOSE = 0.6;
+    public static final double BLOCKER_CLOSE = 0.36;
 
 
     // ===== Linkage Positions =====

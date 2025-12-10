@@ -26,6 +26,7 @@ public class Outtake implements Subsystem {
     public DcMotorEx outtake2;
     public Servo linkage;
 
+
     // Shooter PID variables (from Shooter class)
     public static double kP = 0.01, kI = 0.0, kD = 0.0;
 
