@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.Constants;
 import org.firstinspires.ftc.teamcode.util.StateMachine;
@@ -12,13 +14,15 @@ import org.firstinspires.ftc.teamcode.util.StateMachine;
 public class Intake implements Subsystem{
 
     public enum IntakeState {
-        INTAKE, OUTTAKE, RUNSLOW, OUTTAKE1, OUTTAKE_FAR, OUTTAKE_MID, TRANSFER, REST
+        INTAKE, OUTTAKE, RUNSLOW, OUTTAKE1, OUTTAKE_FAR, OUTTAKE_MID, TRANSFER, IntakeNEXT, REST
     }
 
     // Hardware
     private DcMotor intake;
     private Servo blocker;
     private Servo linkage;
+
+    private DcMotorEx transfer;
 
     private final Outtake shooter;
 
@@ -39,6 +43,7 @@ public class Intake implements Subsystem{
         intake = hw.get(DcMotor.class, "Intake");
         blocker = hw.get(Servo.class, "Blocker");
         linkage = hw.get(Servo.class, "Linkage");
+        transfer = hw.get(DcMotorEx.class, "Transfer");
 
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
@@ -70,7 +75,8 @@ public class Intake implements Subsystem{
         // -----------------------------
         // MAP GAMEPAD INPUT TO STATES
         // -----------------------------
-        if (gamepad2.right_trigger > 0.2) setState(IntakeState.INTAKE);
+        if (gamepad2.dpad_down) setState(IntakeState.INTAKE);
+        if(gamepad2.dpad_up) setState(IntakeState.IntakeNEXT);
         else if (gamepad2.dpad_left) setState(IntakeState.TRANSFER);
         else if (gamepad2.left_trigger > 0.2) setState(IntakeState.OUTTAKE);
         else if (gamepad2.right_bumper) setState(IntakeState.RUNSLOW);
@@ -89,9 +95,17 @@ public class Intake implements Subsystem{
             case INTAKE:
                 intake.setPower(Constants.INTAKE_IN_POWER);
                 shooter.stop();
-                shooter.setPower(-1.0);
                 linkage.setPosition(Constants.LINKAGE_REST);
                 blocker.setPosition(Constants.BLOCKER_OPEN);
+                transfer.setPower(Constants.TRANSFER_IN_POWER);
+                break;
+
+            case IntakeNEXT:
+                intake.setPower(Constants.INTAKE_IN_POWER);
+                shooter.stop();
+                linkage.setPosition(Constants.LINKAGE_REST);
+                blocker.setPosition(Constants.BLOCKER_OPEN);
+                transfer.setPower(Constants.TRANSFER_CLOSED);
                 break;
 
             case TRANSFER:
@@ -101,7 +115,7 @@ public class Intake implements Subsystem{
                 break;
 
             case RUNSLOW:
-                intake.setPower(-1.0);
+                transfer.setPower(-1.0);
                 shooter.reverse();
                 linkage.setPosition(Constants.LINKAGE_REST);
                 break;
@@ -150,10 +164,14 @@ public class Intake implements Subsystem{
                     linkage.setPosition(Constants.LINKAGE_MID);
                 } else {
                     shooter.spinToRpm(4000);
-                    if (shooter.atSpeed(3800, 3600) || AtRPM) {
+                    if (shooter.atSpeed(3800, 3600)) {
                         AtRPM = true;
                         intake.setPower(Constants.INTAKE_FEED_POWER);
-                    } else intake.setPower(0);
+                        transfer.setPower(Constants.TRANSFER_IN_POWER);
+                    } else {
+                        intake.setPower(0);
+                        transfer.setPower(Constants.TRANSFER_CLOSED);
+                    }
                 }
                 break;
 
@@ -165,7 +183,11 @@ public class Intake implements Subsystem{
                     shooter.spinToRpm(6000);
                     if (shooter.atSpeed(3700, 6000)) {
                           intake.setPower(Constants.INTAKE_FEED_POWER);
-                    } else intake.setPower(0);
+                        transfer.setPower(Constants.TRANSFER_IN_POWER);
+                    } else {
+                        intake.setPower(0);
+                        transfer.setPower(Constants.TRANSFER_CLOSED);
+                    }
                 }
                 break;
 
@@ -174,6 +196,7 @@ public class Intake implements Subsystem{
                 intake.setPower(0);
                 shooter.stop();
                 blocker.setPosition(Constants.BLOCKER_CLOSE);
+                transfer.setPower(Constants.TRANSFER_CLOSED);
                 linkage.setPosition(Constants.LINKAGE_REST);
                 break;
         }

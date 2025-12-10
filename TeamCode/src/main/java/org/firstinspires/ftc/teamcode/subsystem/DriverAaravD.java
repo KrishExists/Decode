@@ -21,15 +21,15 @@ public class DriverAaravD implements Subsystem {
 
     public DriverAaravD (HardwareMap map, Telemetry telemetry) {
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        lfMotor = map.get(DcMotor.class, "LFM");
-        lbMotor = map.get(DcMotor.class, "LBM");
-        rfMotor = map.get(DcMotor.class, "RFM");
-        rbMotor = map.get(DcMotor.class, "RBM");
-
-        lfMotor.setDirection(DcMotor.Direction.REVERSE);
-        lbMotor.setDirection(DcMotor.Direction.REVERSE);
-        rfMotor.setDirection(DcMotor.Direction.REVERSE);
-        rbMotor.setDirection(DcMotor.Direction.FORWARD);
+        lfMotor = map.get(DcMotor.class, "frontLeftMotor");
+        lbMotor = map.get(DcMotor.class, "backLeftMotor");
+        rfMotor = map.get(DcMotor.class, "frontRightMotor");
+        rbMotor = map.get(DcMotor.class, "backRightMotor");
+//
+//        lfMotor.setDirection(DcMotor.Direction.REVERSE);
+//        lbMotor.setDirection(DcMotor.Direction.REVERSE);
+//        rfMotor.setDirection(DcMotor.Direction.REVERSE);
+//        rbMotor.setDirection(DcMotor.Direction.FORWARD);
 
         lfMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lbMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -49,17 +49,17 @@ public class DriverAaravD implements Subsystem {
         this.rx = rx;
     }
 
-    public void update(Gamepad g) {
-        denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-        lfPower = (y + x + rx) / denominator;
-        lbPower = (y - x + rx) / denominator;
-        rfPower = (y - x - rx) / denominator;
-        rbPower = (y + x - rx) / denominator;
+    public void update(Gamepad gamepad1) {
+        double y = -gamepad1.left_stick_y;
+        double x = gamepad1.left_stick_x * 1.1;
+        double rx = gamepad1.right_stick_x;
 
-        lfMotor.setPower(lfPower);
-        lbMotor.setPower(lbPower);
-        rfMotor.setPower(rfPower);
-        rbMotor.setPower(rbPower);
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1.0);
+
+        lfMotor.setPower((y + x + rx) / denominator);
+        lbMotor.setPower((y - x + rx) / denominator);
+        rfMotor.setPower((y - x - rx) / denominator);
+        rbMotor.setPower((y + x - rx) / denominator);
     }
 
     public void updateCtrls(Gamepad gp1, Gamepad gp2) {
