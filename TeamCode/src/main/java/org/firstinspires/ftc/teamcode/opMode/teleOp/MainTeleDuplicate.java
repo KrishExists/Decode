@@ -39,6 +39,8 @@ public class MainTeleDuplicate extends LinearOpMode {
         telemetry.update();
         waitForStart();
         if (isStopRequested()) return;
+        intake.timerStart();
+        intake.timerReset();
 
 
 // ===== Main Loop =====

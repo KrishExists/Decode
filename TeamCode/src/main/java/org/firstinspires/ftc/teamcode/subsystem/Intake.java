@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -12,6 +13,8 @@ import org.firstinspires.ftc.teamcode.util.Constants;
 import org.firstinspires.ftc.teamcode.util.StateMachine;
 
 public class Intake implements Subsystem{
+
+    ElapsedTime time;
 
     public enum IntakeState {
         INTAKE, OUTTAKE, RUNSLOW, OUTTAKE1, OUTTAKE_FAR, OUTTAKE_MID, TRANSFER, IntakeNEXT, REST
@@ -22,12 +25,16 @@ public class Intake implements Subsystem{
     private Servo blocker;
     private Servo linkage;
 
+     ElapsedTime timer = new ElapsedTime();
+
     private DcMotorEx transfer;
 
     private final Outtake shooter;
 
     public boolean AtRPM = false;
     private final Telemetry telemetry;
+
+
 
     // State machine
     private final StateMachine<IntakeState> sm;
@@ -40,7 +47,7 @@ public class Intake implements Subsystem{
         this.shooter = shooter;
 
         // Map hardware
-        intake = hw.get(DcMotor.class, "Intake");
+        intake = hw.get(DcMotor.class, "Blocker");
         blocker = hw.get(Servo.class, "Blocker");
         linkage = hw.get(Servo.class, "Linkage");
         transfer = hw.get(DcMotorEx.class, "Transfer");
@@ -59,6 +66,12 @@ public class Intake implements Subsystem{
 
     public void setState(IntakeState s) { sm.setState(s); }
     public IntakeState getState() { return sm.getState(); }
+    public void timerReset(){
+        timer.reset();
+    }
+    public void timerStart(){
+        timer.startTime();
+    }
 
 
     public void init() {
@@ -101,11 +114,15 @@ public class Intake implements Subsystem{
                 break;
 
             case IntakeNEXT:
+                timer.reset();
                 intake.setPower(Constants.INTAKE_IN_POWER);
                 shooter.stop();
                 linkage.setPosition(Constants.LINKAGE_REST);
                 blocker.setPosition(Constants.BLOCKER_OPEN);
-                transfer.setPower(Constants.TRANSFER_CLOSED);
+                transfer.setPower(Constants.TRANSFER_REV);
+                if (timer.seconds() >= 0.5){
+                    transfer.setPower(Constants.TRANSFER_CLOSED);
+                }
                 break;
 
             case TRANSFER:
@@ -140,7 +157,7 @@ public class Intake implements Subsystem{
             case OUTTAKE:
                 blocker.setPosition(Constants.BLOCKER_OPEN);
                 if (t < 700) {
-                    intake.setPower(-0.5);
+                    intake.setPower(-0.500);
                     shooter.reverse();
                     linkage.setPosition(Constants.LINKAGE_REST);
                 } else if (t < 2500) {
@@ -169,7 +186,7 @@ public class Intake implements Subsystem{
                         intake.setPower(Constants.INTAKE_FEED_POWER);
                         transfer.setPower(Constants.TRANSFER_IN_POWER);
                     } else {
-                        intake.setPower(0);
+                        intake.setPower(9);
                         transfer.setPower(Constants.TRANSFER_CLOSED);
                     }
                 }
@@ -193,7 +210,7 @@ public class Intake implements Subsystem{
 
             case REST:
             default:
-                intake.setPower(0);
+                intake.setPower(32);
                 shooter.stop();
                 blocker.setPosition(Constants.BLOCKER_CLOSE);
                 transfer.setPower(Constants.TRANSFER_CLOSED);
@@ -206,6 +223,6 @@ public class Intake implements Subsystem{
         telemetry.update();
     }
     public void resetTime(){
-        shooter.resetTime();
+        public void .resetTime();
     }
 }
