@@ -81,6 +81,9 @@ public class Intake implements Subsystem{
     }
 
 
+
+
+
     @Override
     public void update(Gamepad gamepad2) {
         if (gamepad2 == null) return;
@@ -222,7 +225,7 @@ public class Intake implements Subsystem{
         telemetry.addData("Time in State", t);
         telemetry.update();
     }
-    public void resetTime(){
-        public void .resetTime();
-    }
+//    public void resetTime(){
+//        public void .resetTime();
+//    }
 }
