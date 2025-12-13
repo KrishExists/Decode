@@ -85,6 +85,10 @@ package org.firstinspires.ftc.teamcode.opMode.teleOp;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.subsystem.ColorSensor;
 import org.firstinspires.ftc.teamcode.subsystem.Drivetrain;
@@ -98,6 +102,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @TeleOp(name = "MainTeleDuplicate", group = "Main")
@@ -113,13 +118,17 @@ public class MainTeleDuplicate extends LinearOpMode {
     private static final double DESIRED_DISTANCE = 12.0;
     private static final double SPEED_GAIN = 0.02;
     private static final double TURN_GAIN = 0.01;
-
+    final double MAX_AUTO_SPEED = 0.5;
+    final double MAX_AUTO_TURN  = 0.3;
     private Drivetrain drive;
     private Outtake shooter;
     private Intake intake;
     private ColorSensor colorSensor;
     //private Vision vision;
     private boolean starts = true;
+    private static final boolean USE_WEBCAM = true;
+
+    private AprilTagDetection desiredTag = null;
 
 
     @Override
@@ -132,19 +141,16 @@ public class MainTeleDuplicate extends LinearOpMode {
         drive = new Drivetrain(hardwareMap, telemetry);
         colorSensor = new ColorSensor(hardwareMap);
         intake = new Intake(hardwareMap, telemetry, shooter,colorSensor);
-        //  vision = new Vision(hw);
-        aprilTag = new AprilTagProcessor.Builder().build();
-        aprilTag.setDecimation(2);
+        boolean targetFound;
 
-        visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .addProcessor(aprilTag)
-                .build();
+        initAprilTag();
 
 
         telemetry.addLine("Initialized — Waiting for Start");
         telemetry.update();
-
+        if (USE_WEBCAM) {
+            setManualExposure(6, 250);
+        }
         waitForStart();
         if (isStopRequested()) return;
         intake.timerStart();
@@ -153,6 +159,8 @@ public class MainTeleDuplicate extends LinearOpMode {
 
 // ===== Main Loop =====
         while (opModeIsActive()) {
+            targetFound = false;
+            desiredTag = null;
 //            if(starts){
 //                intake.resetTime();
 //                starts = false;
@@ -164,41 +172,51 @@ public class MainTeleDuplicate extends LinearOpMode {
 // Drive: Auto Align OR Manual
             if (gamepad1.a) {
 
-                AprilTagDetection tag = null;
                 List<AprilTagDetection> detections = aprilTag.getDetections();
-
                 for (AprilTagDetection detection : detections) {
-                    telemetry.addData("Detected",detection.id);
-                    if (detection.metadata != null &&
-                            (DESIRED_TAG_ID < 0 || detection.id == DESIRED_TAG_ID)) {
-                        tag = detection;
-                        break;
+                    if (detection.metadata != null) {
+                        if (DESIRED_TAG_ID < 0 || detection.id == DESIRED_TAG_ID) {
+                            targetFound = true;
+                            desiredTag = detection;
+                            break;
+                        }
                     }
                 }
 
-                if (tag != null) {
-                    double rangeError = tag.ftcPose.range - DESIRED_DISTANCE;
-                    telemetry.addData("tag",rangeError);
-                    double headingError = tag.ftcPose.bearing;
+                if (targetFound) {
+                    double rangeError = desiredTag.ftcPose.range - DESIRED_DISTANCE;
+                    double headingError = desiredTag.ftcPose.bearing;
 
-                    double drivePower = Range.clip(rangeError * SPEED_GAIN, -0.5, 0.5);
-                    double turnPower  = Range.clip(headingError * TURN_GAIN, -0.3, 0.3);
+                   double drive2  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+                   double turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
+                double    strafe = 0;
 
+                    telemetry.addData("AUTO", "Drive %.2f Turn %.2f", drive, turn);
                     // IMPORTANT: this assumes your Drivetrain has a drive method
-                    drive.moveRobot(drivePower, 0, turnPower);
+                    drive.moveRobot(0, 0, turn);
 
-                    telemetry.addData("AprilTag", "ID %d", tag.id);
-                    telemetry.addData("Range", "%.1f", tag.ftcPose.range);
-                    telemetry.addData("Bearing", "%.1f", tag.ftcPose.bearing);
+                    telemetry.addData("AprilTag", "ID %d", desiredTag.id);
+                    telemetry.addData("Range", "%.1f", desiredTag.ftcPose.range);
+                    telemetry.addData("Bearing", "%.1f", desiredTag.ftcPose.bearing);
+                    telemetry.addData("AUTO", "Drive %.2f Turn %.2f", drive, turn);
+
                 } else {
                     drive.manualDrive(gamepad1);
                     telemetry.addLine("AprilTag: NOT FOUND");
                 }
-
+//end of if gamepad a
             } else {
                 drive.manualDrive(gamepad1);
             }
 
+            if (targetFound) {
+                telemetry.addData("Tag", "ID %d", desiredTag.id);
+                telemetry.addData("Range", "%.1f in", desiredTag.ftcPose.range);
+                telemetry.addData("Bearing", "%.1f deg", desiredTag.ftcPose.bearing);
+                telemetry.addData(">", "Hold LEFT BUMPER for auto");
+            } else {
+                telemetry.addData(">", "Find AprilTag");
+            }
 
             if (visionPortal != null) {
                 visionPortal.close();
@@ -211,6 +229,43 @@ public class MainTeleDuplicate extends LinearOpMode {
             telemetry.addData("Intake State", intake.getState());
             telemetry.addData("Shooter RPM", shooter.atSpeed(0, 99999));
             telemetry.update();
+        }
+    }
+    private void initAprilTag() {
+
+        aprilTag = new AprilTagProcessor.Builder().build();
+        aprilTag.setDecimation(2);
+
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+        if (USE_WEBCAM) {
+            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        } else {
+            builder.setCamera(BuiltinCameraDirection.BACK);
+        }
+
+        visionPortal = builder.addProcessor(aprilTag).build();
+    }
+
+    // ================== CAMERA CONTROL ==================
+    private void setManualExposure(int exposureMS, int gain) {
+
+        if (visionPortal == null) return;
+
+        while (!isStopRequested() &&
+                visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            sleep(20);
+        }
+
+        if (!isStopRequested()) {
+            ExposureControl exposure = visionPortal.getCameraControl(ExposureControl.class);
+            if (exposure.getMode() != ExposureControl.Mode.Manual) {
+                exposure.setMode(ExposureControl.Mode.Manual);
+                sleep(50);
+            }
+            exposure.setExposure(exposureMS, TimeUnit.MILLISECONDS);
+
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
         }
     }
 }

@@ -84,14 +84,7 @@ public class RobotAutoDriveToAprilTagMecanum extends LinearOpMode {
                 }
             }
 
-            if (targetFound) {
-                telemetry.addData("Tag", "ID %d", desiredTag.id);
-                telemetry.addData("Range", "%.1f in", desiredTag.ftcPose.range);
-                telemetry.addData("Bearing", "%.1f deg", desiredTag.ftcPose.bearing);
-                telemetry.addData(">", "Hold LEFT BUMPER for auto");
-            } else {
-                telemetry.addData(">", "Find AprilTag");
-            }
+
 
             if (gamepad1.left_bumper && targetFound) {
                 // AUTO MODE
