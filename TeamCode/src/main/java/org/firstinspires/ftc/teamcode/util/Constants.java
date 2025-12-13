@@ -7,11 +7,13 @@ public class Constants {
     // ===== Intake =====
     public static final double INTAKE_IN_POWER = 0.8;
 
-    public static final double TRANSFER_IN_POWER = 1;
+    public static final double INTAKE_REVERSE_KEEP = 1;
+
+    public static final double TRANSFER_IN_POWER = -1;
 
     public static final double TRANSFER_CLOSED = 0;
 
-    public static final double TRANSFER_REV = -0.5;
+    public static final double TRANSFER_REV = 1;
     public static final double INTAKE_FEED_POWER = 1.0;
     public static final double INTAKE_DEFAULT_POWER = 0.0;
     public static final double INTAKE_REVERSE_TRANSFER = -0.5;
