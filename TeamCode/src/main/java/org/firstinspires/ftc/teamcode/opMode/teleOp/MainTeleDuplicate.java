@@ -162,12 +162,13 @@ public class MainTeleDuplicate extends LinearOpMode {
 
 
 // Drive: Auto Align OR Manual
-            if (gamepad2.left_bumper) {
+            if (gamepad1.a) {
 
                 AprilTagDetection tag = null;
                 List<AprilTagDetection> detections = aprilTag.getDetections();
 
                 for (AprilTagDetection detection : detections) {
+                    telemetry.addData("Detected",detection.id);
                     if (detection.metadata != null &&
                             (DESIRED_TAG_ID < 0 || detection.id == DESIRED_TAG_ID)) {
                         tag = detection;
@@ -177,6 +178,7 @@ public class MainTeleDuplicate extends LinearOpMode {
 
                 if (tag != null) {
                     double rangeError = tag.ftcPose.range - DESIRED_DISTANCE;
+                    telemetry.addData("tag",rangeError);
                     double headingError = tag.ftcPose.bearing;
 
                     double drivePower = Range.clip(rangeError * SPEED_GAIN, -0.5, 0.5);
@@ -197,11 +199,7 @@ public class MainTeleDuplicate extends LinearOpMode {
                 drive.manualDrive(gamepad1);
             }
 
-            if (gamepad1.a) {
-                drive.alignToPose(new Pose2d(144, 144, Math.toRadians(90)));
-            } else {
-                drive.manualDrive(gamepad1);
-            }
+
             if (visionPortal != null) {
                 visionPortal.close();
             }

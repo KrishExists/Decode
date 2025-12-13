@@ -62,7 +62,7 @@ public class Drivetrain implements Subsystem {
     }
 
     public void moveRobot(double drive, double strafe, double turn) {
-
+        drive = 0;
         double fl = drive + strafe + turn;
         double fr = drive - strafe - turn;
         double bl = drive - strafe + turn;

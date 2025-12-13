@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class TestBenchColor {
     NormalizedColorSensor colorSensor;
 
-    public enum detectedColor {
+    public enum DetectedColor {
         RED,
         BLUE,
         YELLOW,
@@ -18,9 +22,17 @@ public class TestBenchColor {
         colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
     }
 
-    public DetectedColor getDetectedColor() {
+    public DetectedColor getDetectedColor(Telemetry telemetry) {
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
         float normRed, normGreen,normBlue;
-        normRed = colors.red/
+        normRed = colors.red/colors.alpha;
+        normGreen = colors.green/colors.alpha;
+        normBlue = colors.blue/colors.alpha;
+        telemetry.addData("red",normRed);
+        telemetry.addData("blue",normBlue);
+        telemetry.addData("gren",normGreen);
+
+        //TODO add if statements for specific colors added
+        return DetectedColor.UNKOWN;
     }
 }
