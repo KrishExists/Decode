@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Hardware;
+import org.firstinspires.ftc.teamcode.subsystem.ColorSensor;
 import org.firstinspires.ftc.teamcode.subsystem.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Outtake;
@@ -19,6 +20,7 @@ public class MainTeleDuplicate extends LinearOpMode {
     private Drivetrain drive;
     private Outtake shooter;
     private Intake intake;
+    private ColorSensor colorSensor;
     //private Vision vision;
     private boolean starts = true;
 
@@ -31,7 +33,8 @@ public class MainTeleDuplicate extends LinearOpMode {
         hw = new Hardware(hardwareMap);
         shooter = new Outtake(hardwareMap, telemetry);
         drive = new Drivetrain(hardwareMap, telemetry);
-        intake = new Intake(hardwareMap, telemetry, shooter);
+        colorSensor = new ColorSensor(hardwareMap);
+        intake = new Intake(hardwareMap, telemetry, shooter,colorSensor);
       //  vision = new Vision(hw);
 
 

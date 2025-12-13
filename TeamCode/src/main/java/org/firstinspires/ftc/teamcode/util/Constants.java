@@ -7,6 +7,8 @@ public class Constants {
     // ===== Intake =====
     public static final double INTAKE_IN_POWER = 0.8;
 
+    public static final double shooterMid = 3500;
+
     public static final double INTAKE_REVERSE_KEEP = 1;
 
     public static final double TRANSFER_IN_POWER = -1;
