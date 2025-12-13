@@ -417,6 +417,7 @@ public class Intake implements Subsystem{
                 }
                 break;
             case SpeedFar:
+                intake.setPower(0.6);
                 linkage.setPosition(Constants.LINKAGE_MID);
                 shooter.spinToRpm(6000);
                 if(gamepad2.right_bumper){
@@ -425,6 +426,7 @@ public class Intake implements Subsystem{
                 }
                 break;
             case SpeedMid:
+                intake.setPower(0.6);
                 linkage.setPosition(Constants.LINKAGE_MID);
                 shooter.spinToRpm(4000);
                 if(gamepad2.right_bumper){
@@ -459,7 +461,7 @@ public class Intake implements Subsystem{
                     linkage.setPosition(Constants.LINKAGE_MID);
 
                 } else {
-                    shooter.spinToRpm(4000);
+                    shooter.spinToRpm(3700);
                     if (shooter.atSpeed(3100, 4100)) {
                         intake.setPower(Constants.INTAKE_FEED_POWER);
                         transfer.setPower(Constants.TRANSFER_IN_POWER);
