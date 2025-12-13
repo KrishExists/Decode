@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.subsystem;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -60,6 +59,28 @@ public class Drivetrain implements Subsystem {
         double dx = target.position.x - current.position.x;
         double dy = target.position.y - current.position.y;
         return Math.atan2(dy, dx);
+    }
+
+    public void moveRobot(double drive, double strafe, double turn) {
+
+        double fl = drive + strafe + turn;
+        double fr = drive - strafe - turn;
+        double bl = drive - strafe + turn;
+        double br = drive + strafe - turn;
+
+        double max = Math.max(
+                Math.max(Math.abs(fl), Math.abs(fr)),
+                Math.max(Math.abs(bl), Math.abs(br))
+        );
+
+        if (max > 1.0) {
+            fl /= max;
+            fr /= max;
+            bl /= max;
+            br /= max;
+        }
+        setMotorPowers(fl,fr,bl,br);
+
     }
 
     public void alignToPose(Pose2d target) {
