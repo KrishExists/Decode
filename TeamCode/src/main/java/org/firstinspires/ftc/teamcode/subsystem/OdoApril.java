@@ -73,7 +73,7 @@ public class OdoApril implements Subsystem {
     }
 
 
-    public void update(Gamepad gamepad1) {
+    public void update(Gamepad gamepad1, Gamepad gamepad2) {
         drive.updatePoseEstimate();
 
         if (alignmentActive) {

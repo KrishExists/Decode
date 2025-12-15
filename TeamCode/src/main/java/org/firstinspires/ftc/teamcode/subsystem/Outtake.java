@@ -121,7 +121,7 @@ public class Outtake implements Subsystem {
     }
 
     @Override
-    public void update(Gamepad gamepad2) {
+    public void update(Gamepad gamepad21, Gamepad gamepad2) {
         // no-op (Shooter controlled by other subsystems)
     }
 
