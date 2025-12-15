@@ -40,8 +40,7 @@ public class AutoAlignTester extends LinearOpMode {
         frontLeft  = hardwareMap.get(DcMotor.class, "frontLeftMotor");
         frontRight = hardwareMap.get(DcMotor.class, "frontRightMotor");
         backLeft   = hardwareMap.get(DcMotor.class, "backLeftMotor");
-        backRight  = hardwareMap.get(DcMotor.class, "backRightMotor" +
-                "");
+        backRight  = hardwareMap.get(DcMotor.class, "backRightMotor");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);

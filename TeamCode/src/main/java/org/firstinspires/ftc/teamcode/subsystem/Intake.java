@@ -838,7 +838,7 @@ public class Intake implements Subsystem{
 
 
     @Override
-    public void update(Gamepad gamepad2) {
+    public void update(Gamepad gamepad1, Gamepad gamepad2) {
         if (gamepad2 == null) return;
 
         // -----------------------------

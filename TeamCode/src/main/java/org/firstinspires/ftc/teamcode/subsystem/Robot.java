@@ -44,9 +44,9 @@ public class Robot implements Subsystem { //The Rhetorical Situation
     }
 
     @Override
-    public void update(Gamepad gamepad2) {
+    public void update(Gamepad gamepad1,Gamepad gamepad2){
         for(Subsystem s : subsystems){
-            s.update(gamepad2);
+            s.update(gamepad1, gamepad2);
         }
     }
 }
