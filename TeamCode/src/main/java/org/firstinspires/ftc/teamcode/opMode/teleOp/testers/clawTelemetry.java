@@ -34,6 +34,8 @@ public class clawTelemetry extends LinearOpMode {
     private DcMotor intake;
     private DcMotorEx leftFront, rightFront, leftRear, rightRear;
 
+    private DcMotorEx transfer;
+
     // === Dashboard ===
     FtcDashboard dashboard;
 
@@ -53,6 +55,8 @@ public class clawTelemetry extends LinearOpMode {
     // === Dashboard Adjustable Settings ===
     public static double linkagePos = 0.0;
 
+    public static double transferPower = 0.0;
+
     public static double blockerPos = 0.0;
     public static double shooterPower = 0.0;   // <-- NOW interpreted as TARGET RPM
     public static double intakePower = 0.0;
@@ -62,6 +66,7 @@ public class clawTelemetry extends LinearOpMode {
 
         linkage = hardwareMap.get(Servo.class, "Linkage");
         blocker = hardwareMap.get(Servo.class, "Blocker");
+        transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
 
         shooter = hardwareMap.get(DcMotorEx.class, "Outtake");
         shooter2 = hardwareMap.get(DcMotorEx.class, "Outtake2");
@@ -90,6 +95,7 @@ public class clawTelemetry extends LinearOpMode {
 
         initAprilTag();
 
+
         telemetry.addLine("Init Complete");
         telemetry.update();
         waitForStart();
@@ -101,6 +107,7 @@ public class clawTelemetry extends LinearOpMode {
             // === SERVO ===
             linkage.setPosition(linkagePos);
             blocker.setPosition(blockerPos);
+            transfer.setPower(transferPower);
 
             // === SHOOTER RPM CONTROL ===
             spinToRpm(shooterPower);   // <-- shooterPower is TARGET RPM

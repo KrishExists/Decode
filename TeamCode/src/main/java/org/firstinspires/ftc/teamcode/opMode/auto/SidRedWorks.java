@@ -21,9 +21,9 @@ public class SidRedWorks extends LinearOpMode {
 
     final Pose2d START_POSE = new Pose2d(-51.5, 51.5, Math.toRadians(-144));
     final Pose2d LSHOOT = new Pose2d(-18, 18, Math.toRadians(-225));
-    final Pose2d SPIKE1 = new Pose2d(36, 51, Math.toRadians(-270));
-    final Pose2d SPIKE2 = new Pose2d(12, 54, Math.toRadians(-270));
-    final Pose2d SPIKE3 = new Pose2d(-12, 54, Math.toRadians(-270));
+    final Pose2d SPIKE1 = new Pose2d(36, 21, Math.toRadians(-270));
+    final Pose2d SPIKE2 = new Pose2d(12, 44, Math.toRadians(-270));
+    final Pose2d SPIKE3 = new Pose2d(-12, 44, Math.toRadians(-270));
 
     final PoseMap poseMap = pose -> new Pose2dDual<>(pose.position.x, pose.position.y.unaryMinus(), pose.heading.inverse());
 

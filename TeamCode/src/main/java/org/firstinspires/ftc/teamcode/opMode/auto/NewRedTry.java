@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opMode.auto;
 
+import android.graphics.drawable.ScaleDrawable;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -11,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.roadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.Robot;
 
 @Autonomous
@@ -25,6 +28,8 @@ public class NewRedTry extends LinearOpMode {
     final Pose2d SPIKE1 = new Pose2d(36, 51, Math.toRadians(-270));
     final Pose2d SPIKE2 = new Pose2d(14, 54, Math.toRadians(-270));
     final Pose2d SPIKE3 = new Pose2d(-10, 54, Math.toRadians(-270));
+
+    MecanumDrive drive;
 
     Action shootPre, toSpike3, toShootFrom3, toSpike2, toShootFrom2, toSpike1, toShootFrom1, leave;
     boolean currentAction = true;
@@ -50,11 +55,11 @@ public class NewRedTry extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         timer.reset();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        drive = new MecanumDrive(hardwareMap, START_POSE);
 
         robot = new Robot(hardwareMap, telemetry, START_POSE);
 
         build_paths();
-        robot.init();
 
         waitForStart();
         timer.reset();
@@ -62,8 +67,10 @@ public class NewRedTry extends LinearOpMode {
         while (opModeIsActive()) {
             if (isStopRequested()) return;
 
-            robot.update(gamepad2);
+
             update();
+            drive.updatePoseEstimate();
+            Pose2d currentPose = drive.localizer.getPose();
 
             telemetry.addData("State", state);
             telemetry.addData("Outtake", robot.outtake.getVelocity());
@@ -185,13 +192,15 @@ public class NewRedTry extends LinearOpMode {
                 if(currentAction){
                    robot.outtake.setVelocity(1700);
                    timer.reset();
+                   wasPassedThresh = false;
                 }else{
                      if(timer.milliseconds()<800){
                         telemetry.addData("Timer",timer.milliseconds());
-                        robot.outtake.linkage.setPosition(0.6);
+                        robot.outtake.linkage.setPosition(0.5);
                     }else{
-                    robot.outtake.setVelocity(1700);
-                    if(robot.outtake.currentRPM()>3000){
+                         telemetry.addData("Count",count);
+                    robot.outtake.setVelocity(2000);
+                    if(robot.outtake.currentRPM()>2800){
                         telemetry.addData("Up to rpm",robot.outtake.currentRPM());
                         robot.intake.setPower(1);
                         wasPassedThresh = true;

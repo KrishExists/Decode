@@ -18,13 +18,15 @@ public class Robot implements Subsystem { //The Rhetorical Situation
     public Drivetrain drive;
     public Intake intake;
     public Outtake outtake;
+    public ColorSensor colorSensor;
 
     public Robot(HardwareMap h, Telemetry t, Pose2d pose) {
         this.hardwareMap = h;
         this.telemetry = t;
 
         drive = new Drivetrain(h, t, pose);
-        intake = new Intake(h, t, outtake);
+        intake = new Intake(h, t, outtake,colorSensor);
+        colorSensor = new ColorSensor(h);
         outtake = new Outtake(h, t);
 
         subsystems = List.of(drive, (Subsystem) intake, outtake);
