@@ -131,6 +131,10 @@ public class Drivetrain implements Subsystem {
         drive.rightBack.setPower(br);
     }
 
+    public void updatePoseEstimate() {
+
+    }
+
     // Stop drivetrain
     public void stop() {
         setMotorPowers(0, 0, 0, 0);
