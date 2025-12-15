@@ -475,7 +475,7 @@ public class NewRedTry extends LinearOpMode {
         while (opModeIsActive()) {
             if (isStopRequested()) return;
 
-            robot.update(gamepad2);
+            robot.update(gamepad1,gamepad2);
             update();
 
             telemetry.addData("State", state);
