@@ -11,7 +11,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.subsystem.Robot;
+import org.firstinspires.ftc.teamcode.util.Constants;
 
 @Autonomous
 public class BlueClose extends LinearOpMode {
@@ -59,7 +61,7 @@ public class BlueClose extends LinearOpMode {
         while(opModeIsActive()) {
             if (isStopRequested()) return;
 
-            robot.update(gamepad2);
+            robot.update(gamepad1, gamepad2);
             update();
 
             telemetry.addData("State", state);
@@ -127,18 +129,22 @@ public class BlueClose extends LinearOpMode {
                 else if(timer.milliseconds() < 3500) {
                     robot.outtake.setLinkage(0.6);
                     robot.intake.setPower(0);
+                    robot.intake.transfer.setPower(0);
                 }
 
 
                 else if(timer.milliseconds() < 4500){
                     robot.outtake.setLinkage(0.6);
                     robot.intake.setPower(0.6);
+                    robot.intake.transfer.setPower(1);
                 }
 
                 else if(timer.milliseconds()<5500){
+                    robot.intake.transfer.setPower(0);
                     robot.intake.setPower(0);
                     robot.outtake.setVelocity(1650);
                 }else{
+                    robot.intake.transfer.setPower(1);
                     robot.intake.setPower(0.8);
                 }
 
@@ -156,6 +162,9 @@ public class BlueClose extends LinearOpMode {
                 robot.outtake.setLinkage(0.92);
                 robot.outtake.setPower(-0.5);
                 robot.intake.setPower(0.8);
+                robot.intake.transfer.setPower(1.0);
+               if(robot.intake.transfer.getCurrent(CurrentUnit.AMPS) > Constants.TRANSFEROPEN)
+                   robot.intake.transfer.setPower(Constants.TRANSFER_CLOSED);
                 currentAction = toSpike3.run(packet);
                 if (!currentAction) {
                     state = ShootStates.SHOOT_3;
@@ -180,13 +189,16 @@ public class BlueClose extends LinearOpMode {
 
                 else if(timer.milliseconds() < 3500){
                     robot.intake.setPower(0.6);
+                    robot.intake.transfer.setPower(Constants.TRANSFER_IN_POWER);
                 }
 
                 else if(timer.milliseconds()<4000){
                     robot.intake.setPower(0);
+                    robot.intake.transfer.setPower(Constants.TRANSFER_CLOSED);
                     robot.outtake.setVelocity(1650);
                 }else{
                     robot.intake.setPower(0.8);
+                    robot.intake.transfer.setPower(Constants.TRANSFER_IN_POWER);
                 }
                 currentAction = toShootFrom3.run(packet);
 
@@ -203,6 +215,7 @@ public class BlueClose extends LinearOpMode {
                 robot.outtake.setLinkage(0.92);
                 robot.outtake.setPower(-0.5);
                 robot.intake.setPower(0.8);
+                robot.intake.transfer.setPower(Constants.TRANSFER_IN_POWER);
 
                 currentAction = toSpike2.run(packet);
 
@@ -216,7 +229,7 @@ public class BlueClose extends LinearOpMode {
             case SHOOT_2:
                 if(timer.milliseconds()<150){
                     robot.outtake.setPower(-0.6);
-                    robot.intake.setPower(-0.2);
+                    robot.intake.transfer.setPower(-1.0);
                 }
 //                else{
 //                    robot.outtake.spinToRpm(2500);
@@ -239,13 +252,16 @@ public class BlueClose extends LinearOpMode {
                 else if(timer.milliseconds() < 3500){
                     robot.outtake.setLinkage(0.6);
                     robot.intake.setPower(0.6);
+                    robot.intake.transfer.setPower(Constants.TRANSFER_IN_POWER);
                 }
 
                 else if(timer.milliseconds()<4000){
                     robot.intake.setPower(0);
+                    robot.intake.transfer.setPower(Constants.TRANSFER_CLOSED);
                     robot.outtake.setVelocity(1650);
                 }else{
                     robot.intake.setPower(0.8);
+                    robot.intake.transfer.setPower(Constants.TRANSFER_IN_POWER);
                 }
                 currentAction = toShootFrom2.run(packet);
 
@@ -316,6 +332,14 @@ public class BlueClose extends LinearOpMode {
                 break;
         }
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
+    }
+
+    public void updateIntake() {
+        double current = robot.intake.transfer.getCurrent(CurrentUnit.AMPS);
+
+        if (current > 3.5) { // tune this
+            robot.intake.transfer.setPower(0);
+        }
     }
 
 }

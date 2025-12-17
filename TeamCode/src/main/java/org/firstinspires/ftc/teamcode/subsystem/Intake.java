@@ -760,6 +760,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.Constants;
 import org.firstinspires.ftc.teamcode.util.StateMachine;
 
@@ -778,13 +779,15 @@ public class Intake implements Subsystem{
 
     ElapsedTime timer = new ElapsedTime();
 
-    private DcMotorEx transfer;
+    public DcMotorEx transfer;
 
     private final Outtake shooter;
     private  ColorSensor colorSensor;
     public boolean AtRPM = false;
     private final Telemetry telemetry;
     private boolean shooting = false;
+
+    private boolean transfer123 = false;
 
 
 
@@ -815,7 +818,10 @@ public class Intake implements Subsystem{
         this.gamepad = g;
     }
 
-    public void setPower(double power) { intake.setPower(power); }
+    public void setPower(double power) {
+        intake.setPower(power);
+        transfer.setPower(power);
+    }
 
     public void setState(IntakeState s) { sm.setState(s); }
     public IntakeState getState() { return sm.getState(); }
@@ -880,6 +886,10 @@ public class Intake implements Subsystem{
                 linkage.setPosition(Constants.LINKAGE_REST);
                 blocker.setPosition(Constants.BLOCKER_OPEN);
                 transfer.setPower(Constants.TRANSFER_IN_POWER);
+                if(transfer.getCurrent(CurrentUnit.AMPS) > 6.0 || transfer123) {
+                    transfer.setPower(Constants.TRANSFER_CLOSED);
+                    transfer123=true;
+                }
                 break;
             case INTAKE_LAST:
                 intake.setPower(Constants.INTAKE_IN_POWER);

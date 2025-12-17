@@ -166,7 +166,7 @@ public class MainTeleDuplicate extends LinearOpMode {
 //                starts = false;
 //            }//check if this is needed and works
 // Intake State Machine Update
-            intake.update(gamepad2);
+            intake.update(gamepad1, gamepad2);
 
 
 // Drive: Auto Align OR Manual

@@ -53,8 +53,8 @@ public class OdoAprilTagAlignment extends LinearOpMode {
             drive.updatePoseEstimate();
 
             odoAprilTagAlignment.updateCtrls(gamepad1, gamepad2);
-            drivetrain.update(gamepad2);
-            odoAprilTagAlignment.update(gamepad1);
+            drivetrain.update(gamepad1, gamepad2);
+            odoAprilTagAlignment.update(gamepad1, gamepad1);
 
             Pose2d currentPose = drive.localizer.getPose();
             telemetry.addLine("=== Robot Position ===");
