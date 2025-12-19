@@ -117,35 +117,35 @@ public class clawTelemetry extends LinearOpMode {
             intake.setPower(intakePower);
 
             // === APRILTAG ALIGN ===
-            List<AprilTagDetection> detections = aprilTagProcessor.getDetections();
-
-            if (detections != null && detections.size() > 0) {
-                AprilTagDetection tag = detections.get(0);
-                double error = tag.ftcPose.x;
-
-                double currentTime = getRuntime();
-                double dt = currentTime - lastTime;
-
-                integralSum += error * dt;
-                double derivative = (error - lastError) / dt;
-
-                double output = (kP * error) + (kI * integralSum) + (kD * derivative);
-                output = Range.clip(output, -0.4, 0.4);
-
-                leftFront.setPower(output);
-                leftRear.setPower(output);
-                rightFront.setPower(-output);
-                rightRear.setPower(-output);
-
-                lastTime = currentTime;
-                lastError = error;
-
-                telemetry.addData("ATag ID", tag.id);
-                telemetry.addData("Error", error);
-            } else {
-                stopDrive();
-                telemetry.addLine("No Tags");
-            }
+//            List<AprilTagDetection> detections = aprilTagProcessor.getDetections();
+//
+//            if (detections != null && detections.size() > 0) {
+//                AprilTagDetection tag = detections.get(0);
+//                double error = tag.ftcPose.x;
+//
+//                double currentTime = getRuntime();
+//                double dt = currentTime - lastTime;
+//
+//                integralSum += error * dt;
+//                double derivative = (error - lastError) / dt;
+//
+//                double output = (kP * error) + (kI * integralSum) + (kD * derivative);
+//                output = Range.clip(output, -0.4, 0.4);
+//
+//                leftFront.setPower(output);
+//                leftRear.setPower(output);
+//                rightFront.setPower(-output);
+//                rightRear.setPower(-output);
+//
+//                lastTime = currentTime;
+//                lastError = error;
+//
+//                telemetry.addData("ATag ID", tag.id);
+//                telemetry.addData("Error", error);
+//            } else {
+//                stopDrive();
+//                telemetry.addLine("No Tags");
+//            }
 
             telemetry.addData("Target RPM", shooterPower);
             telemetry.addData("Shooter RPM", currentRPM());
