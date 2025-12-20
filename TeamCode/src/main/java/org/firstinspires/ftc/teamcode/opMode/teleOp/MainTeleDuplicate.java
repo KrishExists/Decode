@@ -417,7 +417,6 @@ public class MainTeleDuplicate extends LinearOpMode {
         hw = new Hardware(hardwareMap);
         shooter = new Outtake(hardwareMap, telemetry);
         drive = new Drivetrain(hardwareMap, telemetry);
-        colorSensor = new ColorSensor(hardwareMap);
         intake = new Intake(hardwareMap, telemetry, shooter,colorSensor);
         boolean targetFound;
 
