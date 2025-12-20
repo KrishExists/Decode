@@ -3,10 +3,13 @@ package org.firstinspires.ftc.teamcode.subsystem;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.roadRunner.MecanumDrive;
 
 public class Drivetrain implements Subsystem {
@@ -19,6 +22,11 @@ public class Drivetrain implements Subsystem {
     private Pose2d currentPose;
     private PoseVelocity2d currentVelocity;
 
+    PIDController headingController;
+    public static double headingKp = 1.5;
+    public static double headingKi = 0.0;
+    public static double headingKd = 0.0;
+
     public Drivetrain(HardwareMap h, Telemetry t, Pose2d startPose) {
         this.hardwareMap = h;
         this.telemetry = t;
@@ -27,6 +35,8 @@ public class Drivetrain implements Subsystem {
 
         currentPose = startPose;
         currentVelocity = new PoseVelocity2d(new Vector2d(0,0), 0);
+
+        headingController = new PIDController(headingKp, headingKi, headingKd);
     }
 
     public Drivetrain(HardwareMap h, Telemetry t) {
@@ -47,6 +57,27 @@ public class Drivetrain implements Subsystem {
         drive.leftBack.setPower((y - x + rx) / denominator);
         drive.rightFront.setPower((y - x - rx) / denominator);
         drive.rightBack.setPower((y + x - rx) / denominator);
+    }
+
+    public void combinedDrive(Gamepad gamepad1) {
+        Vector2d goalPose = new Vector2d(-72, -72);
+        if (gamepad1.left_bumper) goalPose = new Vector2d(-72, -72);
+        if (gamepad1.right_bumper) goalPose = new Vector2d(-72, 72);
+
+        double lockedHeading = Math.atan2(goalPose.y - currentPose.position.y, goalPose.x - currentPose.position.x);
+
+        double error = AngleUnit.normalizeRadians(lockedHeading - AngleUnit.normalizeRadians(currentPose.heading.log()));
+        double target = error + currentPose.heading.log();
+        double output = Range.clip(headingController.calculate(currentPose.heading.log(), target), -1, 1);
+
+        drive.setDrivePowers(new PoseVelocity2d(
+                new Vector2d(
+                        -gamepad1.left_stick_y,
+                        -gamepad1.left_stick_x * 1.1
+
+                ),
+                (gamepad1.left_bumper || gamepad1.right_bumper) ? output : -gamepad1.right_stick_x
+        ));
     }
 
     private double normalize(double angle) {
@@ -158,11 +189,13 @@ public class Drivetrain implements Subsystem {
 
     @Override
     public void update(Gamepad gamepad1, Gamepad gamepad2) {
-        currentVelocity = drive.updatePoseEstimate();
-        currentPose = drive.localizer.getPose();
+        update();
     }
-    public void update(){
+
+    public void update() {
         currentVelocity = drive.updatePoseEstimate();
         currentPose = drive.localizer.getPose();
+
+        Robot.pose = currentPose;
     }
 }

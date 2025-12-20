@@ -20,6 +20,8 @@ public class Robot implements Subsystem { //The Rhetorical Situation
     public Outtake outtake;
     public ColorSensor colorSensor;
 
+    public static Pose2d pose = new Pose2d(0, 0, 0);
+
     public Robot(HardwareMap h, Telemetry t, Pose2d pose) {
         this.hardwareMap = h;
         this.telemetry = t;
