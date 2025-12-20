@@ -16,18 +16,15 @@ public class AutoAlignnn extends LinearOpMode {
 
     @Override
     public void runOpMode(){
-        aprilTagAlignment.init();
         drivetrain.init();
 
         waitForStart();
 
         while (opModeIsActive()){
-            aprilTagAlignment.update(gamepad1, gamepad2);
-            drivetrain.update(gamepad1, gamepad2);
+            drivetrain.update();
 
-            telemetry.update();
         }
-        aprilTagAlignment.close();
+
     }
 
 

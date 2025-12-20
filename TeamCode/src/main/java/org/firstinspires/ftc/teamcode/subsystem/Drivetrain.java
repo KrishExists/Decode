@@ -161,4 +161,8 @@ public class Drivetrain implements Subsystem {
         currentVelocity = drive.updatePoseEstimate();
         currentPose = drive.localizer.getPose();
     }
+    public void update(){
+        currentVelocity = drive.updatePoseEstimate();
+        currentPose = drive.localizer.getPose();
+    }
 }

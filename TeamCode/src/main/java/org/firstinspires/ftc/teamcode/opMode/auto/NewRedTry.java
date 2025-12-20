@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.roadRunner.MecanumDrive;
@@ -47,6 +48,7 @@ public class NewRedTry extends LinearOpMode {
     }
 
     ShootStates state = ShootStates.PRELOAD;
+    DcMotorEx transfer;
 
     Robot robot;
     int count =0;
@@ -56,6 +58,8 @@ public class NewRedTry extends LinearOpMode {
         timer.reset();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         drive = new MecanumDrive(hardwareMap, START_POSE);
+        transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
+
 
         robot = new Robot(hardwareMap, telemetry, START_POSE);
 
@@ -190,7 +194,7 @@ public class NewRedTry extends LinearOpMode {
                 currentAction = shootPre.run(packet);
 
                 if(currentAction){
-                    robot.outtake.setVelocity(1700);
+                    robot.outtake.spinToRpm(3000);
                     timer.reset();
                     wasPassedThresh = false;
                 }else{
@@ -199,12 +203,15 @@ public class NewRedTry extends LinearOpMode {
                         robot.outtake.linkage.setPosition(0.5);
                     }else{
                         telemetry.addData("Count",count);
-                        robot.outtake.setVelocity(2000);
-                        if(robot.outtake.currentRPM()>2800){
+                        robot.outtake.spinToRpm(3000);
+                        if(robot.outtake.currentRPM()>2700){
                             telemetry.addData("Up to rpm",robot.outtake.currentRPM());
                             robot.intake.setPower(1);
+                            transfer.setPower(-1);
+
                             wasPassedThresh = true;
-                        }else{
+                        }
+                        else{
                             if(wasPassedThresh){
                                 count++;
                                 wasPassedThresh = false;
@@ -213,6 +220,7 @@ public class NewRedTry extends LinearOpMode {
                                 state = ShootStates.CYCLE_3;
                             }
                             robot.intake.setPower(0);
+                            transfer.setPower(0);
                         }
                     }
                 }
