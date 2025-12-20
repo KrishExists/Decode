@@ -9,7 +9,7 @@ public class Constants {
 
     public static final double TRANSFEROPEN = 6;
 
-    public static final double shooterMid = 3500;
+    public static final double shooterMid = 3000;
 
     public static final double INTAKE_REVERSE_KEEP = 1;
 
@@ -37,7 +37,7 @@ public class Constants {
     // ===== Shooter RPM Targets =====
     public static final double SHOOTER_CLOSE_RPM = 2700;
     public static final double SHOOTER_MID_RPM = 3500;
-    public static final double SHOOTER_FAR_RPM = 6000;
+    public static final double SHOOTER_FAR_RPM = 4000;
 
 
     // PID

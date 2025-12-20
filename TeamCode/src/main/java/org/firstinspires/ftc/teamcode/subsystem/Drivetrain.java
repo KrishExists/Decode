@@ -28,6 +28,7 @@ public class Drivetrain implements Subsystem {
     public static double headingKd = 0.0;
 
     public Drivetrain(HardwareMap h, Telemetry t, Pose2d startPose) {
+
         this.hardwareMap = h;
         this.telemetry = t;
 
@@ -86,12 +87,6 @@ public class Drivetrain implements Subsystem {
         return angle;
     }
 
-    private double angleToTarget(Pose2d current, Pose2d target) {
-        double dx = target.position.x - current.position.x;
-        double dy = target.position.y - current.position.y;
-        return Math.atan2(dy, dx);
-    }
-
     public void moveRobot(double drive, double strafe, double turn) {
         drive = 0;
         double fl = drive + strafe + turn;
@@ -112,6 +107,12 @@ public class Drivetrain implements Subsystem {
         }
         setMotorPowers(fl,fr,bl,br);
 
+    }
+
+    private double angleToTarget(Pose2d current, Pose2d target) {
+        double dx = target.position.x - current.position.x;
+        double dy = target.position.y - current.position.y;
+        return Math.atan2(dy, dx);
     }
 
     public void alignToPose(Pose2d target) {

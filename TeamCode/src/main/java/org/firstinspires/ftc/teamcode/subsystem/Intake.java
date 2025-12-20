@@ -892,12 +892,17 @@ public class Intake implements Subsystem{
                 }
                 break;
             case INTAKE_LAST:
+                shooter.setPower(-0.2);
+
                 intake.setPower(Constants.INTAKE_IN_POWER);
                 break;
 
             case IntakeNEXT:
+
                 intake.setPower(Constants.INTAKE_IN_POWER);
-                shooter.stop();
+                shooter.setPower(-0.2);
+
+
                 linkage.setPosition(Constants.LINKAGE_REST);
                 blocker.setPosition(Constants.BLOCKER_OPEN);
                 transfer.setPower(Constants.TRANSFER_IN_POWER);
@@ -986,7 +991,7 @@ public class Intake implements Subsystem{
 
                 } else {
                     shooter.spinToRpm(Constants.shooterMid);
-                    if (shooter.atSpeed(3100, 4100)) {
+                    if (shooter.atSpeed(2750, 3200)) {
                         intake.setPower(Constants.INTAKE_FEED_POWER);
                         transfer.setPower(Constants.TRANSFER_IN_POWER);
                     } else {

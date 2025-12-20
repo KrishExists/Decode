@@ -7,83 +7,75 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
-
-    // Helpers
-    public static Vector2d pos(double x, double y) { return new Vector2d(x, y); }
-    public static double rad(double deg) { return Math.toRadians(deg); }
-
-    @SuppressWarnings("ALL")
     public static void main(String[] args) {
 
-        MeepMeep mm = new MeepMeep(800);
+        MeepMeep meepMeep = new MeepMeep(800);
 
-        // === POSES (FROM BLUECLOSE) ===
-        Pose2d START  = new Pose2d(-51.5, -51.5, rad(144));
-        Pose2d LSHOOT = new Pose2d(-18, -18, rad(225));
-        Pose2d SPIKE1 = new Pose2d(36, -51, rad(270));
-        Pose2d SPIKE2 = new Pose2d(12, -51, rad(270));
-        Pose2d SPIKE3 = new Pose2d(-12, -51, rad(270));
+        Pose2d START_POSE = new Pose2d(-49.2, 50.1  , Math.toRadians(-144));
+        Pose2d LSHOOT = new Pose2d(-22, 3, Math.toRadians(-235));
+        Pose2d GOSHOOT2 = new Pose2d(-23, 26, Math.toRadians(-235));
 
-        RoadRunnerBotEntity bot = new DefaultBotBuilder(mm)
+        Pose2d SPIKE1 = new Pose2d(36, 51, Math.toRadians(-270));
+        Pose2d SPIKE2 = new Pose2d(14, 54, Math.toRadians(-270));
+        Pose2d SPIKE3 = new Pose2d(-5, 54, Math.toRadians(-270));
+
+        RoadRunnerBotEntity bot = new DefaultBotBuilder(meepMeep)
+                .setDimensions(17, 17)
                 .setConstraints(
                         60,     // maxVel
                         60,     // maxAccel
-                        rad(180),
-                        rad(180),
-                        15
+                        Math.toRadians(180), // maxAngVel
+                        Math.toRadians(180), // maxAngAccel
+                        15      // track width
                 )
-                .setStartPose(START)
                 .build();
 
         bot.runAction(
-                bot.getDrive().actionBuilder(START)
+                bot.getDrive().actionBuilder(START_POSE)
 
-                        // ===== PRELOAD =====
+                        // PRELOAD → LSHOOT
                         .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
 
-                        // ===== CYCLE 3 =====
-                        .turnTo(rad(270))
-                        .setTangent(rad(305))
-                        .splineToLinearHeading(SPIKE3, rad(270))
 
-                        // ===== SHOOT FROM 3 =====
+
+                        // GOSHOOT2 → SPIKE 3
+                        .turnTo(Math.toRadians(-255))
+                        .setTangent(Math.toRadians(0))
+                        .splineToLinearHeading(SPIKE3, Math.toRadians(90))
+
+                        // SPIKE 3 → LSHOOT
                         .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
 
-                        // ===== CYCLE 2 =====
-                        .setTangent(rad(340))
+                        // LSHOOT → SPIKE 2
+                        .setTangent(Math.toRadians(20))
                         .splineToSplineHeading(
-                                new Pose2d(4, -26, rad(270)),
-                                rad(340)
+                                new Pose2d(5, 20, Math.toRadians(-270)),
+                                Math.toRadians(-20)
                         )
-                        .splineToLinearHeading(SPIKE2, rad(270))
+                        .splineToLinearHeading(SPIKE2, Math.toRadians(-270))
 
-                        // ===== SHOOT FROM 2 =====
-                        .setTangent(rad(180))
-                        .splineToLinearHeading(
-                                new Pose2d(LSHOOT.position, LSHOOT.heading),
-                                rad(180)
-                        )
-
-                        // ===== CYCLE 1 =====
-                        .setTangent(rad(345))
-                        .splineToSplineHeading(
-                                new Pose2d(27, -27, rad(270)),
-                                rad(345)
-                        )
-                        .splineToLinearHeading(SPIKE1, rad(270))
-
-                        // ===== SHOOT FROM 1 =====
+                        // SPIKE 2 → LSHOOT
                         .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
 
-                        // ===== LEAVE =====
-                        .strafeTo(pos(0, -18))
+                        // LSHOOT → SPIKE 1
+                        .setTangent(Math.toRadians(15))
+                        .splineToSplineHeading(
+                                new Pose2d(27, 10, Math.toRadians(-270)),
+                                Math.toRadians(-15)
+                        )
+                        .splineToLinearHeading(SPIKE1, Math.toRadians(-270))
+
+                        // SPIKE 1 → LSHOOT
+                        .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
+
+                        // LEAVE
+                        .strafeTo(new Vector2d(0, 18))
 
                         .build()
         );
 
-        mm.setBackground(MeepMeep.Background.FIELD_DECODE_OFFICIAL)
+        meepMeep.setBackground(MeepMeep.Background.FIELD_DECODE_OFFICIAL)
                 .setDarkMode(true)
-                .setBackgroundAlpha(0.95f)
                 .addEntity(bot)
                 .start();
     }
