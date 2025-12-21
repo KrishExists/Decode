@@ -20,10 +20,10 @@ public class BlueClose extends LinearOpMode {
     private final ElapsedTime timer = new ElapsedTime();
 
     final Pose2d START_POSE = new Pose2d(-51.5, -51.5, Math.toRadians(144));
-    final Pose2d LSHOOT = new Pose2d(-18, -18, Math.toRadians(225));
+    final Pose2d LSHOOT = new Pose2d(-18, -1, Math.toRadians(225));
     final Pose2d SPIKE1 = new Pose2d(36, -51, Math.toRadians(270));
     final Pose2d SPIKE2 = new Pose2d(12, -51, Math.toRadians(270));
-    final Pose2d SPIKE3 = new Pose2d(-12, -51, Math.toRadians(270));
+    final Pose2d SPIKE3 = new Pose2d(-7, -51, Math.toRadians(270));
 
     Action shootPre, toSpike3, toShootFrom3, toSpike2, toShootFrom2, toSpike1, toShootFrom1, leave;
     boolean currentAction = true;

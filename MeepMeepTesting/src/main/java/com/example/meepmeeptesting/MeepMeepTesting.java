@@ -17,7 +17,7 @@ public class MeepMeepTesting {
 
         Pose2d SPIKE1 = new Pose2d(36, 51, Math.toRadians(-270));
         Pose2d SPIKE2 = new Pose2d(14, 54, Math.toRadians(-270));
-        Pose2d SPIKE3 = new Pose2d(-5, 54, Math.toRadians(-270));
+        Pose2d SPIKE3 = new Pose2d(-10, 52, Math.toRadians(-270));
 
         RoadRunnerBotEntity bot = new DefaultBotBuilder(meepMeep)
                 .setDimensions(17, 17)

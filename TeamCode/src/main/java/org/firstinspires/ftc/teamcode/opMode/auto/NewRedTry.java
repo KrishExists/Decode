@@ -28,7 +28,7 @@ public class NewRedTry extends LinearOpMode {
     final Pose2d GOSHOOT2 = new Pose2d(-23, 26, Math.toRadians(-235));
     final Pose2d SPIKE1 = new Pose2d(36, 51, Math.toRadians(-270));
     final Pose2d SPIKE2 = new Pose2d(14, 54, Math.toRadians(-270));
-    final Pose2d SPIKE3 = new Pose2d(-10, 54, Math.toRadians(-270));
+    final Pose2d SPIKE3 = new Pose2d(-14, 51, Math.toRadians(-270));
 
     MecanumDrive drive;
 
@@ -240,7 +240,10 @@ public class NewRedTry extends LinearOpMode {
                 }
                 break;
             case SHOOT_3:
-                if(timer.milliseconds()<400){
+            //    state = NewRedTry.ShootStates.;
+                count = 0;
+                wasPassedThresh = false;
+                if(timer.milliseconds()<500){
                     telemetry.addData("Timer",timer.milliseconds());
                     robot.outtake.linkage.setPosition(0.5);
                     robot.outtake.spinToRpm(3000);
@@ -265,6 +268,12 @@ public class NewRedTry extends LinearOpMode {
                         robot.intake.setPower(0);
                         transfer.setPower(0);
                     }
+                }
+                currentAction = toShootFrom3.run(packet);
+                if (!currentAction) {
+                    state = ShootStates.CYCLE_2;
+                    timer.reset();
+                    timer.startTime();
                 }
                 break;
             case CYCLE_2:

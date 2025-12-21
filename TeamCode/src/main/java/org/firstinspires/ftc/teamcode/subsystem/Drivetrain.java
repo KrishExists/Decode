@@ -61,9 +61,9 @@ public class Drivetrain implements Subsystem {
     }
 
     public void combinedDrive(Gamepad gamepad1) {
-        Vector2d goalPose = new Vector2d(-72, -72);
-        if (gamepad1.left_bumper) goalPose = new Vector2d(-72, -72);
-        if (gamepad1.right_bumper) goalPose = new Vector2d(-72, 72);
+        Vector2d goalPose = new Vector2d(0, 0);
+        if (gamepad1.left_bumper) goalPose = new Vector2d(-72, -72); // blue
+        if (gamepad1.right_bumper) goalPose = new Vector2d(-74, 72); // red
 
         double lockedHeading = Math.atan2(goalPose.y - currentPose.position.y, goalPose.x - currentPose.position.x);
 
