@@ -13,11 +13,14 @@ public class MeepMeepTesting {
 
         Pose2d START_POSE = new Pose2d(-49.2, 50.1  , Math.toRadians(-144));
         Pose2d LSHOOT = new Pose2d(-22, 3, Math.toRadians(-235));
-        Pose2d GOSHOOT2 = new Pose2d(-23, 26, Math.toRadians(-235));
+       //Pose2d GOSHOOT2 = new Pose2d(-23, 26, Math.toRadians(-235));
 
         Pose2d SPIKE1 = new Pose2d(36, 51, Math.toRadians(-270));
         Pose2d SPIKE2 = new Pose2d(14, 54, Math.toRadians(-270));
         Pose2d SPIKE3 = new Pose2d(-10, 52, Math.toRadians(-270));
+        Pose2d OpenGate = new Pose2d(0, 35, Math.toRadians(-270));
+        Pose2d TouchGate = new Pose2d(0, 54, Math.toRadians(-270));
+       // Pose2d DontTouchGate = new Pose2d(14, 42, Math.toRadians(-270))
 
         RoadRunnerBotEntity bot = new DefaultBotBuilder(meepMeep)
                 .setDimensions(17, 17)
@@ -39,11 +42,15 @@ public class MeepMeepTesting {
 
 
                         // GOSHOOT2 → SPIKE 3
-                        .turnTo(Math.toRadians(-255))
+                        .turnTo(Math.toRadians(-270))
                         .setTangent(Math.toRadians(0))
                         .splineToLinearHeading(SPIKE3, Math.toRadians(90))
 
-                        // SPIKE 3 → LSHOOT
+                        // SPIKE 3 → Opening the Gate
+                        .strafeToLinearHeading(OpenGate.position, OpenGate.heading)
+                        .strafeToLinearHeading(TouchGate.position, TouchGate.heading)
+
+                        //Opening the Gate -> LSHOOT
                         .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
 
                         // LSHOOT → SPIKE 2
