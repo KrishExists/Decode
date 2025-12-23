@@ -24,7 +24,7 @@ public class KrishRedDefWorks extends LinearOpMode {
     final Pose2d LSHOOT     = new Pose2d(-22, 3, Math.toRadians(-235));
 
     final Pose2d SPIKE3 = new Pose2d(-10, 52, Math.toRadians(-270));
-    final Pose2d SPIKE2 = new Pose2d(14, 54, Math.toRadians(-270));
+    final Pose2d SPIKE2 = new Pose2d(16, 52, Math.toRadians(-270));
     final Pose2d SPIKE1 = new Pose2d(36, 51, Math.toRadians(-270));
 
     /* ================= HARDWARE ================= */
@@ -79,7 +79,7 @@ public class KrishRedDefWorks extends LinearOpMode {
 
     /* ================= CONSTANTS ================= */
 
-    static final double BALL_CURRENT_THRESHOLD = 6.0;
+    static final double BALL_CURRENT_THRESHOLD = 5.0;
     static final int SHOOT_RPM = 3000;
 
     ElapsedTime timer = new ElapsedTime();
@@ -209,7 +209,8 @@ public class KrishRedDefWorks extends LinearOpMode {
                 robot.intake.setPower(1);
                 transfer.setPower(-1);
 
-                if (timer.milliseconds() > 500) {
+
+                if (timer.milliseconds() > 1000) {
                     robot.intake.setPower(0);
                     transfer.setPower(0);
 
@@ -224,11 +225,11 @@ public class KrishRedDefWorks extends LinearOpMode {
                 if (!actionStarted) {
                     startAction(toSpike3);
                     robot.outtake.stop();
-                }
-                if (actionFinished) {
                     state = AutoState.INTAKE_SPIKE_3;
                     ballDetected = false;
+
                 }
+
                 break;
 
             case INTAKE_SPIKE_3:
