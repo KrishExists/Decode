@@ -16,7 +16,7 @@ public class MeepMeepTesting {
        //Pose2d GOSHOOT2 = new Pose2d(-23, 26, Math.toRadians(-235));
 
         Pose2d SPIKE1 = new Pose2d(36, 51, Math.toRadians(-270));
-        Pose2d SPIKE2 = new Pose2d(14, 54, Math.toRadians(-270));
+        Pose2d SPIKE2 = new Pose2d(11, 54, Math.toRadians(-270));
         Pose2d SPIKE3 = new Pose2d(-10, 52, Math.toRadians(-270));
         Pose2d OpenGate = new Pose2d(0, 35, Math.toRadians(-270));
         Pose2d TouchGate = new Pose2d(0, 54, Math.toRadians(-270));
@@ -55,13 +55,18 @@ public class MeepMeepTesting {
 
                         // LSHOOT → SPIKE 2
                         .setTangent(Math.toRadians(20))
-                        .splineToSplineHeading(
-                                new Pose2d(5, 20, Math.toRadians(-270)),
-                                Math.toRadians(-20)
+                        .strafeToLinearHeading(
+                                new Pose2d(11, 10,Math.toRadians(-270)).position,
+                                Math.toRadians(-270)
                         )
-                        .splineToLinearHeading(SPIKE2, Math.toRadians(-270))
+                        .strafeToLinearHeading(SPIKE2.position, Math.toRadians(-270))
 
                         // SPIKE 2 → LSHOOT
+                        .setTangent(Math.toRadians(-90))
+                        .strafeToLinearHeading(
+                                new Pose2d(11, 20,Math.toRadians(-10)).position,
+                                Math.toRadians(-270)
+                        )
                         .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
 
                         // LSHOOT → SPIKE 1

@@ -28,7 +28,7 @@ public class Outtake implements Subsystem {
 
 
     // Shooter PID variables (from Shooter class)
-    public static double kP = 0.01, kI = 0.0, kD = 0.0;
+    public static double kP = 0.02, kI = 0.0, kD = 0.0003;
 
     private double integral = 0;
     private double lastError = 0;

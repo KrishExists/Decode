@@ -26,8 +26,8 @@ public class NewRedTry extends LinearOpMode {
     final Pose2d START_POSE = new Pose2d(-49.2, 50.1, Math.toRadians(-144));
     final Pose2d LSHOOT     = new Pose2d(-22, 3, Math.toRadians(-235));
 
-    final Pose2d SPIKE3 = new Pose2d(-10, 52, Math.toRadians(-270));
-    final Pose2d SPIKE2 = new Pose2d(16, 52, Math.toRadians(-270));
+    final Pose2d SPIKE3 = new Pose2d(-8, 52, Math.toRadians(-270));
+    final Pose2d SPIKE2 = new Pose2d(14, 52, Math.toRadians(-270));
     final Pose2d SPIKE1 = new Pose2d(36, 51, Math.toRadians(-270));
 
 
@@ -108,10 +108,20 @@ public class NewRedTry extends LinearOpMode {
         // LSHOOT → SPIKE 2
         TrajectoryActionBuilder toSpike2Path = robot.drive.drive.actionBuilder(LSHOOT)
                 .setTangent(Math.toRadians(20))
-                .splineToLinearHeading(SPIKE2, Math.toRadians(-270));
+                .strafeToLinearHeading(
+                        new Pose2d(14, 10,Math.toRadians(-270)).position,
+                        Math.toRadians(-270)
+                )
+                .strafeToLinearHeading(SPIKE2.position, Math.toRadians(-270));
+
         // SPIKE 2 → LSHOOT
         TrajectoryActionBuilder toShootFrom2Path = robot.drive.drive.actionBuilder(SPIKE2)
-                .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading);
+                .setTangent(Math.toRadians(20))
+                .strafeToLinearHeading(
+                        new Pose2d(14, 10,Math.toRadians(-270)).position,
+                        Math.toRadians(-270)
+                )
+                .strafeToLinearHeading(SPIKE2.position, Math.toRadians(-270));
 
         // LSHOOT → SPIKE 1
         TrajectoryActionBuilder toSpike1Path = robot.drive.drive.actionBuilder(LSHOOT)
@@ -188,7 +198,7 @@ public class NewRedTry extends LinearOpMode {
                 currentAction = shootPre.run(packet);
 
                 if(currentAction){
-                    robot.outtake.spinToRpm(3000);
+                    robot.outtake.spinToRpm(2950);
                     robot.outtake.linkage.setPosition(0.5);
                     timer.reset();
                     wasPassedThresh = false;
@@ -196,11 +206,12 @@ public class NewRedTry extends LinearOpMode {
                     if(timer.milliseconds()<0){
                         telemetry.addData("Timer",timer.milliseconds());
                         robot.outtake.linkage.setPosition(0.5);
-                        robot.outtake.spinToRpm(3000);
+                        robot.outtake.spinToRpm(2950);
                     }else{
                         telemetry.addData("Count",count);
-                        robot.outtake.spinToRpm(3000);
-                        if(robot.outtake.currentRPM()>2700){
+                        robot.outtake.spinToRpm(2950);
+
+                        if(robot.outtake.currentRPM()>2850){
                             telemetry.addData("Up to rpm",robot.outtake.currentRPM());
                             robot.intake.setPower(1);
                             transfer.setPower(-1);
@@ -235,29 +246,35 @@ public class NewRedTry extends LinearOpMode {
                     state = NewRedTry.ShootStates.SHOOT_3;
                     timer.reset();
                     timer.startTime();
+                    count = 0;
+                    wasPassedThresh = false;
                 }
                 break;
             case SHOOT_3:
                 currentAction = toShootFrom3.run(packet);
                 //    state = NewRedTry.ShootStates.;
-                count = 0;
-                wasPassedThresh = false;
-                if(timer.milliseconds()<700&&timer.milliseconds()>400){
+
+                if(timer.milliseconds()<400&&timer.milliseconds()>200){
                     transfer.setPower(0.5);
                     robot.intake.setPower(1);
                     robot.outtake.setPower(-0.5);
                 }
+                else if(timer.milliseconds()<400){
+                    robot.intake.setPower(0);
+                    robot.outtake.setPower(-0.5);
+                    transfer.setPower(0);
+
+                }
                 else if(currentAction){
                     telemetry.addData("Timer",timer.milliseconds());
                     robot.outtake.linkage.setPosition(0.5);
-                    robot.outtake.spinToRpm(3000);
+                    robot.outtake.spinToRpm(2950);
+                    wasPassedThresh = false;
                 }
                 else{
-                    count = 0;
-                    wasPassedThresh = false;
                     telemetry.addData("Count",count);
-                    robot.outtake.spinToRpm(3000);
-                    if(robot.outtake.currentRPM()>2700){
+                    robot.outtake.spinToRpm(3200);
+                    if(robot.outtake.currentRPM()>2850){
                         telemetry.addData("Up to rpm",robot.outtake.currentRPM());
                         robot.intake.setPower(1);
                         transfer.setPower(-1);
@@ -269,17 +286,13 @@ public class NewRedTry extends LinearOpMode {
                             count++;
                             wasPassedThresh = false;
                         }
-                        if(count==3||timer.milliseconds()>3000){
+                        if(count==3){
                             state = ShootStates.CYCLE_2;
                         }
                         robot.intake.setPower(0);
                         transfer.setPower(0);
                     }
-                    if(timer.milliseconds()>6000){
-                        state = ShootStates.CYCLE_2;
-                        robot.intake.setPower(0);
-                        transfer.setPower(0);
-                    }
+
 
 
                 }
@@ -298,27 +311,36 @@ public class NewRedTry extends LinearOpMode {
                     state = NewRedTry.ShootStates.SHOOT_2;
                     timer.reset();
                     timer.startTime();
+                    count = 0;
+                    wasPassedThresh = false;
                 }
                 break;
             case SHOOT_2:
-                currentAction = toShootFrom3.run(packet);
+                currentAction = toShootFrom2.run(packet);
                 //    state = NewRedTry.ShootStates.;
-                count = 0;
-                wasPassedThresh = false;
-                if(timer.milliseconds()<500){
+
+                if(timer.milliseconds()<400&&timer.milliseconds()>200){
                     transfer.setPower(0.5);
                     robot.intake.setPower(1);
                     robot.outtake.setPower(-0.5);
                 }
+                else if(timer.milliseconds()<400){
+                    robot.intake.setPower(0);
+                    robot.outtake.setPower(-0.5);
+                    transfer.setPower(0);
+
+                }
                 else if(currentAction){
                     telemetry.addData("Timer",timer.milliseconds());
                     robot.outtake.linkage.setPosition(0.5);
-                    robot.outtake.spinToRpm(3000);
+                    robot.outtake.spinToRpm(2950);
+                    wasPassedThresh = false;
+
                 }
                 else{
                     telemetry.addData("Count",count);
-                    robot.outtake.spinToRpm(3000);
-                    if(robot.outtake.currentRPM()>2700){
+                    robot.outtake.spinToRpm(2950);
+                    if(robot.outtake.currentRPM()>2850){
                         telemetry.addData("Up to rpm",robot.outtake.currentRPM());
                         robot.intake.setPower(1);
                         transfer.setPower(-1);
@@ -330,17 +352,15 @@ public class NewRedTry extends LinearOpMode {
                             count++;
                             wasPassedThresh = false;
                         }
-                        if(count==3||timer.milliseconds()>3000){
-                            state = ShootStates.CYCLE_3;
+                        if(count==3){
+                            state = ShootStates.CYCLE_1;
                         }
                         robot.intake.setPower(0);
                         transfer.setPower(0);
                     }
-                    if(timer.milliseconds()>6000){
-                        state = ShootStates.CYCLE_3;
-                        robot.intake.setPower(0);
-                        transfer.setPower(0);
-                    }
+
+
+
                 }
 
                 break;
@@ -354,30 +374,38 @@ public class NewRedTry extends LinearOpMode {
 
                 currentAction = toSpike3.run(packet);
                 if (!currentAction) {
-                    state = NewRedTry.ShootStates.SHOOT_3;
+                    state = ShootStates.SHOOT_1;
                     timer.reset();
                     timer.startTime();
+                    count = 0;
+                    wasPassedThresh = false;
                 }
                 break;
             case SHOOT_1:
-                currentAction = toShootFrom3.run(packet);
-                //    state = NewRedTry.ShootStates.;
-                count = 0;
-                wasPassedThresh = false;
-                if(timer.milliseconds()<500){
+                currentAction = toShootFrom1.run(packet);
+
+                if(timer.milliseconds()<400&&timer.milliseconds()>200){
                     transfer.setPower(0.5);
                     robot.intake.setPower(1);
                     robot.outtake.setPower(-0.5);
                 }
+                else if(timer.milliseconds()<400){
+                    robot.intake.setPower(0);
+                    robot.outtake.setPower(-0.5);
+                    transfer.setPower(0);
+
+                }
                 else if(currentAction){
                     telemetry.addData("Timer",timer.milliseconds());
                     robot.outtake.linkage.setPosition(0.5);
-                    robot.outtake.spinToRpm(3000);
+                    robot.outtake.spinToRpm(2950);
+                    wasPassedThresh = false;
+
                 }
                 else{
                     telemetry.addData("Count",count);
-                    robot.outtake.spinToRpm(3000);
-                    if(robot.outtake.currentRPM()>2700){
+                    robot.outtake.spinToRpm(2950);
+                    if(robot.outtake.currentRPM()>2850){
                         telemetry.addData("Up to rpm",robot.outtake.currentRPM());
                         robot.intake.setPower(1);
                         transfer.setPower(-1);
@@ -389,18 +417,17 @@ public class NewRedTry extends LinearOpMode {
                             count++;
                             wasPassedThresh = false;
                         }
-                        if(count==3||timer.milliseconds()>3000){
-                            state = ShootStates.CYCLE_3;
+                        if(count==3){
+                            state = ShootStates.END;
                         }
                         robot.intake.setPower(0);
                         transfer.setPower(0);
                     }
-                    if(timer.milliseconds()>3000){
-                        state = ShootStates.CYCLE_3;
-                        robot.intake.setPower(0);
-                        transfer.setPower(0);
-                    }
+
+
+
                 }
+
 
                 break;
             case LEAVE:
