@@ -69,6 +69,12 @@ public class MeepMeepTesting {
                         )
                         .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
 
+//                        .splineToSplineHeading(
+//                                new Pose2d(27, 10, Math.toRadians(-270)),
+//                                Math.toRadians(-15)
+//                        )
+
+
                         // LSHOOT → SPIKE 1
                         .setTangent(Math.toRadians(15))
                         .splineToSplineHeading(

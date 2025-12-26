@@ -27,8 +27,8 @@ public class NewRedTry extends LinearOpMode {
     final Pose2d LSHOOT     = new Pose2d(-22, 3, Math.toRadians(-235));
 
     final Pose2d SPIKE3 = new Pose2d(-8, 52, Math.toRadians(-270));
-    final Pose2d SPIKE2 = new Pose2d(14, 52, Math.toRadians(-270));
-    final Pose2d SPIKE1 = new Pose2d(36, 51, Math.toRadians(-270));
+    final Pose2d SPIKE2 = new Pose2d(15, 57, Math.toRadians(-270));
+    final Pose2d SPIKE1 = new Pose2d(29, 51, Math.toRadians(-270));
 
 
     MecanumDrive drive;
@@ -121,7 +121,7 @@ public class NewRedTry extends LinearOpMode {
                         new Pose2d(14, 10,Math.toRadians(-270)).position,
                         Math.toRadians(-270)
                 )
-                .strafeToLinearHeading(SPIKE2.position, Math.toRadians(-270));
+                .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading);
 
         // LSHOOT → SPIKE 1
         TrajectoryActionBuilder toSpike1Path = robot.drive.drive.actionBuilder(LSHOOT)
@@ -157,7 +157,7 @@ public class NewRedTry extends LinearOpMode {
 
     public void update() {
         TelemetryPacket packet = new TelemetryPacket();
-        // TODO: add robot actuations in state machine
+        // TODO: Fix the robot cycle between at shoot3 as the logic there is very incorrect.
         //timer.reset();
 
         switch (state) {
@@ -209,9 +209,9 @@ public class NewRedTry extends LinearOpMode {
                         robot.outtake.spinToRpm(2950);
                     }else{
                         telemetry.addData("Count",count);
-                        robot.outtake.spinToRpm(2950);
+                        robot.outtake.spinToRpm(3000);
 
-                        if(robot.outtake.currentRPM()>2850){
+                        if(robot.outtake.currentRPM()>2950){
                             telemetry.addData("Up to rpm",robot.outtake.currentRPM());
                             robot.intake.setPower(1);
                             transfer.setPower(-1);
@@ -223,7 +223,7 @@ public class NewRedTry extends LinearOpMode {
                                 count++;
                                 wasPassedThresh = false;
                             }
-                            if(count==3){
+                            if(count>3 || timer.milliseconds()>1000){ // change back to 6500
                                 state = ShootStates.CYCLE_3;
                                 transfer.setPower(-0.8);
                             }
@@ -273,7 +273,7 @@ public class NewRedTry extends LinearOpMode {
                 }
                 else{
                     telemetry.addData("Count",count);
-                    robot.outtake.spinToRpm(3200);
+                    robot.outtake.spinToRpm(3000);
                     if(robot.outtake.currentRPM()>2850){
                         telemetry.addData("Up to rpm",robot.outtake.currentRPM());
                         robot.intake.setPower(1);
@@ -286,7 +286,7 @@ public class NewRedTry extends LinearOpMode {
                             count++;
                             wasPassedThresh = false;
                         }
-                        if(count==3){
+                        if(count==3|| timer.milliseconds()>4500){
                             state = ShootStates.CYCLE_2;
                         }
                         robot.intake.setPower(0);
@@ -352,7 +352,7 @@ public class NewRedTry extends LinearOpMode {
                             count++;
                             wasPassedThresh = false;
                         }
-                        if(count==3){
+                        if(count==3|| timer.milliseconds()>6000){
                             state = ShootStates.CYCLE_1;
                         }
                         robot.intake.setPower(0);
@@ -372,7 +372,7 @@ public class NewRedTry extends LinearOpMode {
                     transfer.setPower(0);
                 }
 
-                currentAction = toSpike3.run(packet);
+                currentAction = toSpike1.run(packet);
                 if (!currentAction) {
                     state = ShootStates.SHOOT_1;
                     timer.reset();
