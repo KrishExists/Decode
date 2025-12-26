@@ -24,11 +24,10 @@ public class NewRedTry extends LinearOpMode {
 
     // ---- UPDATED TO MATCH YOUR MEEPMEEP FILE EXACTLY ----
     final Pose2d START_POSE = new Pose2d(-49.2, 50.1, Math.toRadians(-144));
-    final Pose2d LSHOOT     = new Pose2d(-22, 3, Math.toRadians(-235));
-
+    final Pose2d LSHOOT = new Pose2d(-22, 3, Math.toRadians(-235));
     final Pose2d SPIKE3 = new Pose2d(-8, 52, Math.toRadians(-270));
     final Pose2d SPIKE2 = new Pose2d(15, 57, Math.toRadians(-270));
-    final Pose2d SPIKE1 = new Pose2d(29, 51, Math.toRadians(-270));
+    final Pose2d SPIKE1 = new Pose2d(27, 51, Math.toRadians(-270));
 
 
     MecanumDrive drive;
@@ -211,19 +210,24 @@ public class NewRedTry extends LinearOpMode {
                         telemetry.addData("Count",count);
                         robot.outtake.spinToRpm(3000);
 
-                        if(robot.outtake.currentRPM()>2950){
+                        if(robot.outtake.currentRPM()>3000 || wasPassedThresh){
                             telemetry.addData("Up to rpm",robot.outtake.currentRPM());
                             robot.intake.setPower(1);
                             transfer.setPower(-1);
 
                             wasPassedThresh = true;
+
+                            if(timer.milliseconds()>2000){ // change back to 6500
+                                state = ShootStates.CYCLE_3;
+                                transfer.setPower(-0.8);
+                            }
                         }
                         else{
                             if(wasPassedThresh){
                                 count++;
-                                wasPassedThresh = false;
+                                //wasPassedThresh = false;
                             }
-                            if(count>3 || timer.milliseconds()>1000){ // change back to 6500
+                            if(timer.milliseconds()>2000){ // change back to 6500
                                 state = ShootStates.CYCLE_3;
                                 transfer.setPower(-0.8);
                             }
@@ -352,7 +356,7 @@ public class NewRedTry extends LinearOpMode {
                             count++;
                             wasPassedThresh = false;
                         }
-                        if(count==3|| timer.milliseconds()>6000){
+                        if(timer.milliseconds()>8000){
                             state = ShootStates.CYCLE_1;
                         }
                         robot.intake.setPower(0);
