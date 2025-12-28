@@ -11,13 +11,13 @@ public class MeepMeepTesting {
 
         MeepMeep meepMeep = new MeepMeep(800);
 
-        Pose2d START_POSE = new Pose2d(-49.2, 50.1  , Math.toRadians(-144));
-        Pose2d LSHOOT = new Pose2d(-22, 3, Math.toRadians(-235));
+        Pose2d START_POSE = new Pose2d(60, 0  , Math.toRadians(180));
+        Pose2d LSHOOT = new Pose2d(58, 3, Math.toRadians(144));
        //Pose2d GOSHOOT2 = new Pose2d(-23, 26, Math.toRadians(-235));
 
-        Pose2d SPIKE1 = new Pose2d(36, 51, Math.toRadians(-270));
-        Pose2d SPIKE2 = new Pose2d(11, 54, Math.toRadians(-270));
-        Pose2d SPIKE3 = new Pose2d(-10, 52, Math.toRadians(-270));
+        Pose2d SPIKE1 = new Pose2d(59, 60, Math.toRadians(-270));
+        Pose2d SPIKE2 = new Pose2d(59, 60, Math.toRadians(-270));
+        Pose2d SPIKE3 = new Pose2d(59, 60, Math.toRadians(-270));
         Pose2d OpenGate = new Pose2d(0, 35, Math.toRadians(-270));
         Pose2d TouchGate = new Pose2d(0, 54, Math.toRadians(-270));
        // Pose2d DontTouchGate = new Pose2d(14, 42, Math.toRadians(-270))
@@ -42,31 +42,32 @@ public class MeepMeepTesting {
 
 
                         // GOSHOOT2 → SPIKE 3
-                        .turnTo(Math.toRadians(-270))
-                        .setTangent(Math.toRadians(0))
-                        .splineToLinearHeading(SPIKE3, Math.toRadians(90))
+                      //  .turnTo(Math.toRadians(-270))
+                       // .setTangent(Math.toRadians(0))
+                        .turnTo(90)
+                        .strafeToLinearHeading(SPIKE3.position, Math.toRadians(90))
 
                         // SPIKE 3 → Opening the Gate
-                        .strafeToLinearHeading(OpenGate.position, OpenGate.heading)
-                        .strafeToLinearHeading(TouchGate.position, TouchGate.heading)
+                       // .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
+                      //  .strafeToLinearHeading(TouchGate.position, TouchGate.heading)
 
                         //Opening the Gate -> LSHOOT
                         .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
 
                         // LSHOOT → SPIKE 2
-                        .setTangent(Math.toRadians(20))
-                        .strafeToLinearHeading(
-                                new Pose2d(11, 10,Math.toRadians(-270)).position,
-                                Math.toRadians(-270)
-                        )
+//                        .setTangent(Math.toRadians(20))
+//                        .strafeToLinearHeading(
+//                                new Pose2d(11, 10,Math.toRadians(-270)).position,
+//                                Math.toRadians(-270)
+//                        )
                         .strafeToLinearHeading(SPIKE2.position, Math.toRadians(-270))
 
                         // SPIKE 2 → LSHOOT
-                        .setTangent(Math.toRadians(-90))
-                        .strafeToLinearHeading(
-                                new Pose2d(11, 20,Math.toRadians(-10)).position,
-                                Math.toRadians(-270)
-                        )
+//                        .setTangent(Math.toRadians(-90))
+//                        .strafeToLinearHeading(
+//                                new Pose2d(11, 20,Math.toRadians(-10)).position,
+//                                Math.toRadians(-270)
+//                        )
                         .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
 
 //                        .splineToSplineHeading(
@@ -76,18 +77,18 @@ public class MeepMeepTesting {
 
 
                         // LSHOOT → SPIKE 1
-                        .setTangent(Math.toRadians(15))
-                        .splineToSplineHeading(
-                                new Pose2d(27, 10, Math.toRadians(-270)),
-                                Math.toRadians(-15)
-                        )
-                        .splineToLinearHeading(SPIKE1, Math.toRadians(-270))
+//                        .setTangent(Math.toRadians(15))
+//                        .splineToSplineHeading(
+//                                new Pose2d(27, 10, Math.toRadians(-270)),
+//                                Math.toRadians(-15)
+//                        )
+                        .strafeToLinearHeading(SPIKE1.position, Math.toRadians(-270))
 
                         // SPIKE 1 → LSHOOT
                         .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
 
                         // LEAVE
-                        .strafeTo(new Vector2d(0, 18))
+                        .strafeTo(new Vector2d(48, 18))
 
                         .build()
         );
