@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -24,10 +25,11 @@ public class NewRedTry extends LinearOpMode {
 
     // ---- UPDATED TO MATCH YOUR MEEPMEEP FILE EXACTLY ----
     final Pose2d START_POSE = new Pose2d(-49.2, 50.1, Math.toRadians(-144));
-    final Pose2d LSHOOT = new Pose2d(-22, 3, Math.toRadians(-235));
+    final Pose2d LSHOOT = new Pose2d(-5, 3, Math.toRadians(-225));
     final Pose2d SPIKE3 = new Pose2d(-8, 52, Math.toRadians(-270));
-    final Pose2d SPIKE2 = new Pose2d(15, 57, Math.toRadians(-270));
-    final Pose2d SPIKE1 = new Pose2d(27, 51, Math.toRadians(-270));
+    final Pose2d Spike1Init = new Pose2d(40, 10,Math.toRadians(-270));
+    final Pose2d SPIKE2 = new Pose2d(17, 57, Math.toRadians(-270));
+    final Pose2d SPIKE1 = new Pose2d(40, 57, Math.toRadians(-270));
 
 
     MecanumDrive drive;
@@ -96,9 +98,9 @@ public class NewRedTry extends LinearOpMode {
 
         // LSHOOT → SPIKE 3
         TrajectoryActionBuilder toSpike3Path = robot.drive.drive.actionBuilder(LSHOOT)
-                .turnTo(Math.toRadians(-270))
-                .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(SPIKE3, Math.toRadians(90));
+//                .turnTo(Math.toRadians(-270))
+//                .setTangent(Math.toRadians(0))
+                .strafeToLinearHeading(SPIKE3.position, Math.toRadians(90));
 
         // SPIKE 3 → LSHOOT
         TrajectoryActionBuilder toShootFrom3Path = robot.drive.drive.actionBuilder(SPIKE3)
@@ -124,12 +126,13 @@ public class NewRedTry extends LinearOpMode {
 
         // LSHOOT → SPIKE 1
         TrajectoryActionBuilder toSpike1Path = robot.drive.drive.actionBuilder(LSHOOT)
-                .setTangent(Math.toRadians(15))
-                .splineToSplineHeading(
-                        new Pose2d(27, 10, Math.toRadians(-270)),
-                        Math.toRadians(-15)
-                )
-                .splineToLinearHeading(SPIKE1, Math.toRadians(-270));
+//                .setTangent(Math.toRadians(15))
+//                .splineToSplineHeading(
+//                        new Pose2d(27, 10, Math.toRadians(-270)),
+//                        Math.toRadians(-15)
+//                )
+                .strafeToLinearHeading(Spike1Init.position, Math.toRadians(-270))
+                .strafeToLinearHeading(SPIKE1.position, Math.toRadians(-270));
 
         // SPIKE 1 → LSHOOT
         TrajectoryActionBuilder toShootFrom1Path = robot.drive.drive.actionBuilder(SPIKE1)
@@ -333,9 +336,9 @@ public class NewRedTry extends LinearOpMode {
                     robot.outtake.setPower(-0.5);
                 }
                 else if(timer.milliseconds()<420){
-                    robot.intake.setPower(0);
+                    robot.intake.setPower(1);
                     robot.outtake.setPower(-0.5);
-                    transfer.setPower(0);
+                    transfer.setPower(0.5);
 
                 }
                 else if(currentAction){
@@ -417,17 +420,19 @@ public class NewRedTry extends LinearOpMode {
                 else{
                     telemetry.addData("Count",count);
                     robot.outtake.spinToRpm(2950);
-                    if(robot.outtake.currentRPM()>2850){
+                    if(robot.outtake.currentRPM()>2850 || wasPassedThresh){
                         telemetry.addData("Up to rpm",robot.outtake.currentRPM());
                         robot.intake.setPower(1);
                         transfer.setPower(-1);
 
                         wasPassedThresh = true;
+                        if(timer.milliseconds() > 4000)
+                            state = ShootStates.LEAVE;
                     }
                     else{
                         if(wasPassedThresh){
                             count++;
-                            wasPassedThresh = false;
+                           // wasPassedThresh = false;
                         }
                         if(count==3){
                             state = ShootStates.END;
