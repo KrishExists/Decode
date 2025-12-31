@@ -23,11 +23,10 @@ public class NewRedTryFar extends LinearOpMode {
 
     // ---------------- POSES FROM MEEPMEEP ----------------
     final Pose2d START_POSE = new Pose2d(60, 0, Math.toRadians(180));
-    final Pose2d LSHOOT     = new Pose2d(58, 3, Math.toRadians(160));
-
-    final Pose2d SPIKE1 = new Pose2d(59, 60, Math.toRadians(-270));
-    final Pose2d SPIKE2 = new Pose2d(59, 60, Math.toRadians(-270));
-    final Pose2d SPIKE3 = new Pose2d(59, 60, Math.toRadians(-270));
+    final Pose2d LSHOOT  = new Pose2d(57, 3, Math.toRadians(160));
+    final Pose2d SPIKE1 = new Pose2d(59, 55, Math.toRadians(-270));
+    final Pose2d SPIKE2 = new Pose2d(59, 55, Math.toRadians(-270));
+    final Pose2d SPIKE3 = new Pose2d(59, 55, Math.toRadians(-270));
 
     MecanumDrive drive;
 
@@ -89,8 +88,10 @@ public class NewRedTryFar extends LinearOpMode {
 
         // LSHOOT → SPIKE 3
         toSpike3 = robot.drive.drive.actionBuilder(LSHOOT)
-                .turnTo(Math.toRadians(90))
-                .strafeToLinearHeading(SPIKE3.position, Math.toRadians(90))
+                .setTangent(Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(SPIKE3.position.minus(new Vector2d(0,10)), Math.toRadians(70)), Math.toRadians(70))
+                .setTangent(Math.toRadians(70))
+                .splineToSplineHeading(SPIKE3, Math.toRadians(90))
                 .build();
 
         // SPIKE 3 → LSHOOT
@@ -133,70 +134,258 @@ public class NewRedTryFar extends LinearOpMode {
             case PRELOAD:
                 currentAction = shootPre.run(packet);
 
-                if (currentAction) {
-                    robot.outtake.spinToRpm(4000);
+                if(currentAction){
+                    robot.outtake.spinToRpm(3200);
                     robot.outtake.linkage.setPosition(0.5);
                     timer.reset();
                     wasPassedThresh = false;
-                } else {
-                    robot.outtake.spinToRpm(4000);
+                }else{
+                    if(timer.milliseconds()<0){
+                        telemetry.addData("Timer",timer.milliseconds());
+                        robot.outtake.linkage.setPosition(0.5);
+                        robot.outtake.spinToRpm(3200);
+                    }else{
+                        telemetry.addData("Count",count);
+                        robot.outtake.spinToRpm(3200);
 
-                    if (robot.outtake.currentRPM() > 3900) {
-                        robot.intake.setPower(1);
-                        transfer.setPower(-1);
-                        wasPassedThresh = true;
-                    } else {
-                        if (wasPassedThresh) {
-                            count++;
-                            wasPassedThresh = false;
+                        if(robot.outtake.currentRPM()>3100){
+                            telemetry.addData("Up to rpm",robot.outtake.currentRPM());
+                            robot.intake.setPower(1);
+                            transfer.setPower(-1);
+
+                            wasPassedThresh = true;
+
+                            if(timer.milliseconds()>8000){ // change back to 6500
+                                state = NewRedTryFar.ShootStates.CYCLE_3;
+                                transfer.setPower(-0.8);
+                            }
                         }
-                        if (count >= 3) {
-                            state = ShootStates.CYCLE_3;
-                            count = 0;
+                        else{
+                            if(wasPassedThresh){
+                                count++;
+                                wasPassedThresh = false;
+                            }
+                            if(timer.milliseconds()>8000){ // change back to 6500
+                                state = NewRedTryFar.ShootStates.CYCLE_3;
+                                transfer.setPower(-0.8);
+                            }
+                            robot.intake.setPower(0);
+                            transfer.setPower(0);
                         }
-                        robot.intake.setPower(0);
-                        transfer.setPower(0);
                     }
                 }
                 break;
-
             case CYCLE_3:
+                robot.outtake.setLinkage(0.5);
+                robot.outtake.setPower(-0.5);
+                robot.intake.setPower(0.8);
+                if (transfer.getCurrent(CurrentUnit.AMPS) >= 5.0) {
+                    transfer.setPower(0);
+                }
+
                 currentAction = toSpike3.run(packet);
                 if (!currentAction) {
-                    state = ShootStates.SHOOT_3;
+                    state = NewRedTryFar.ShootStates.SHOOT_3;
                     timer.reset();
+                    timer.startTime();
+                    count = 0;
+                    wasPassedThresh = false;
                 }
                 break;
 
             case SHOOT_3:
                 currentAction = toShootFrom3.run(packet);
-                if (!currentAction) state = ShootStates.CYCLE_2;
+                //    state = NewRedTry.ShootStates.;
+
+                if(timer.milliseconds()<400&&timer.milliseconds()>200){
+                    transfer.setPower(0.5);
+                    robot.intake.setPower(1);
+                    robot.outtake.setPower(-0.5);
+                }
+                else if(timer.milliseconds()<400){
+                    robot.intake.setPower(0);
+                    robot.outtake.setPower(-0.5);
+                    transfer.setPower(0);
+
+                }
+                else if(currentAction){
+                    telemetry.addData("Timer",timer.milliseconds());
+                    robot.outtake.linkage.setPosition(0.5);
+                    robot.outtake.spinToRpm(3000);
+                    wasPassedThresh = false;
+                }
+                else{
+                    telemetry.addData("Count",count);
+                    robot.outtake.spinToRpm(3000);
+                    if(robot.outtake.currentRPM()>2993 || wasPassedThresh){
+                        telemetry.addData("Up to rpm",robot.outtake.currentRPM());
+                        robot.intake.setPower(1);
+                        transfer.setPower(-1);
+
+                        wasPassedThresh = true;
+
+                        if(count==3|| timer.milliseconds()>4000){
+                            state = NewRedTryFar.ShootStates.CYCLE_2;
+                        }
+                    }
+                    else{
+                        if(wasPassedThresh){
+                            count++;
+                            //wasPassedThresh = false;
+                        }
+                        if(count==3|| timer.milliseconds()>4500){
+                            state = NewRedTryFar.ShootStates.CYCLE_2;
+                        }
+                        robot.intake.setPower(0);
+                        transfer.setPower(0);
+                    }
+
+
+
+                }
+
                 break;
 
             case CYCLE_2:
+                robot.outtake.setLinkage(0.5);
+                robot.outtake.setPower(-0.5);
+                robot.intake.setPower(0.8);
+                if (transfer.getCurrent(CurrentUnit.AMPS) >= 5.0) {
+                    transfer.setPower(0);
+                }
+
                 currentAction = toSpike2.run(packet);
                 if (!currentAction) {
-                    state = ShootStates.SHOOT_2;
+                    state = NewRedTryFar.ShootStates.SHOOT_2;
                     timer.reset();
+                    timer.startTime();
+                    count = 0;
+                    wasPassedThresh = false;
                 }
                 break;
 
             case SHOOT_2:
                 currentAction = toShootFrom2.run(packet);
-                if (!currentAction) state = ShootStates.CYCLE_1;
+                //    state = NewRedTry.ShootStates.;
+
+                if(timer.milliseconds()<400&&timer.milliseconds()>200){
+                    transfer.setPower(0.5);
+                    robot.intake.setPower(1);
+                    robot.outtake.setPower(-0.5);
+                }
+                else if(timer.milliseconds()<420){
+                    robot.intake.setPower(1);
+                    robot.outtake.setPower(-0.5);
+                    transfer.setPower(0.5);
+
+                }
+                else if(currentAction){
+                    telemetry.addData("Timer",timer.milliseconds());
+                    robot.outtake.linkage.setPosition(0.5);
+                    robot.outtake.spinToRpm(2993);
+                    wasPassedThresh = false;
+
+                }
+                else{
+                    telemetry.addData("Count",count);
+                    robot.outtake.spinToRpm(2993);
+                    if(robot.outtake.currentRPM()>2901 || wasPassedThresh){
+                        telemetry.addData("Up to rpm",robot.outtake.currentRPM());
+                        robot.intake.setPower(1);
+                        transfer.setPower(-1);
+
+                        wasPassedThresh = true;
+
+                        if(timer.milliseconds()>6000){
+                            state = NewRedTryFar.ShootStates.CYCLE_1;
+                        }
+                    }
+                    else{
+                        if(wasPassedThresh){
+                            count++;
+                            // wasPassedThresh = false;
+                        }
+                        if(timer.milliseconds()>4500){
+                            state = NewRedTryFar.ShootStates.CYCLE_1;
+                        }
+                        robot.intake.setPower(0);
+                        transfer.setPower(0);
+                    }
+
+
+
+                }
+
                 break;
 
             case CYCLE_1:
+                robot.outtake.setLinkage(0.5);
+                robot.outtake.setPower(-0.5);
+                robot.intake.setPower(0.8);
+                if (transfer.getCurrent(CurrentUnit.AMPS) >= 5.0) {
+                    transfer.setPower(0);
+                }
+
                 currentAction = toSpike1.run(packet);
                 if (!currentAction) {
-                    state = ShootStates.SHOOT_1;
+                    state = NewRedTryFar.ShootStates.SHOOT_1;
                     timer.reset();
+                    timer.startTime();
+                    count = 0;
+                    wasPassedThresh = false;
                 }
                 break;
 
             case SHOOT_1:
                 currentAction = toShootFrom1.run(packet);
-                if (!currentAction) state = ShootStates.LEAVE;
+
+                if(timer.milliseconds()<400&&timer.milliseconds()>200){
+                    transfer.setPower(0.5);
+                    robot.intake.setPower(1);
+                    robot.outtake.setPower(-0.5);
+                }
+                else if(timer.milliseconds()<400){
+                    robot.intake.setPower(0);
+                    robot.outtake.setPower(-0.5);
+                    transfer.setPower(0);
+
+                }
+                else if(currentAction){
+                    telemetry.addData("Timer",timer.milliseconds());
+                    robot.outtake.linkage.setPosition(0.5);
+                    robot.outtake.spinToRpm(2993);
+                    wasPassedThresh = false;
+
+                }
+                else{
+                    telemetry.addData("Count",count);
+                    robot.outtake.spinToRpm(2993);
+                    if(robot.outtake.currentRPM()>2901 || wasPassedThresh){
+                        telemetry.addData("Up to rpm",robot.outtake.currentRPM());
+                        robot.intake.setPower(1);
+                        transfer.setPower(-1);
+
+                        wasPassedThresh = true;
+                        if(timer.milliseconds() > 4000)
+                            state = NewRedTryFar.ShootStates.LEAVE;
+                    }
+                    else{
+                        if(wasPassedThresh){
+                            count++;
+                            // wasPassedThresh = false;
+                        }
+                        if(count==20){
+                            state = NewRedTryFar.ShootStates.END;
+                        }
+                        robot.intake.setPower(0);
+                        transfer.setPower(0);
+                    }
+
+
+
+                }
+
+
                 break;
 
             case LEAVE:

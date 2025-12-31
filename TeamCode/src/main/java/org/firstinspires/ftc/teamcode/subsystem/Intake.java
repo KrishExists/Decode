@@ -1803,6 +1803,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.opMode.teleOp.TeleopBlue;
+import org.firstinspires.ftc.teamcode.opMode.teleOp.TeleopRed;
 import org.firstinspires.ftc.teamcode.util.Constants;
 import org.firstinspires.ftc.teamcode.util.ShooterConstants;
 import org.firstinspires.ftc.teamcode.util.StateMachine;
@@ -1812,7 +1814,7 @@ public class Intake implements Subsystem{
     ElapsedTime time;
 
     public enum IntakeState {
-        INTAKE, OUTTAKE, RUNSLOW, OUTTAKE1, RAPOD_FAR,RAPOD_CLOSE, OUTTAKE_FAR, OUTTAKE_MID, TRANSFER, IntakeNEXT, REST, INTAKE_LAST, SpeedMid,SpeedFar, RUNSLOW1;
+        INTAKE, OUTTAKE, RUNSLOW, OUTTAKE1, RAPOD_FAR,RAPOD_CLOSE, OUTTAKE_FAR, OUTTAKE_MID, TRANSFER, IntakeNEXT, REST, INTAKE_LAST, SpeedMid,SpeedFar, RUNSLOW1, AUTORPM, AUTORPMRED;
     }
 
     // Hardware
@@ -1820,6 +1822,7 @@ public class Intake implements Subsystem{
     private Servo blocker;
     private Servo linkage;
 
+    private double goodRPM;
     ElapsedTime timer = new ElapsedTime();
 
     public DcMotorEx transfer;
@@ -1917,6 +1920,11 @@ public class Intake implements Subsystem{
             setState(IntakeState.SpeedFar);
             shooting = true;
         }
+
+        else if(gamepad2.y) {
+            setState(IntakeState.AUTORPMRED);
+            shooting = true;
+        }
         else if (shooting){
             //do nothing
         }
@@ -1958,6 +1966,28 @@ public class Intake implements Subsystem{
                 linkage.setPosition(Constants.LINKAGE_REST);
                 blocker.setPosition(Constants.BLOCKER_OPEN);
                 transfer.setPower(Constants.TRANSFER_IN_POWER);
+                break;
+
+            case AUTORPMRED:
+                intake.setPower(0.6);
+                linkage.setPosition(0.5);
+                //shooter.spinToRpm(2996);
+                goodRPM = 8.980589* TeleopRed.distanceFromGoal() + 1847.499;
+                intake.setPower(0.8);
+                transfer.setPower(0.8);
+                shooter.spinToRpm(goodRPM);
+                if(gamepad2.right_bumper){
+                    if(true){
+                        setState(IntakeState.OUTTAKE_FAR);
+                        intake.setPower(0);
+                        transfer.setPower(0);
+                    }else{
+                        setState(IntakeState.RAPOD_FAR);
+                    }
+                    ;
+                    shooting = false;
+
+                }
                 break;
             case RUNSLOW1:
                 intake.setPower(Constants.INTAKE_IN_POWER);
@@ -2002,8 +2032,8 @@ public class Intake implements Subsystem{
                 break;
             case SpeedFar:
                 intake.setPower(0.6);
-                linkage.setPosition(Constants.LINKAGE_MID);
-                shooter.spinToRpm(4000);
+                linkage.setPosition(0.5);
+                shooter.spinToRpm(2996);
                 intake.setPower(0.8);
                 transfer.setPower(0.8);
                 if(gamepad2.right_bumper){
@@ -2023,7 +2053,7 @@ public class Intake implements Subsystem{
                 intake.setPower(0.6);
                 linkage.setPosition(Constants.LINKAGE_MID);
 
-                shooter.spinToRpm(3000);
+                shooter.spinToRpm(2400);
                 intake.setPower(0.8);
                 transfer.setPower(0.8);
                 if(gamepad2.right_bumper){
@@ -2081,8 +2111,8 @@ public class Intake implements Subsystem{
                 if (t < 0) {
                     linkage.setPosition(Constants.LINKAGE_MID);
                 } else {
-                    shooter.spinToRpm(3950);
-                    if (shooter.atSpeed(3850, 4100)) {
+                    shooter.spinToRpm(2993);
+                    if (shooter.atSpeed(2890, 3200)) {
                         intake.setPower(Constants.INTAKE_FEED_POWER);
                         transfer.setPower(Constants.TRANSFER_IN_POWER);
                     } else {
@@ -2099,7 +2129,7 @@ public class Intake implements Subsystem{
                 break;
             case RAPOD_FAR:
                 blocker.setPosition(Constants.BLOCKER_OPEN);
-                shooter.spinToRpm(3850);
+                shooter.spinToRpm(2993);
                 intake.setPower(Constants.INTAKE_IN_POWER);
                 transfer.setPower(Constants.TRANSFER_IN_POWER);
                 break;

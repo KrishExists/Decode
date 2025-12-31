@@ -356,9 +356,6 @@
 package org.firstinspires.ftc.teamcode.opMode.teleOp;
 
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -366,30 +363,21 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.subsystem.ColorSensor;
 import org.firstinspires.ftc.teamcode.subsystem.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Outtake;
-import org.firstinspires.ftc.teamcode.subsystem.Vision;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.PoseVelocity2d;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.util.Range;
-
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
-@TeleOp(name = "difftele", group = "Main")
-@Config
-public class diffTele extends LinearOpMode {
+@TeleOp(name = "TeleopRed", group = "Main")
+public class TeleopRed extends LinearOpMode {
 
 
     private Hardware hw;
@@ -401,10 +389,6 @@ public class diffTele extends LinearOpMode {
 
     private static final int DESIRED_TAG_ID = -1;
     private static final double DESIRED_DISTANCE = 12.0;
-    public static double intakePowers = 0.8;
-    public static double transferPowers = 0.8;
-    public static double currentAmount = 5.0;
-    public static boolean hasHapend = false;
     private static final double SPEED_GAIN = 0.02;
     private static final double TURN_GAIN = 0.01;
     final double MAX_AUTO_SPEED = 0.5;
@@ -419,6 +403,9 @@ public class diffTele extends LinearOpMode {
 
     private AprilTagDetection desiredTag = null;
 
+    public static Pose2d currentPOse;
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -429,9 +416,6 @@ public class diffTele extends LinearOpMode {
         shooter = new Outtake(hardwareMap, telemetry);
         drive = new Drivetrain(hardwareMap, telemetry);
         intake = new Intake(hardwareMap, telemetry, shooter,colorSensor);
-        DcMotorEx transferMotor  =  hardwareMap.get(DcMotorEx.class,"Transfer");
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
         boolean targetFound;
 
         initAprilTag();
@@ -457,24 +441,19 @@ public class diffTele extends LinearOpMode {
 //                starts = false;
 //            }//check if this is needed and works
 // Intake State Machine Update
-
+            drive.update();
+            intake.update(gamepad1, gamepad2);
 
 
 // Drive: Auto Align OR Manual
-            drive.combinedDrive(gamepad1);
+           drive.combinedDrive(gamepad1);
 
-            Pose2d currentPOse =drive.getPose();
-            intake.setPower(intakePowers);
-            if(transferMotor.getCurrent(CurrentUnit.AMPS)>=currentAmount||hasHapend){
-                transferMotor.setPower(0);
-                hasHapend = true;
-            }else{
-                transferMotor.setPower(transferPowers);
-            }
+           currentPOse =drive.getPose();
+
 // Telemetry
+            telemetry.addData("Intake State", intake.getState());
             telemetry.addData("Pose position",currentPOse.position);
             telemetry.addData("Pose heading",currentPOse.heading);
-            telemetry.addData("Transfer Motor Current",transferMotor.getCurrent(CurrentUnit.AMPS));
             telemetry.addData("Shooter RPM", shooter.atSpeed(0, 99999));
 
         }
@@ -492,6 +471,11 @@ public class diffTele extends LinearOpMode {
         }
 
         visionPortal = builder.addProcessor(aprilTag).build();
+    }
+
+    public static double distanceFromGoal() {
+        double currentPoseinCoordinates =  Math.sqrt(Math.pow((currentPOse.position.x + 74), 2) + Math.pow((currentPOse.position.y - 72), 2));
+        return currentPoseinCoordinates;
     }
 
     // ================== CAMERA CONTROL ==================

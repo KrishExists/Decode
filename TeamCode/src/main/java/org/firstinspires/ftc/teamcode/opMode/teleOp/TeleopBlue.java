@@ -368,21 +368,16 @@ import org.firstinspires.ftc.teamcode.subsystem.ColorSensor;
 import org.firstinspires.ftc.teamcode.subsystem.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Outtake;
-import org.firstinspires.ftc.teamcode.subsystem.Vision;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.PoseVelocity2d;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import com.qualcomm.robotcore.util.Range;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
-@TeleOp(name = "MainTeleDuplicate", group = "Main")
-public class MainTeleDuplicate extends LinearOpMode {
+@TeleOp(name = "TeleopBlue", group = "Main")
+public class TeleopBlue extends LinearOpMode {
 
 
     private Hardware hw;
@@ -448,7 +443,7 @@ public class MainTeleDuplicate extends LinearOpMode {
 
 
 // Drive: Auto Align OR Manual
-           drive.combinedDrive(gamepad1);
+            drive.combinedDrive(gamepad1);
 
             Pose2d currentPOse =drive.getPose();
 // Telemetry

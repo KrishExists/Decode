@@ -34,15 +34,9 @@ dependencies {
     implementation 'org.ftclib.ftclib:core:2.1.1' // core
     implementation 'org.openftc:easyopencv:1.5.2'
     implementation 'org.openftc:easyopencv:1.5.1'
-    implementation("com.acmerobotics.slothboard:dashboard:0.2.4+0.5.1")
 
 
     implementation 'org.openftc:apriltag:1.1.2'
 
-    implementation("com.acmerobotics.roadrunner:ftc:0.1.25") {
-        exclude group: "com.acmerobotics.dashboard"
-    }
-    implementation ("com.acmerobotics.roadrunner:actions:1.0.1"){
-        exclude group: "com.acmerobotics.dashboard"
-    }
+
 }
