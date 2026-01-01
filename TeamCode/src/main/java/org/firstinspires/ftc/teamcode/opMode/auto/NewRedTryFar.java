@@ -26,7 +26,7 @@ public class NewRedTryFar extends LinearOpMode {
     final Pose2d LSHOOT  = new Pose2d(57, 3, Math.toRadians(160));
     final Pose2d SPIKE1 = new Pose2d(59, 55, Math.toRadians(-270));
     final Pose2d SPIKE2 = new Pose2d(59, 55, Math.toRadians(-270));
-    final Pose2d SPIKE3 = new Pose2d(59, 55, Math.toRadians(-270));
+    final Pose2d SPIKE3 = new Pose2d(55, 55, Math.toRadians(-270));
 
     MecanumDrive drive;
 
@@ -88,10 +88,13 @@ public class NewRedTryFar extends LinearOpMode {
 
         // LSHOOT → SPIKE 3
         toSpike3 = robot.drive.drive.actionBuilder(LSHOOT)
-                .setTangent(Math.toRadians(90))
-                .splineToLinearHeading(new Pose2d(SPIKE3.position.minus(new Vector2d(0,10)), Math.toRadians(70)), Math.toRadians(70))
-                .setTangent(Math.toRadians(70))
-                .splineToSplineHeading(SPIKE3, Math.toRadians(90))
+                //.setTangent(Math.toRadians(90))
+                //.splineToLinearHeading(new Pose2d(SPIKE3.position.minus(new Vector2d(0,10)), Math.toRadians(70)), Math.toRadians(70))
+               // .setTangent(Math.toRadians(70))
+              .splineToSplineHeading(SPIKE3, SPIKE3.heading)
+                .strafeToLinearHeading(SPIKE1.position, SPIKE1.heading)
+                .strafeToLinearHeading(SPIKE3.position, SPIKE3.heading)
+                //.strafeToLinearHeading(SPIKE3.position, SPIKE3.heading)
                 .build();
 
         // SPIKE 3 → LSHOOT
