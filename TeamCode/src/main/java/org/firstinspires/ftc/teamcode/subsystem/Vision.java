@@ -41,7 +41,7 @@ public class Vision {
         return error * kP_align;
     }
 
-    public AprilTagDetection detectTag(Drivetrain drive) {
+    public AprilTagDetection autoAlignToTag(Drivetrain drive) {
         List<AprilTagDetection> detections = aprilTag.getDetections();
         if (detections.isEmpty()) {
             drive.stop();
@@ -52,6 +52,8 @@ public class Vision {
 // Use closest detection
         AprilTagDetection tag = detections.get(0);
         return tag;
+
+
 
 
     }

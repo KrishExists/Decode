@@ -21,6 +21,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -34,6 +35,17 @@ public class TeleOpNewRed extends LinearOpMode {
 
 
     private static final int DESIRED_TAG_ID = -1;
+    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
+
+    /**
+     * The variable to store our instance of the AprilTag processor.
+     */
+    private AprilTagProcessor aprilTag;
+
+    /**
+     * The variable to store our instance of the vision portal.
+     */
+    private VisionPortal visionPortal;
     private static final double DESIRED_DISTANCE = 12.0;
     private static final double SPEED_GAIN = 0.02;
     private static final double TURN_GAIN = 0.01;
@@ -45,7 +57,6 @@ public class TeleOpNewRed extends LinearOpMode {
     private ColorSensor colorSensor;
     //private Vision vision;
     private boolean starts = true;
-    private static final boolean USE_WEBCAM = true;
 
     private AprilTagDetection desiredTag = null;
     private Vision vision;
@@ -59,7 +70,7 @@ public class TeleOpNewRed extends LinearOpMode {
         shooter = new Outtake(hardwareMap, telemetry);
         drive = new Drivetrain(hardwareMap, telemetry);
         intake = new Intake(hardwareMap, telemetry, shooter,colorSensor);
-        vision = new Vision(hw);
+
         boolean targetFound;
 
 
@@ -84,15 +95,53 @@ public class TeleOpNewRed extends LinearOpMode {
             drive.combinedDrive(gamepad1);
 
             Pose2d currentPOse =drive.getPose();
-            AprilTagDetection tag=  vision.detectTag(drive);
+            telemetryAprilTag();
 // Telemetry
             telemetry.addData("Intake State", intake.getState());
             telemetry.addData("Pose position",currentPOse.position);
             telemetry.addData("Pose heading",currentPOse.heading);
             telemetry.addData("Shooter RPM", shooter.atSpeed(0, 99999));
-            telemetry.addData("Tag Distance", tag.ftcPose.range);
 
         }
     }
+    private void initAprilTag() {
+
+        // Create the AprilTag processor the easy way.
+        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
+
+        // Create the vision portal the easy way.
+        if (USE_WEBCAM) {
+            visionPortal = VisionPortal.easyCreateWithDefaults(
+                    hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
+        } else {
+            visionPortal = VisionPortal.easyCreateWithDefaults(
+                    BuiltinCameraDirection.BACK, aprilTag);
+        }
+
+    }   // end method initAprilTag()
+    private void telemetryAprilTag() {
+
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        telemetry.addData("# AprilTags Detected", currentDetections.size());
+
+        // Step through the list of detections and display info for each one.
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+            } else {
+                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+            }
+        }   // end for() loop
+
+        // Add "key" information to telemetry
+        telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+        telemetry.addLine("RBE = Range, Bearing & Elevation");
+
+    }   // end method telemetryAprilTag()
 
 }
