@@ -93,23 +93,23 @@ public class NewBlueTry extends LinearOpMode {
     public void build_paths() {
 
         // PRELOAD → LSHOOT
-        TrajectoryActionBuilder shootPrePath = robot.drive.drive.actionBuilder(START_POSE, p -> new Pose2dDual<>(p.position.x.unaryMinus(), p.position.y.unaryMinus(), p.heading.plus(Math.PI)))
+        TrajectoryActionBuilder shootPrePath = robot.drive.drive.actionBuilder(START_POSE, p -> new Pose2dDual<>(p.position.x, p.position.y.unaryMinus(), p.heading.plus(Math.PI)))
                 .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading);
         //LShoot -> GOFORWARD
 
 
         // LSHOOT → SPIKE 3
-        TrajectoryActionBuilder toSpike3Path = robot.drive.drive.actionBuilder(LSHOOT, p -> new Pose2dDual<>(p.position.x.unaryMinus(), p.position.y.unaryMinus(), p.heading.plus(Math.PI)))
+        TrajectoryActionBuilder toSpike3Path = robot.drive.drive.actionBuilder(LSHOOT, p -> new Pose2dDual<>(p.position.x, p.position.y.unaryMinus(), p.heading.plus(Math.PI)))
 //                .turnTo(Math.toRadians(-270))
 //                .setTangent(Math.toRadians(0))
                 .strafeToLinearHeading(SPIKE3.position, Math.toRadians(90));
 
         // SPIKE 3 → LSHOOT
-        TrajectoryActionBuilder toShootFrom3Path = robot.drive.drive.actionBuilder(SPIKE3, p -> new Pose2dDual<>(p.position.x.unaryMinus(), p.position.y.unaryMinus(), p.heading.plus(Math.PI)))
+        TrajectoryActionBuilder toShootFrom3Path = robot.drive.drive.actionBuilder(SPIKE3, p -> new Pose2dDual<>(p.position.x, p.position.y.unaryMinus(), p.heading.plus(Math.PI)))
                 .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading);
 
         // LSHOOT → SPIKE 2
-        TrajectoryActionBuilder toSpike2Path = robot.drive.drive.actionBuilder(LSHOOT, p -> new Pose2dDual<>(p.position.x.unaryMinus(), p.position.y.unaryMinus(), p.heading.plus(Math.PI)))
+        TrajectoryActionBuilder toSpike2Path = robot.drive.drive.actionBuilder(LSHOOT, p -> new Pose2dDual<>(p.position.x, p.position.y.unaryMinus(), p.heading.plus(Math.PI)))
                 .setTangent(Math.toRadians(20))
                 .strafeToLinearHeading(
                         new Pose2d(14, 10,Math.toRadians(-270)).position,
@@ -118,7 +118,7 @@ public class NewBlueTry extends LinearOpMode {
                 .strafeToLinearHeading(SPIKE2.position, Math.toRadians(-270));
 
         // SPIKE 2 → LSHOOT
-        TrajectoryActionBuilder toShootFrom2Path = robot.drive.drive.actionBuilder(SPIKE2, p -> new Pose2dDual<>(p.position.x.unaryMinus(), p.position.y.unaryMinus(), p.heading.plus(Math.PI)))
+        TrajectoryActionBuilder toShootFrom2Path = robot.drive.drive.actionBuilder(SPIKE2, p -> new Pose2dDual<>(p.position.x, p.position.y.unaryMinus(), p.heading.plus(Math.PI)))
                 .setTangent(Math.toRadians(20))
                 .strafeToLinearHeading(
                         new Pose2d(14, 10,Math.toRadians(-270)).position,
@@ -127,7 +127,7 @@ public class NewBlueTry extends LinearOpMode {
                 .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading);
 
         // LSHOOT → SPIKE 1
-        TrajectoryActionBuilder toSpike1Path = robot.drive.drive.actionBuilder(LSHOOT, p -> new Pose2dDual<>(p.position.x.unaryMinus(), p.position.y.unaryMinus(), p.heading.plus(Math.PI)))
+        TrajectoryActionBuilder toSpike1Path = robot.drive.drive.actionBuilder(LSHOOT, p -> new Pose2dDual<>(p.position.x, p.position.y.unaryMinus(), p.heading.plus(Math.PI)))
 //                .setTangent(Math.toRadians(15))
 //                .splineToSplineHeading(
 //                        new Pose2d(27, 10, Math.toRadians(-270)),
@@ -137,11 +137,11 @@ public class NewBlueTry extends LinearOpMode {
                 .strafeToLinearHeading(SPIKE1.position, Math.toRadians(-270));
 
         // SPIKE 1 → LSHOOT
-        TrajectoryActionBuilder toShootFrom1Path = robot.drive.drive.actionBuilder(SPIKE1, p -> new Pose2dDual<>(p.position.x.unaryMinus(), p.position.y.unaryMinus(), p.heading.plus(Math.PI)))
+        TrajectoryActionBuilder toShootFrom1Path = robot.drive.drive.actionBuilder(SPIKE1, p -> new Pose2dDual<>(p.position.x, p.position.y.unaryMinus(), p.heading.plus(Math.PI)))
                 .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading);
 
         // LEAVE
-        TrajectoryActionBuilder leavePath = robot.drive.drive.actionBuilder(LSHOOT, p -> new Pose2dDual<>(p.position.x.unaryMinus(), p.position.y.unaryMinus(), p.heading.plus(Math.PI)))
+        TrajectoryActionBuilder leavePath = robot.drive.drive.actionBuilder(LSHOOT, p -> new Pose2dDual<>(p.position.x, p.position.y.unaryMinus(), p.heading.plus(Math.PI)))
                 .strafeTo(new Vector2d(0, 18));
 
         // BUILD ACTIONS
