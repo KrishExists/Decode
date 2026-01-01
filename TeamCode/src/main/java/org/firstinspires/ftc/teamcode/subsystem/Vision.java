@@ -41,22 +41,18 @@ public class Vision {
         return error * kP_align;
     }
 
-    public void autoAlignToTag(Drivetrain drive) {
+    public AprilTagDetection detectTag(Drivetrain drive) {
         List<AprilTagDetection> detections = aprilTag.getDetections();
         if (detections.isEmpty()) {
             drive.stop();
-            return;
+            return null;
         }
 
 
 // Use closest detection
         AprilTagDetection tag = detections.get(0);
+        return tag;
 
 
-        double error = tag.ftcPose.x; // Left/right offset
-        double turnPower = error * kP_align;
-
-
-        drive.setMotorPowers(turnPower, turnPower, -turnPower, -turnPower);
     }
 }
