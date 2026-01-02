@@ -112,6 +112,8 @@ public final class CombinedLocalizer implements Localizer {
     @Override
     public PoseVelocity2d update() {
         driver.update();
+
+        // Get the heading from Pinpoint only
         Rotation2d heading = new Rotation2d(0, 0);
         double rawHeadingVel = 0;
         if (Objects.requireNonNull(driver.getDeviceStatus()) == GoBildaPinpointDriver.DeviceStatus.READY) {
@@ -119,16 +121,16 @@ public final class CombinedLocalizer implements Localizer {
             rawHeadingVel = driver.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS);
         }
 
-        PositionVelocityPair parPosVel = par.getPositionAndVelocity();
-        PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
-
-
-        // see https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/617
+        // Correct wraparound for angular velocity
         if (Math.abs(rawHeadingVel - lastRawHeadingVel) > Math.PI) {
             headingVelOffset -= Math.signum(rawHeadingVel) * 2 * Math.PI;
         }
         lastRawHeadingVel = rawHeadingVel;
         double headingVel = headingVelOffset + rawHeadingVel;
+
+        // Read encoders
+        PositionVelocityPair parPosVel = par.getPositionAndVelocity();
+        PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
 
         if (!initialized) {
             initialized = true;
@@ -140,33 +142,32 @@ public final class CombinedLocalizer implements Localizer {
             return new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0);
         }
 
+        // Encoder deltas (XY only, no heading correction)
         int parPosDelta = parPosVel.position - lastParPos;
         int perpPosDelta = perpPosVel.position - lastPerpPos;
-        double headingDelta = heading.minus(lastHeading);
+        double headingDelta = heading.minus(lastHeading); // heading delta from Pinpoint only
 
+        // Convert encoder deltas to inches
+        double dx = parPosDelta * inPerTick;
+        double dy = perpPosDelta * inPerTick;
+
+        // Build twist: XY from dead wheels, heading from Pinpoint
         Twist2dDual<Time> twist = new Twist2dDual<>(
                 new Vector2dDual<>(
-                        new DualNum<Time>(new double[] {
-                                parPosDelta - PARAMS.parYTicks * headingDelta,
-                                parPosVel.velocity - PARAMS.parYTicks * headingVel,
-                        }).times(inPerTick),
-                        new DualNum<Time>(new double[] {
-                                perpPosDelta - PARAMS.perpXTicks * headingDelta,
-                                perpPosVel.velocity - PARAMS.perpXTicks * headingVel,
-                        }).times(inPerTick)
+                        new DualNum<>(new double[]{dx, parPosVel.velocity * inPerTick}),
+                        new DualNum<>(new double[]{dy, perpPosVel.velocity * inPerTick})
                 ),
-                new DualNum<>(new double[] {
-                        headingDelta,
-                        headingVel,
-                })
+                new DualNum<>(new double[]{headingDelta, headingVel})
         );
 
+        // Update last readings
         lastParPos = parPosVel.position;
         lastPerpPos = perpPosVel.position;
         lastHeading = heading;
 
-
+        // Apply pose update
         pose = pose.plus(twist.value());
         return twist.velocity().value();
     }
+
 }

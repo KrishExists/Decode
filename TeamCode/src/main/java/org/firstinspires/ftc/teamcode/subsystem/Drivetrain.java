@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.opMode.auto.NewRedTry;
 import org.firstinspires.ftc.teamcode.roadRunner.MecanumDrive;
 
 public class Drivetrain implements Subsystem {
@@ -62,7 +61,8 @@ public class Drivetrain implements Subsystem {
     }
 
     public void combinedDrive(Gamepad gamepad1) {
-        Vector2d goalPose = NewRedTry.currentPose.position;
+//        Vector2d goalPose = NewRedTry.currentPose.position;
+        Vector2d goalPose = new Vector2d(0,0);
         if (gamepad1.left_bumper) goalPose = new Vector2d(-72, -72); // blue
         if (gamepad1.right_bumper) goalPose = new Vector2d(-74, 72); // red
 
