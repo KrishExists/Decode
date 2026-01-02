@@ -26,7 +26,7 @@ public class NewRedTry extends LinearOpMode {
 
     // ---- UPDATED TO MATCH YOUR MEEPMEEP FILE EXACTLY ----
     final Pose2d START_POSE = new Pose2d(-49.2, 50.1, Math.toRadians(-144));
-    final Pose2d LSHOOT = new Pose2d(-5, 3, Math.toRadians(-227));
+    final Pose2d LSHOOT     = new Pose2d(-22, 3, Math.toRadians(-235));
     final Pose2d SPIKE3 = new Pose2d(-8, 50, Math.toRadians(-270));
     final Pose2d Spike1Init = new Pose2d(40, 10,Math.toRadians(-270));
     final Pose2d SPIKE2 = new Pose2d(17, 56, Math.toRadians(-270));

@@ -23,18 +23,20 @@ public class NewRedTry18Ball extends LinearOpMode {
     private final ElapsedTime timer = new ElapsedTime();
 
     Pose2d START_POSE = new Pose2d(-49.2, 50.1, Math.toRadians(-144));
-    Pose2d LSHOOT = new Pose2d(-5, 3, Math.toRadians(-227));
+    Pose2d LSHOOT = new Pose2d(-5, 3, Math.toRadians(-225));
     Pose2d SPIKE3 = new Pose2d(-8, 50, Math.toRadians(-270));
     Pose2d Spike1Init = new Pose2d(40, 30,Math.toRadians(-270));
-    Pose2d SPIKE2 = new Pose2d(14, 56, Math.toRadians(-270));
-    Pose2d Spike2SplineSpot = new Pose2d(14, 40, Math.toRadians(-270));
+    Pose2d SPIKE2 = new Pose2d(17, 56, Math.toRadians(-275));
+    Pose2d Spike2SplineSpot = new Pose2d(14, 40, Math.toRadians(-275));
     Pose2d SPIKE1 = new Pose2d(40, 56, Math.toRadians(-270));
-    Pose2d OpenGate = new Pose2d(7, 35, Math.toRadians(-270));
-    Pose2d TouchGate = new Pose2d(7, 54, Math.toRadians(-255));
+    Pose2d OpenGate = new Pose2d(14, 35, Math.toRadians(-270));
+    Pose2d TouchGate = new Pose2d(14, 57, Math.toRadians(-245));
     Pose2d ReleaseGate = new Pose2d(10, 53, Math.toRadians(-255));
     Pose2d LEAVE = new Pose2d(9, 3, Math.toRadians(-227));
 
     public static Pose2d currentPose;
+
+    public static boolean ran;
     MecanumDrive drive;
 
     Action shootPre, toSpike2, toShootFrom2, toGate, leaveGate, toGate2, leaveGate2, toSpike3, shootFrom3, toSpike1, shootFrom1, leave;
@@ -99,8 +101,9 @@ public class NewRedTry18Ball extends LinearOpMode {
 
         // LSHOOT → SPIKE 2
         TrajectoryActionBuilder toSpike2Path = robot.drive.drive.actionBuilder(LSHOOT) // GOOD
-                .splineToSplineHeading(
-                        new Pose2d(14, 20, Math.toRadians(-270)),
+                .setTangent(Math.toRadians(20))
+                .strafeToLinearHeading(
+                        new Pose2d(14, 10,Math.toRadians(-270)).position,
                         Math.toRadians(-270)
                 )
                 .strafeToLinearHeading(SPIKE2.position, Math.toRadians(-270));
@@ -117,6 +120,22 @@ public class NewRedTry18Ball extends LinearOpMode {
 
         // OPENGATE → LSHOOT (2)
         TrajectoryActionBuilder toShootFromGatePath = robot.drive.drive.actionBuilder(TouchGate) // GOOD (2 times remember!!!!)
+//                .setTangent(Math.toRadians(20))
+//                .strafeToLinearHeading(
+//                        new Pose2d(14, 10,Math.toRadians(-270)).position,
+//                        Math.toRadians(-270)
+//                )
+//                .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading);
+                .strafeToLinearHeading(Spike2SplineSpot.position, Spike2SplineSpot.heading)
+                .splineToLinearHeading(LSHOOT, LSHOOT.heading);
+
+        TrajectoryActionBuilder toOpenGate2Path = robot.drive.drive.actionBuilder(LSHOOT) // GOOD (2 times remember!!!!)
+                .splineToSplineHeading(OpenGate, OpenGate.heading)
+                .strafeToLinearHeading(TouchGate.position, TouchGate.heading
+                );
+
+        // OPENGATE → LSHOOT (2)
+        TrajectoryActionBuilder toShootFromGate2Path = robot.drive.drive.actionBuilder(TouchGate) // GOOD (2 times remember!!!!)
                 .setTangent(Math.toRadians(20))
                 .strafeToLinearHeading(
                         new Pose2d(14, 10,Math.toRadians(-270)).position,
@@ -149,8 +168,8 @@ public class NewRedTry18Ball extends LinearOpMode {
         toShootFrom2 = toShootFrom2Path.build();
         toGate = toOpenGatePath.build();
         leaveGate = toShootFromGatePath.build();
-        toGate2 = toOpenGatePath.build();
-        leaveGate2 = toShootFromGatePath.build();
+        toGate2 = toOpenGate2Path.build();
+        leaveGate2 = toShootFromGate2Path.build();
         toSpike3 = toSpike3Path.build();
         shootFrom3 = toShootFrom3Path.build();
         toSpike1 = toSpike1Path.build();
@@ -191,8 +210,8 @@ public class NewRedTry18Ball extends LinearOpMode {
 
                             wasPassedThresh = true;
 
-                            if(timer.milliseconds()>2000){ // change back to 6500
-                                state = NewRedTry18Ball.ShootStates.CYCLE_3;
+                            if(timer.milliseconds()>650){ // change back to 6500
+                                state = NewRedTry18Ball.ShootStates.CYCLE_2;
                                 transfer.setPower(-0.8);
                             }
                         }
@@ -260,7 +279,7 @@ public class NewRedTry18Ball extends LinearOpMode {
 
                         wasPassedThresh = true;
 
-                        if(timer.milliseconds()>6000){
+                        if(timer.milliseconds()>3000){
                             state = NewRedTry18Ball.ShootStates.CYCLE_GATE;
                         }
                     }
@@ -282,12 +301,20 @@ public class NewRedTry18Ball extends LinearOpMode {
                 currentAction = toGate.run(packet);  // FIND EACH ERROR WITHIN THIS
                 robot.outtake.setLinkage(0.5);
                 robot.outtake.setPower(-0.5);
-                robot.intake.setPower(0.8);
+                robot.intake.setPower(1);
+                transfer.setPower(-1);
+
                 if (transfer.getCurrent(CurrentUnit.AMPS) >= 5.0) {
-                    transfer.setPower(0);
+                    transfer.setPower(-0.5);
                 }
 
-                if (!currentAction) {
+                if(!currentAction && !ran) {
+                    timer.reset();
+                    timer.startTime();
+                    ran = true;
+                }
+
+                if (!currentAction && timer.milliseconds()>500) {
                     state = ShootStates.SHOOT_GATE;
                     timer.reset();
                     timer.startTime();
@@ -326,8 +353,8 @@ public class NewRedTry18Ball extends LinearOpMode {
 
                         wasPassedThresh = true;
 
-                        if(timer.milliseconds()>6000){
-                            state = NewRedTry18Ball.ShootStates.CYCLE_GATE2;
+                        if(timer.milliseconds()>4000){
+                            state = ShootStates.CYCLE_3;
                         }
                     }
                     else{
@@ -345,15 +372,24 @@ public class NewRedTry18Ball extends LinearOpMode {
                 break;
 
             case CYCLE_GATE2:
-                currentAction = toGate.run(packet);  // FIND EACH ERROR WITHIN THIS
+
+                currentAction = toGate2.run(packet);  // FIND EACH ERROR WITHIN THIS
                 robot.outtake.setLinkage(0.5);
                 robot.outtake.setPower(-0.5);
-                robot.intake.setPower(0.8);
+                robot.intake.setPower(1);
+                transfer.setPower(-1);
+
                 if (transfer.getCurrent(CurrentUnit.AMPS) >= 5.0) {
-                    transfer.setPower(0);
+                    transfer.setPower(-0.5);
                 }
 
-                if (!currentAction) {
+                if (!currentAction && !ran) { // runs once
+                    timer.reset();
+                    timer.startTime();
+                    ran = true;
+                }
+
+                if (!currentAction && timer.milliseconds() > 1500) {
                     state = ShootStates.SHOOT_GATE2;
                     timer.reset();
                     timer.startTime();
@@ -363,7 +399,7 @@ public class NewRedTry18Ball extends LinearOpMode {
                 break;
 
             case SHOOT_GATE2:
-                currentAction = leaveGate.run(packet);
+                currentAction = leaveGate2.run(packet);
 
                 if(timer.milliseconds()<400&&timer.milliseconds()>200){
                     transfer.setPower(0.5);
@@ -393,7 +429,7 @@ public class NewRedTry18Ball extends LinearOpMode {
 
                         wasPassedThresh = true;
 
-                        if(timer.milliseconds()>6000){
+                        if(timer.milliseconds()>4000){
                             state = ShootStates.CYCLE_3;
                         }
                     }

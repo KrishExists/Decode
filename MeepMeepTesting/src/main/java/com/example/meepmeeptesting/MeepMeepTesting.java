@@ -21,7 +21,7 @@ public class MeepMeepTesting {
          Pose2d OpenGate = new Pose2d(7, 35, Math.toRadians(-270));
          Pose2d TouchGate = new Pose2d(7, 54, Math.toRadians(-255));
          Pose2d ReleaseGate = new Pose2d(10, 53, Math.toRadians(-255));
-         Pose2d LEAVE = new Pose2d(9, 3, Math.toRadians(-227));
+         Pose2d LEAVE = new Pose2d(9, 8, Math.toRadians(-227));
 
 
         RoadRunnerBotEntity bot = new DefaultBotBuilder(meepMeep)
@@ -50,8 +50,9 @@ public class MeepMeepTesting {
 
                         // SPIKE2 -> LSHOOT
                         .strafeToLinearHeading(Spike2SplineSpot.position, Spike2SplineSpot.heading)
+                        .splineToLinearHeading(LSHOOT, LSHOOT.heading)
 
-                        .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
+                        //.strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
                         // LSHOOT -> Gate
                         .splineToSplineHeading(OpenGate, OpenGate.heading)
                         .strafeToLinearHeading(TouchGate.position, TouchGate.heading
