@@ -27,7 +27,7 @@ public class MeepMeepTesting {
 //         Pose2d LEAVE = new Pose2d(9, 8, Math.toRadians(-227));
 
 
-        Pose2d START_POSE = new Pose2d(-49.2, 50.1, Math.toRadians(-144));
+        Pose2d START_POSE = new Pose2d(-50.4, 50.2, Math.toRadians(-233));
         Pose2d LSHOOT = new Pose2d(-7, 3, Math.toRadians(-221));
         Pose2d SPIKE3 = new Pose2d(-12, 50, Math.toRadians(-270));
         Pose2d Spike1Init = new Pose2d(40, 10,Math.toRadians(-270));
@@ -40,10 +40,10 @@ public class MeepMeepTesting {
         Pose2d LEAVE = new Pose2d(9, 3, Math.toRadians(-227));
 
         RoadRunnerBotEntity bot = new DefaultBotBuilder(meepMeep)
-                .setDimensions(17, 17)
+                .setDimensions(16, 16)
                 .setConstraints(
-                        70,     // maxVel
-                        70,     // maxAccel
+                        100,     // maxVel
+                        100,     // maxAccel
                         Math.toRadians(180), // maxAngVel
                         Math.toRadians(180), // maxAngAccel
                         15      // track width
@@ -61,8 +61,12 @@ public class MeepMeepTesting {
                         new Pose2d(12, 10,Math.toRadians(-270)).position,
                         Math.toRadians(-270)
                 )
+
                 .strafeToLinearHeading(SPIKE2.position, Math.toRadians(-270))
-                                .strafeToLinearHeading(LSHOOT.position,LSHOOT.heading)
+                        .strafeToLinearHeading(new Vector2d(12,50),Math.toRadians(-270))
+                        .strafeToLinearHeading(new Vector2d(6,50),Math.toRadians(-270))
+                        .strafeToLinearHeading(new Vector2d(6,54),Math.toRadians(-270))
+                        .strafeToLinearHeading(LSHOOT.position,LSHOOT.heading)
 
                         .strafeToLinearHeading(new Pose2d(-12,3,5).position,SPIKE3.heading)
                 .strafeToLinearHeading(SPIKE3.position, SPIKE3.heading)

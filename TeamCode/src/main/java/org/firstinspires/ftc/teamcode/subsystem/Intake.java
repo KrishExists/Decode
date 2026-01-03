@@ -2068,7 +2068,6 @@ public class Intake implements Subsystem{
 
         telemetry.addData("Intake State", sm.getState());
         telemetry.addData("Time in State", t);
-        telemetry.update();
     }
 //    public void resetTime(){
 //        public void .resetTime();

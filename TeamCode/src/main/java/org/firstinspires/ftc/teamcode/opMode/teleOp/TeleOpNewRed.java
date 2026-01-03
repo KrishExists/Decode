@@ -100,7 +100,16 @@ public class TeleOpNewRed extends LinearOpMode {
 
 
 // Drive: Auto Align OR Manual
-            drive.combinedDrive(gamepad1, detected);
+            if(detected!=null){
+                drive.combinedDrive(gamepad1, detected);
+                telemetry.addData("Detected tag ", 1);
+
+
+            }else{
+                telemetry.addData("Detected tag", 0);
+
+                drive.combinedDrive(gamepad1);
+            }
 
             Pose2d currentPOse =drive.getPose();
             
@@ -109,11 +118,9 @@ public class TeleOpNewRed extends LinearOpMode {
             telemetry.addData("Pose position",currentPOse.position);
             telemetry.addData("Pose heading",currentPOse.heading);
             telemetry.addData("Shooter RPM", shooter.atSpeed(0, 99999));
-            if(detected.metadata!=null){
-                telemetry.addData("Detected tag ", 1);
-            }else{
-                telemetry.addData("Detected tag", 0);
-            }
+            telemetry.update();
+
+
 
         }
     }

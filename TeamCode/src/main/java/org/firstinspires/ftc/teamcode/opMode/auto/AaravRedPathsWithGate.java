@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.roadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.Robot;
 
 @Autonomous
-public class AaravRedPaths extends LinearOpMode {
+public class AaravRedPathsWithGate extends LinearOpMode {
     private final ElapsedTime timer = new ElapsedTime();
 
     Pose2d START_POSE = new Pose2d(-50.4, 50.2, Math.toRadians(-233));
@@ -35,7 +35,7 @@ public class AaravRedPaths extends LinearOpMode {
     public static boolean ran;
     MecanumDrive drive;
 
-    Action shootPre, toSpike2, toShootFrom2, toGate, leaveGate, toGate2, leaveGate2, toSpike3, shootFrom3, toSpike1, shootFrom1, leave;
+    Action shootPre, toSpike2, toShootFrom2, toGate, leaveGate, toGate2, leaveGate2, toSpike3, shootFrom3, toSpike1, shootFrom1, leave,openGate;
 
     boolean currentAction = true;
     public enum ShootStates {
@@ -46,10 +46,11 @@ public class AaravRedPaths extends LinearOpMode {
         SHOOT_3,
         CYCLE_1,
         SHOOT_1,
+        Gate,
         LEAVE, END
     }
 
-    ShootStates state = AaravRedPaths.ShootStates.PRELOAD;
+    ShootStates state = AaravRedPathsWithGate.ShootStates.PRELOAD;
     DcMotorEx transfer;
 
     Robot robot;
@@ -99,6 +100,10 @@ public class AaravRedPaths extends LinearOpMode {
                         Math.toRadians(-270)
                 )
                 .strafeToLinearHeading(SPIKE2.position, Math.toRadians(-270));
+        TrajectoryActionBuilder OpenGate = robot.drive.drive.actionBuilder(SPIKE2)
+                .strafeToLinearHeading(new Vector2d(12,50),Math.toRadians(-270))
+                .strafeToLinearHeading(new Vector2d(6,50),Math.toRadians(-270))
+                .strafeToLinearHeading(new Vector2d(6,54),Math.toRadians(-270));
 
         // SPIKE 2 → LSHOOT
         TrajectoryActionBuilder toShootFrom2Path = robot.drive.drive.actionBuilder(SPIKE2) // GOOD
@@ -136,6 +141,7 @@ public class AaravRedPaths extends LinearOpMode {
         toSpike1 = toSpike1Path.build();
         shootFrom1 = toShootFrom1Path.build();
         leave = toLeavePath.build();
+        openGate = OpenGate.build();
 
     }
 
@@ -172,7 +178,7 @@ public class AaravRedPaths extends LinearOpMode {
                             wasPassedThresh = true;
 
                             if(timer.milliseconds()>650){ // change back to 6500
-                                state = AaravRedPaths.ShootStates.CYCLE_2;
+                                state = AaravRedPathsWithGate.ShootStates.CYCLE_2;
                                 transfer.setPower(-0.8);
                             }
                         }
@@ -182,7 +188,7 @@ public class AaravRedPaths extends LinearOpMode {
                                 //wasPassedThresh = false;
                             }
                             if(timer.milliseconds()>2000){ // change back to 6500
-                                state = AaravRedPaths.ShootStates.CYCLE_2;
+                                state = AaravRedPathsWithGate.ShootStates.CYCLE_2;
                                 transfer.setPower(-0.8);
                             }
                             robot.intake.setPower(0);
@@ -201,14 +207,22 @@ public class AaravRedPaths extends LinearOpMode {
 
                 currentAction = toSpike2.run(packet);
                 if (!currentAction) {
-                    state = AaravRedPaths.ShootStates.SHOOT_2;
+                    state = ShootStates.Gate;
                     timer.reset();
                     timer.startTime();
                     count = 0;
                     wasPassedThresh = false;
                 }
                 break;
-
+            case Gate:
+                currentAction = openGate.run(packet);
+                if(!currentAction){
+                    state = ShootStates.SHOOT_2;
+                    timer.reset();
+                    timer.startTime();
+                    count = 0;
+                    wasPassedThresh = false;
+                }
             case SHOOT_2:
                 currentAction = toShootFrom2.run(packet);
 
@@ -271,7 +285,7 @@ public class AaravRedPaths extends LinearOpMode {
 
                 currentAction = toSpike3.run(packet);
                 if (!currentAction) {
-                    state = AaravRedPaths.ShootStates.SHOOT_3;
+                    state = AaravRedPathsWithGate.ShootStates.SHOOT_3;
                     timer.reset();
                     timer.startTime();
                     count = 0;
@@ -339,7 +353,7 @@ public class AaravRedPaths extends LinearOpMode {
 
                 currentAction = toSpike1.run(packet);
                 if (!currentAction) {
-                    state = AaravRedPaths.ShootStates.SHOOT_1;
+                    state = AaravRedPathsWithGate.ShootStates.SHOOT_1;
                     timer.reset();
                     timer.startTime();
                     count = 0;
@@ -377,7 +391,7 @@ public class AaravRedPaths extends LinearOpMode {
 
                         wasPassedThresh = true;
                         if(timer.milliseconds() > 4000)
-                            state = AaravRedPaths.ShootStates.LEAVE;
+                            state = AaravRedPathsWithGate.ShootStates.LEAVE;
                     }
                     else{
                         if(wasPassedThresh){
@@ -385,7 +399,7 @@ public class AaravRedPaths extends LinearOpMode {
                             // wasPassedThresh = false;
                         }
                         if(count==3){
-                            state = AaravRedPaths.ShootStates.LEAVE;
+                            state = AaravRedPathsWithGate.ShootStates.LEAVE;
                         }
                         robot.intake.setPower(0);
                         transfer.setPower(0);
@@ -401,7 +415,7 @@ public class AaravRedPaths extends LinearOpMode {
                 currentAction = leave.run(packet);
 
                 if (!currentAction) {
-                    state = AaravRedPaths.ShootStates.END;
+                    state = AaravRedPathsWithGate.ShootStates.END;
                 }
                 break;
             case END:
