@@ -443,7 +443,7 @@ public class TeleopBlue extends LinearOpMode {
 
 
 // Drive: Auto Align OR Manual
-            drive.combinedDrive(gamepad1);
+            drive.manualDrive(gamepad1);
 
             Pose2d currentPOse =drive.getPose();
 // Telemetry

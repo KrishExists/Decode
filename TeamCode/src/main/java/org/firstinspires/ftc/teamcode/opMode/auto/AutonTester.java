@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode.opMode.auto;
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.bylazar.configurables.annotations.Configurable;
@@ -21,9 +20,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Pedro Pathing Autonomous", group = "Autonomous")
 @Configurable // Panels
-@Config
-public class PedroAutonomous extends OpMode {
-    public static double SHOOTER_WAIT = 8000;
+public class AutonTester extends OpMode {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
     public Follower follower; // Pedro Pathing follower instance
     private int pathState; // Current autonomous path state (state machine)
@@ -154,57 +151,56 @@ public class PedroAutonomous extends OpMode {
         }
     }
 
-//    public void resetTimerAndPrepareShoot() {
-//        robot.outtake.spinToRpm(2400);
-//        robot.outtake.setLinkage(0.5);
-//        robot.intake.setPower(0.8);
-//        transfer.setPower(1.0);
-//        if (!follower.isBusy() && ran) {
-//            timer.reset();
-//            ran = false;
-//        }
-//    }
-//
-//    public void shootAndAdvancePath(int pathNumber, PathChain currPath) {
-//        //
-//        robot.outtake.spinToRpm(2500);
-//        if(!follower.isBusy()) {
-//            transfer.setPower(-1);
-//            robot.intake.setPower(1.0);
-//            telemetry.addData("Is in this loop",1);
-//            if(robot.outtake.getRPM()> 2400 || rapidShoot ) {
-//                robot.intake.setPower(1.0);
-//                transfer.setPower(-1.0);
-//                rapidShoot = true;
-//                if(timer.milliseconds() > SHOOTER_WAIT) {
-//                    pathState = pathNumber;
-//                    follower.followPath(currPath);
-//                    ran = true;
-//                    rapidShoot = false;
-//                    return;
-//                }
-//            }
-//
-//        }
-//    }
-//
-//    public void intakeAndAdvance(int pathNumber, PathChain currPath) {
-//        robot.outtake.setLinkage(0.5);
-//        robot.outtake.setPower(-0.5);
-//        robot.intake.setPower(0.8);
-//        robot.outtake.spinToRpm(0);
-//        transfer.setPower(-0.05);
-//        if (transfer.getCurrent(CurrentUnit.AMPS) >= 5.0) {
-//            transfer.setPower(0);
-//        }
-//
-//        if (!follower.isBusy()) {
-//            follower.followPath(currPath);
-//            pathState = pathNumber;
-//            return;
-//        }
-//
-//    }
+    public void resetTimerAndPrepareShoot() {
+        robot.outtake.spinToRpm(2400);
+        robot.outtake.setLinkage(0.5);
+        robot.intake.setPower(0.8);
+        transfer.setPower(1.0);
+        if (!follower.isBusy() && ran) {
+            timer.reset();
+            ran = false;
+        }
+    }
+
+    public void shootAndAdvancePath(int pathNumber, PathChain currPath) {
+        robot.outtake.spinToRpm(2500);
+        if(!follower.isBusy()) {
+            transfer.setPower(-1);
+            robot.intake.setPower(1.0);
+            telemetry.addData("Is in this loop",1);
+            if(robot.outtake.getRPM()> 2400 || rapidShoot ) {
+                robot.intake.setPower(1.0);
+                transfer.setPower(-1.0);
+                rapidShoot = true;
+                if(timer.milliseconds() > 1200) {
+                    pathState = pathNumber;
+                    //follower.followPath(currPath);
+                    ran = true;
+                    rapidShoot = false;
+                    return;
+                }
+            }
+
+        }
+    }
+
+    public void intakeAndAdvance(int pathNumber, PathChain currPath) {
+        robot.outtake.setLinkage(0.5);
+        robot.outtake.setPower(-0.5);
+        robot.intake.setPower(0.8);
+        robot.outtake.spinToRpm(0);
+        transfer.setPower(-0.05);
+        if (transfer.getCurrent(CurrentUnit.AMPS) >= 5.0) {
+            transfer.setPower(0);
+        }
+
+        if (!follower.isBusy()) {
+            //follower.followPath(currPath);
+            pathState = pathNumber;
+            return;
+        }
+
+    }
 
 
     public int autonomousPathUpdate() {
@@ -212,41 +208,77 @@ public class PedroAutonomous extends OpMode {
         // Make sure to register NamedCommands in your RobotContainer
         switch(pathState) {
             case 0:
+                // Start Path 1
+                //follower.followPath(paths.Path1);
 
+                resetTimerAndPrepareShoot();
+                telemetry.addLine("Reset and Prepare Shoot Complete");
+                shootAndAdvancePath(1, paths.Path1);
+                telemetry.addLine("Complete Shoot and Advance");
+                intakeAndAdvance(1, paths.Path1);
+                telemetry.addLine("Complete Intake and Advance");
+                follower.update();
+                pathState = 67;
+                ran = true;
+                rapidShoot = false;
+                break;
 
             case 1:
-
+                telemetry.addData("Is Follower Busy? ", follower.isBusy());
+                shootAndAdvancePath(2, paths.Path2);
+                break;
 
             case 2:
-
+                intakeAndAdvance(3, paths.Path3);
+                resetTimerAndPrepareShoot();
+                break;
 
             case 3:
-
+                shootAndAdvancePath(4, paths.Path4);
+                break;
 
             case 4:
+                intakeAndAdvance(5, paths.Path5);
 
-
-
+                resetTimerAndPrepareShoot();
                 break;
 
             case 5:
-
+                shootAndAdvancePath(6, paths.Path6);
                 break;
 
             case 6:
+                intakeAndAdvance(7, paths.Path7);
 
+                resetTimerAndPrepareShoot();
                 break;
 
             case 7:
-
+                shootAndAdvancePath(8, paths.Path8);
                 break;
 
             case 8:
+                intakeAndAdvance(9, paths.Path9);
 
+                resetTimerAndPrepareShoot();
                 break;
 
             case 9:
+                if(!follower.isBusy()) {
+                    telemetry.addData("Is in this loop",1);
+                    if(robot.outtake.getRPM()> 2400 || rapidShoot ) {
+                        robot.intake.setPower(1.0);
+                        transfer.setPower(-1.0);
+                        rapidShoot = true;
+                        if(timer.milliseconds() > 1000) {
+                            pathState = 67;
+                            ran = true;
+                            rapidShoot = false;
+                            break;
+                        }
+                    }
 
+                }
                 break;
 
 

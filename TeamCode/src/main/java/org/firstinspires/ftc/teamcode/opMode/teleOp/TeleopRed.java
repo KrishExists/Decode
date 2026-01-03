@@ -446,7 +446,7 @@ public class TeleopRed extends LinearOpMode {
 
 
 // Drive: Auto Align OR Manual
-           drive.combinedDrive(gamepad1);
+           drive.manualDrive(gamepad1);
 
            currentPOse =drive.getPose();
 
