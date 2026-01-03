@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.opMode.auto;
 
+import androidx.core.os.TraceKt;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -19,17 +22,17 @@ import org.firstinspires.ftc.teamcode.subsystem.Robot;
 public class BlueClose extends LinearOpMode {
     private final ElapsedTime timer = new ElapsedTime();
 
-    Pose2d START_POSE = new Pose2d(-49.2, -50.1, Math.toRadians(144));
-    Pose2d LSHOOT = new Pose2d(-5, -3, Math.toRadians(225));
-    Pose2d SPIKE3 = new Pose2d(-8, -50, Math.toRadians(270));
-    Pose2d Spike1Init = new Pose2d(40, -30,Math.toRadians(270));
-    Pose2d SPIKE2 = new Pose2d(17, -56, Math.toRadians(270));
-    Pose2d Spike2SplineSpot = new Pose2d(14, -40, Math.toRadians(270));
-    Pose2d SPIKE1 = new Pose2d(45, -56, Math.toRadians(270));
-    Pose2d OpenGate = new Pose2d(14, -35, Math.toRadians(270));
-    Pose2d TouchGate = new Pose2d(14, -57, Math.toRadians(245));
-    Pose2d ReleaseGate = new Pose2d(10, -53, Math.toRadians(255));
-    Pose2d LEAVE = new Pose2d(9, -3, Math.toRadians(227));
+    Pose2d START_POSE = new Pose2d(-49.2, 50.1, Math.toRadians(-144));
+    Pose2d LSHOOT = new Pose2d(-7, 3, Math.toRadians(-221));
+    Pose2d SPIKE3 = new Pose2d(-9, 50, Math.toRadians(-270));
+    Pose2d Spike1Init = new Pose2d(40, 10,Math.toRadians(-270));
+    Pose2d SPIKE2 = new Pose2d(17, 56, Math.toRadians(-275));
+    Pose2d Spike2SplineSpot = new Pose2d(14, 40, Math.toRadians(-275));
+    Pose2d SPIKE1 = new Pose2d(40, 56, Math.toRadians(-270));
+    Pose2d OpenGate = new Pose2d(14, 35, Math.toRadians(-270));
+    Pose2d TouchGate = new Pose2d(14, 57, Math.toRadians(-245));
+    Pose2d ReleaseGate = new Pose2d(10, 53, Math.toRadians(-255));
+    Pose2d LEAVE = new Pose2d(9, 3, Math.toRadians(-227));
 
     public static Pose2d currentPose;
 
@@ -53,7 +56,7 @@ public class BlueClose extends LinearOpMode {
         CYCLE_GATE2, SHOOT_GATE2, LEAVE, END
     }
 
-    ShootStates state = ShootStates.PRELOAD;
+    ShootStates state = BlueClose.ShootStates.PRELOAD;
     DcMotorEx transfer;
 
     Robot robot;
@@ -100,10 +103,10 @@ public class BlueClose extends LinearOpMode {
         TrajectoryActionBuilder toSpike2Path = robot.drive.drive.actionBuilder(LSHOOT) // GOOD
                 .setTangent(Math.toRadians(20))
                 .strafeToLinearHeading(
-                        new Pose2d(14, 10,Math.toRadians(270)).position,
-                        Math.toRadians(270)
+                        new Pose2d(14, 10,Math.toRadians(-270)).position,
+                        Math.toRadians(-270)
                 )
-                .strafeToLinearHeading(SPIKE2.position, Math.toRadians(270));
+                .strafeToLinearHeading(SPIKE2.position, Math.toRadians(-270));
 
         // SPIKE 2 → LSHOOT
         TrajectoryActionBuilder toShootFrom2Path = robot.drive.drive.actionBuilder(SPIKE2) // GOOD
@@ -135,8 +138,8 @@ public class BlueClose extends LinearOpMode {
         TrajectoryActionBuilder toShootFromGate2Path = robot.drive.drive.actionBuilder(TouchGate) // GOOD (2 times remember!!!!)
                 .setTangent(Math.toRadians(20))
                 .strafeToLinearHeading(
-                        new Pose2d(14, 10,Math.toRadians(270)).position,
-                        Math.toRadians(270)
+                        new Pose2d(14, 10,Math.toRadians(-270)).position,
+                        Math.toRadians(-270)
                 )
                 .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading);
 
@@ -149,8 +152,8 @@ public class BlueClose extends LinearOpMode {
                 .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading);
 
         TrajectoryActionBuilder toSpike1Path = robot.drive.drive.actionBuilder(LSHOOT)
-                .splineToSplineHeading(Spike1Init, Math.toRadians(270))
-                .strafeToLinearHeading(SPIKE1.position, Math.toRadians(270));
+                .splineToLinearHeading(Spike1Init, Math.toRadians(-270))
+                .strafeToLinearHeading(SPIKE1.position, Math.toRadians(-270));
 
         TrajectoryActionBuilder toShootFrom1Path = robot.drive.drive.actionBuilder(SPIKE1)
                 .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading);
@@ -183,7 +186,7 @@ public class BlueClose extends LinearOpMode {
                 currentAction = shootPre.run(packet);
 
                 if(currentAction){
-                    robot.outtake.spinToRpm(2500);
+                    robot.outtake.spinToRpm(2400);
                     robot.outtake.linkage.setPosition(0.5);
                     robot.intake.setPower(1);
                     transfer.setPower(1);
@@ -193,14 +196,14 @@ public class BlueClose extends LinearOpMode {
                     if(timer.milliseconds()<0){
                         telemetry.addData("Timer",timer.milliseconds());
                         robot.outtake.linkage.setPosition(0.5);
-                        robot.outtake.spinToRpm(2500);
+                        robot.outtake.spinToRpm(2450);
                         robot.intake.setPower(1);
                         transfer.setPower(1);
                     }else{
                         telemetry.addData("Count",count);
-                        robot.outtake.spinToRpm(2500);
+                        robot.outtake.spinToRpm(2450);
 
-                        if(robot.outtake.currentRPM()>2400 || wasPassedThresh){
+                        if(robot.outtake.currentRPM()>2350 || wasPassedThresh){
                             telemetry.addData("Up to rpm",robot.outtake.currentRPM());
                             robot.intake.setPower(1);
                             transfer.setPower(-1);
@@ -262,14 +265,14 @@ public class BlueClose extends LinearOpMode {
                 else if(currentAction){
                     telemetry.addData("Timer",timer.milliseconds());
                     robot.outtake.linkage.setPosition(0.5);
-                    robot.outtake.spinToRpm(2500);
+                    robot.outtake.spinToRpm(2450);
                     wasPassedThresh = false;
 
                 }
                 else{
                     telemetry.addData("Count",count);
-                    robot.outtake.spinToRpm(2500);
-                    if(robot.outtake.currentRPM()>2400 || wasPassedThresh){
+                    robot.outtake.spinToRpm(2450);
+                    if(robot.outtake.currentRPM()>2350 || wasPassedThresh){
                         telemetry.addData("Up to rpm",robot.outtake.currentRPM());
                         robot.intake.setPower(1);
                         transfer.setPower(-1);
@@ -336,14 +339,14 @@ public class BlueClose extends LinearOpMode {
                 else if(currentAction){
                     telemetry.addData("Timer",timer.milliseconds());
                     robot.outtake.linkage.setPosition(0.5);
-                    robot.outtake.spinToRpm(2500);
+                    robot.outtake.spinToRpm(2400);
                     wasPassedThresh = false;
 
                 }
                 else{
                     telemetry.addData("Count",count);
-                    robot.outtake.spinToRpm(2500);
-                    if(robot.outtake.currentRPM()>2400 || wasPassedThresh){
+                    robot.outtake.spinToRpm(2400);
+                    if(robot.outtake.currentRPM()>2300 || wasPassedThresh){
                         telemetry.addData("Up to rpm",robot.outtake.currentRPM());
                         robot.intake.setPower(1);
                         transfer.setPower(-1);
@@ -412,14 +415,14 @@ public class BlueClose extends LinearOpMode {
                 else if(currentAction){
                     telemetry.addData("Timer",timer.milliseconds());
                     robot.outtake.linkage.setPosition(0.5);
-                    robot.outtake.spinToRpm(2500);
+                    robot.outtake.spinToRpm(2400);
                     wasPassedThresh = false;
 
                 }
                 else{
                     telemetry.addData("Count",count);
-                    robot.outtake.spinToRpm(2500);
-                    if(robot.outtake.currentRPM()>2400 || wasPassedThresh){
+                    robot.outtake.spinToRpm(2400);
+                    if(robot.outtake.currentRPM()>2300 || wasPassedThresh){
                         telemetry.addData("Up to rpm",robot.outtake.currentRPM());
                         robot.intake.setPower(1);
                         transfer.setPower(-1);
@@ -479,13 +482,13 @@ public class BlueClose extends LinearOpMode {
                 else if(currentAction){
                     telemetry.addData("Timer",timer.milliseconds());
                     robot.outtake.linkage.setPosition(0.5);
-                    robot.outtake.spinToRpm(2500);
+                    robot.outtake.spinToRpm(2450);
                     wasPassedThresh = false;
                 }
                 else{
                     telemetry.addData("Count",count);
-                    robot.outtake.spinToRpm(2500);
-                    if(robot.outtake.currentRPM()>2400 || wasPassedThresh){
+                    robot.outtake.spinToRpm(25450);
+                    if(robot.outtake.currentRPM()>2350 || wasPassedThresh){
                         telemetry.addData("Up to rpm",robot.outtake.currentRPM());
                         robot.intake.setPower(1);
                         transfer.setPower(-1);
@@ -546,14 +549,14 @@ public class BlueClose extends LinearOpMode {
                 else if(currentAction){
                     telemetry.addData("Timer",timer.milliseconds());
                     robot.outtake.linkage.setPosition(0.5);
-                    robot.outtake.spinToRpm(2500);
+                    robot.outtake.spinToRpm(2450);
                     wasPassedThresh = false;
 
                 }
                 else{
                     telemetry.addData("Count",count);
-                    robot.outtake.spinToRpm(2500);
-                    if(robot.outtake.currentRPM()>2400 || wasPassedThresh){
+                    robot.outtake.spinToRpm(2450);
+                    if(robot.outtake.currentRPM()>2350 || wasPassedThresh){
                         telemetry.addData("Up to rpm",robot.outtake.currentRPM());
                         robot.intake.setPower(1);
                         transfer.setPower(-1);

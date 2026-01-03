@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.roadRunner.MecanumDrive;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 public class Drivetrain implements Subsystem {
 
@@ -60,6 +61,31 @@ public class Drivetrain implements Subsystem {
         drive.rightBack.setPower((y + x - rx) / denominator);
     }
 
+    public void combinedDrive(Gamepad gamepad1, AprilTagDetection tag) {
+//        Vector2d goalPose = NewRedTry.currentPose.position;
+        Vector2d goalPose = new Vector2d(0,0);
+        if (gamepad1.left_bumper) goalPose = new Vector2d(-72, -72); // blue
+        if (gamepad1.right_bumper) goalPose = new Vector2d(-74, 72); // red
+
+        double lockedHeading = Math.atan2(goalPose.y - currentPose.position.y, goalPose.x - currentPose.position.x);
+
+        double error = AngleUnit.normalizeRadians(lockedHeading - AngleUnit.normalizeRadians(currentPose.heading.log()));
+        double target = error + currentPose.heading.log();
+        double output = Range.clip(headingController.calculate(currentPose.heading.log(), target), -1, 1);
+        if(tag.metadata!=null){
+             output = Range.clip(headingController.calculate(0,tag.ftcPose.bearing), -1, 1);
+
+        }
+
+        drive.setDrivePowers(new PoseVelocity2d(
+                new Vector2d(
+                        -gamepad1.left_stick_y,
+                        -gamepad1.left_stick_x * 1.1
+
+                ),
+                (gamepad1.left_bumper || gamepad1.right_bumper) ? output : -gamepad1.right_stick_x
+        ));
+    }
     public void combinedDrive(Gamepad gamepad1) {
 //        Vector2d goalPose = NewRedTry.currentPose.position;
         Vector2d goalPose = new Vector2d(0,0);

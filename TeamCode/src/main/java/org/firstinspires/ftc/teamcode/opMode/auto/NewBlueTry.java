@@ -19,20 +19,20 @@ import org.firstinspires.ftc.teamcode.roadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.Robot;
 
 @Autonomous
-public class NewRedTry18Ball extends LinearOpMode {
+public class NewBlueTry extends LinearOpMode {
     private final ElapsedTime timer = new ElapsedTime();
 
-    Pose2d START_POSE = new Pose2d(-49.2, 50.1, Math.toRadians(-144));
-    Pose2d LSHOOT = new Pose2d(-7, 3, Math.toRadians(-221));
-    Pose2d SPIKE3 = new Pose2d(-9, 50, Math.toRadians(-270));
-    Pose2d Spike1Init = new Pose2d(40, 10,Math.toRadians(-270));
-    Pose2d SPIKE2 = new Pose2d(17, 56, Math.toRadians(-275));
-    Pose2d Spike2SplineSpot = new Pose2d(14, 40, Math.toRadians(-275));
-    Pose2d SPIKE1 = new Pose2d(40, 56, Math.toRadians(-270));
-    Pose2d OpenGate = new Pose2d(14, 35, Math.toRadians(-270));
-    Pose2d TouchGate = new Pose2d(14, 57, Math.toRadians(-245));
-    Pose2d ReleaseGate = new Pose2d(10, 53, Math.toRadians(-255));
-    Pose2d LEAVE = new Pose2d(9, 3, Math.toRadians(-227));
+    Pose2d START_POSE = new Pose2d(-49.2, -50.1, Math.toRadians(144));
+    Pose2d LSHOOT = new Pose2d(-7, -3, Math.toRadians(225));
+    Pose2d SPIKE3 = new Pose2d(-9, -50, Math.toRadians(270));
+    Pose2d Spike1Init = new Pose2d(35, -10,Math.toRadians(270));
+    Pose2d SPIKE2 = new Pose2d(10, -56, Math.toRadians(275));
+    Pose2d Spike2SplineSpot = new Pose2d(10, -40, Math.toRadians(275));
+    Pose2d SPIKE1 = new Pose2d(35, -56, Math.toRadians(270));
+    Pose2d OpenGate = new Pose2d(14, -35, Math.toRadians(270));
+    Pose2d TouchGate = new Pose2d(14, -57, Math.toRadians(245));
+    Pose2d ReleaseGate = new Pose2d(10, -53, Math.toRadians(255));
+    Pose2d LEAVE = new Pose2d(9, -3, Math.toRadians(227));
 
     public static Pose2d currentPose;
 
@@ -56,7 +56,7 @@ public class NewRedTry18Ball extends LinearOpMode {
         CYCLE_GATE2, SHOOT_GATE2, LEAVE, END
     }
 
-    ShootStates state = NewRedTry18Ball.ShootStates.PRELOAD;
+    ShootStates state = ShootStates.PRELOAD;
     DcMotorEx transfer;
 
     Robot robot;
@@ -101,12 +101,12 @@ public class NewRedTry18Ball extends LinearOpMode {
 
         // LSHOOT → SPIKE 2
         TrajectoryActionBuilder toSpike2Path = robot.drive.drive.actionBuilder(LSHOOT) // GOOD
-                .setTangent(Math.toRadians(20))
+                .setTangent(Math.toRadians(-20))
                 .strafeToLinearHeading(
-                        new Pose2d(14, 10,Math.toRadians(-270)).position,
-                        Math.toRadians(-270)
+                        new Pose2d(14, -10,Math.toRadians(270)).position,
+                        Math.toRadians(270)
                 )
-                .strafeToLinearHeading(SPIKE2.position, Math.toRadians(-270));
+                .strafeToLinearHeading(SPIKE2.position, Math.toRadians(270));
 
         // SPIKE 2 → LSHOOT
         TrajectoryActionBuilder toShootFrom2Path = robot.drive.drive.actionBuilder(SPIKE2) // GOOD
@@ -136,10 +136,10 @@ public class NewRedTry18Ball extends LinearOpMode {
 
         // OPENGATE → LSHOOT (2)
         TrajectoryActionBuilder toShootFromGate2Path = robot.drive.drive.actionBuilder(TouchGate) // GOOD (2 times remember!!!!)
-                .setTangent(Math.toRadians(20))
+                .setTangent(Math.toRadians(-20))
                 .strafeToLinearHeading(
-                        new Pose2d(14, 10,Math.toRadians(-270)).position,
-                        Math.toRadians(-270)
+                        new Pose2d(14, -10,Math.toRadians(270)).position,
+                        Math.toRadians(270)
                 )
                 .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading);
 
@@ -152,8 +152,8 @@ public class NewRedTry18Ball extends LinearOpMode {
                 .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading);
 
         TrajectoryActionBuilder toSpike1Path = robot.drive.drive.actionBuilder(LSHOOT)
-                .splineToLinearHeading(Spike1Init, Math.toRadians(-270))
-                .strafeToLinearHeading(SPIKE1.position, Math.toRadians(-270));
+                .splineToLinearHeading(Spike1Init, Math.toRadians(270))
+                .strafeToLinearHeading(SPIKE1.position, Math.toRadians(270));
 
         TrajectoryActionBuilder toShootFrom1Path = robot.drive.drive.actionBuilder(SPIKE1)
                 .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading);
@@ -211,7 +211,7 @@ public class NewRedTry18Ball extends LinearOpMode {
                             wasPassedThresh = true;
 
                             if(timer.milliseconds()>650){ // change back to 6500
-                                state = NewRedTry18Ball.ShootStates.CYCLE_2;
+                                state = ShootStates.CYCLE_2;
                                 transfer.setPower(-0.8);
                             }
                         }
@@ -220,8 +220,8 @@ public class NewRedTry18Ball extends LinearOpMode {
                                 count++;
                                 //wasPassedThresh = false;
                             }
-                            if(timer.milliseconds()>2000){ // change back to 6500
-                                state = NewRedTry18Ball.ShootStates.CYCLE_2;
+                            if(timer.milliseconds()>2500){ // change back to 6500
+                                state = ShootStates.CYCLE_2;
                                 transfer.setPower(-0.8);
                             }
                             robot.intake.setPower(0);
@@ -240,7 +240,7 @@ public class NewRedTry18Ball extends LinearOpMode {
 
                 currentAction = toSpike2.run(packet);
                 if (!currentAction) {
-                    state = NewRedTry18Ball.ShootStates.SHOOT_2;
+                    state = ShootStates.SHOOT_2;
                     timer.reset();
                     timer.startTime();
                     count = 0;
@@ -457,7 +457,7 @@ public class NewRedTry18Ball extends LinearOpMode {
 
                 currentAction = toSpike3.run(packet);
                 if (!currentAction) {
-                    state = NewRedTry18Ball.ShootStates.SHOOT_3;
+                    state = ShootStates.SHOOT_3;
                     timer.reset();
                     timer.startTime();
                     count = 0;
@@ -487,7 +487,7 @@ public class NewRedTry18Ball extends LinearOpMode {
                 }
                 else{
                     telemetry.addData("Count",count);
-                    robot.outtake.spinToRpm(25450);
+                    robot.outtake.spinToRpm(2450);
                     if(robot.outtake.currentRPM()>2350 || wasPassedThresh){
                         telemetry.addData("Up to rpm",robot.outtake.currentRPM());
                         robot.intake.setPower(1);
@@ -525,7 +525,7 @@ public class NewRedTry18Ball extends LinearOpMode {
 
                 currentAction = toSpike1.run(packet);
                 if (!currentAction) {
-                    state = NewRedTry18Ball.ShootStates.SHOOT_1;
+                    state = ShootStates.SHOOT_1;
                     timer.reset();
                     timer.startTime();
                     count = 0;
@@ -563,7 +563,7 @@ public class NewRedTry18Ball extends LinearOpMode {
 
                         wasPassedThresh = true;
                         if(timer.milliseconds() > 4000)
-                            state = NewRedTry18Ball.ShootStates.LEAVE;
+                            state = ShootStates.LEAVE;
                     }
                     else{
                         if(wasPassedThresh){
@@ -571,7 +571,7 @@ public class NewRedTry18Ball extends LinearOpMode {
                             // wasPassedThresh = false;
                         }
                         if(count==3){
-                            state = NewRedTry18Ball.ShootStates.LEAVE;
+                            state = ShootStates.LEAVE;
                         }
                         robot.intake.setPower(0);
                         transfer.setPower(0);
@@ -587,7 +587,7 @@ public class NewRedTry18Ball extends LinearOpMode {
                 currentAction = leave.run(packet);
 
                 if (!currentAction) {
-                    state = NewRedTry18Ball.ShootStates.END;
+                    state = ShootStates.END;
                 }
                 break;
             case END:

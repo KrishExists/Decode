@@ -77,7 +77,7 @@ public class TeleOpNewRed extends LinearOpMode {
 
         telemetry.addLine("Initialized — Waiting for Start");
         telemetry.update();
-
+        initAprilTag();
         waitForStart();
         if (isStopRequested()) return;
         intake.timerStart();
@@ -86,16 +86,24 @@ public class TeleOpNewRed extends LinearOpMode {
 
 // ===== Main Loop =====
         while (opModeIsActive()) {
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            AprilTagDetection detected = null;
+            for (AprilTagDetection detection : currentDetections) {
+                if(detection.id==20||detection.id ==24){
+                    detected = detection;
+                    break;
+                }
+            }
 
             drive.update();
             intake.update(gamepad1, gamepad2);
 
 
 // Drive: Auto Align OR Manual
-            drive.combinedDrive(gamepad1);
+            drive.combinedDrive(gamepad1, detected);
 
             Pose2d currentPOse =drive.getPose();
-            telemetryAprilTag();
+            
 // Telemetry
             telemetry.addData("Intake State", intake.getState());
             telemetry.addData("Pose position",currentPOse.position);
