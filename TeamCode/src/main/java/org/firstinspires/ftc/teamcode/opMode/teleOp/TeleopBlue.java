@@ -451,6 +451,8 @@ public class TeleopBlue extends LinearOpMode {
             telemetry.addData("Pose position",currentPOse.position);
             telemetry.addData("Pose heading",currentPOse.heading);
             telemetry.addData("Shooter RPM", shooter.atSpeed(0, 99999));
+            telemetry.update();
+
 
         }
     }
