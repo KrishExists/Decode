@@ -29,11 +29,11 @@ public class MeepMeepTesting {
 
         Pose2d START_POSE = new Pose2d(-49.2, 50.1, Math.toRadians(-144));
         Pose2d LSHOOT = new Pose2d(-7, 3, Math.toRadians(-221));
-        Pose2d SPIKE3 = new Pose2d(-9, 50, Math.toRadians(-270));
+        Pose2d SPIKE3 = new Pose2d(-12, 50, Math.toRadians(-270));
         Pose2d Spike1Init = new Pose2d(40, 10,Math.toRadians(-270));
-        Pose2d SPIKE2 = new Pose2d(14, 56, Math.toRadians(-275));
+        Pose2d SPIKE2 = new Pose2d(12, 56, Math.toRadians(-275));
         Pose2d Spike2SplineSpot = new Pose2d(14, 40, Math.toRadians(-275));
-        Pose2d SPIKE1 = new Pose2d(40, 56, Math.toRadians(-270));
+        Pose2d SPIKE1 = new Pose2d(35, 56, Math.toRadians(-270));
         Pose2d OpenGate = new Pose2d(14, 35, Math.toRadians(-270));
         Pose2d TouchGate = new Pose2d(14, 57, Math.toRadians(-245));
         Pose2d ReleaseGate = new Pose2d(10, 53, Math.toRadians(-255));
@@ -58,10 +58,19 @@ public class MeepMeepTesting {
 
                 .setTangent(Math.toRadians(0))
                 .strafeToLinearHeading(
-                        new Pose2d(14, 10,Math.toRadians(-270)).position,
+                        new Pose2d(12, 10,Math.toRadians(-270)).position,
                         Math.toRadians(-270)
                 )
                 .strafeToLinearHeading(SPIKE2.position, Math.toRadians(-270))
+                                .strafeToLinearHeading(LSHOOT.position,LSHOOT.heading)
+
+                        .strafeToLinearHeading(new Pose2d(-12,3,5).position,SPIKE3.heading)
+                .strafeToLinearHeading(SPIKE3.position, SPIKE3.heading)
+                        .strafeToLinearHeading(LSHOOT.position,LSHOOT.heading)
+                        .strafeToLinearHeading(new Vector2d(35,13), Math.toRadians(-270))
+
+                        .strafeToLinearHeading(SPIKE1.position, Math.toRadians(-270))
+                .strafeToLinearHeading(LSHOOT.position, LSHOOT.heading)
 //                    .strafeTo(close18Shoot.position)
 //                    .waitSeconds(1)
 
