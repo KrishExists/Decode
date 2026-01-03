@@ -73,7 +73,7 @@ public class Drivetrain implements Subsystem {
         double target = error + currentPose.heading.log();
         double output = Range.clip(headingController.calculate(currentPose.heading.log(), target), -1, 1);
         if(tag.metadata!=null){
-             output = Range.clip(headingController.calculate(0,tag.ftcPose.bearing), -1, 1);
+             output = Range.clip(headingController.calculate(tag.ftcPose.bearing,0), -1, 1);
 
         }
 

@@ -1897,12 +1897,15 @@ public class Intake implements Subsystem{
         // -----------------------------
         // MAP GAMEPAD INPUT TO STATES
         // -----------------------------
-        if (gamepad2.right_trigger>0.2) setState(IntakeState.INTAKE);
+        //Button controls
+        //Dpad up for first ball. dpad left for second and third
+        //Dpad right to cancel
+        //Y for auto speed dont like see if i fix
+        //Right bumper for outtake
+        //Bottom 2 for outtake mid and outtake far just speeding up
+
+
         else if(gamepad2.dpad_up) setState(IntakeState.IntakeNEXT);
-        else if(gamepad2.left_bumper) setState(IntakeState.RUNSLOW1);
-        else if(gamepad2.left_trigger>0.2){
-            rapid = !rapid;
-        }
         else if (gamepad2.dpad_left) setState(IntakeState.INTAKE_LAST);
         else if (gamepad2.dpad_right) {
             setState(IntakeState.REST);
@@ -1910,6 +1913,7 @@ public class Intake implements Subsystem{
         }
         else if (gamepad2.dpad_down) setState(IntakeState.RUNSLOW);
         else if (gamepad2.right_bumper){
+            //IS CURCIAL PLEASE DO NOT DELETE. I REPEAT DO NOT DELETE. IS HELPING US PLEASE MURDUKUR
         }
 
         else if (gamepad2.a){
@@ -1926,12 +1930,10 @@ public class Intake implements Subsystem{
             shooting = true;
         }
         else if (shooting){
-            //do nothing
+            //do nothing AGAIN IS CRUCIAL MURDURKUR
         }
         else setState(IntakeState.REST);
-        if(sm.getState()!=IntakeState.INTAKE){
-            transfer123 = false;
-        }
+
 
         long t = sm.timeInStateMs();
 
@@ -1940,17 +1942,6 @@ public class Intake implements Subsystem{
         // -----------------------------
         switch (sm.getState()) {
 
-            case INTAKE:
-                intake.setPower(Constants.INTAKE_IN_POWER);
-                shooter.setPower(-0.5);
-                linkage.setPosition(Constants.LINKAGE_MID);
-                if(transfer.getCurrent(CurrentUnit.AMPS) > 3.0 || transfer123) {
-                    transfer.setPower(Constants.TRANSFER_CLOSED);
-                    transfer123=true;
-                }else{
-                    transfer.setPower(Constants.TRANSFER_IN_POWER);
-                }
-                break;
             case INTAKE_LAST:
                 shooter.setPower(-0.2);
 
@@ -1989,47 +1980,9 @@ public class Intake implements Subsystem{
 
                 }
                 break;
-            case RUNSLOW1:
-                intake.setPower(Constants.INTAKE_IN_POWER);
-                shooter.setPower(-0.5);
-                transfer.setPower(0.8);
-            case TRANSFER:
-                timer.reset();
-                blocker.setPosition(Constants.BLOCKER_CLOSE);
-                intake.setPower(Constants.INTAKE_REVERSE_KEEP);
-                transfer.setPower(Constants.TRANSFER_REV);
-                if (timer.seconds()>=4){
-                    transfer.setPower(0);
-                    intake.setPower(0);
 
-                }
 
-                shooter.stop();
-                break;
 
-            case RUNSLOW:
-                transfer.setPower(1.0);
-                intake.setPower(-0.5);
-                shooter.reverse();
-                linkage.setPosition(Constants.LINKAGE_REST);
-                break;
-
-            case OUTTAKE1:
-                blocker.setPosition(Constants.BLOCKER_OPEN);
-                if (t < 1500) {
-                    shooter.spinToRpm(2000);
-                    intake.setPower(0);
-                    linkage.setPosition(Constants.LINKAGE_REST);
-                } else if (t < 3300) {
-                    shooter.spinToRpm(2400);
-                    intake.setPower(0);
-                    linkage.setPosition(Constants.LINKAGE_SHOOT);
-                } else {
-                    shooter.spinToRpm(2400);
-                    intake.setPower(Constants.INTAKE_FEED_POWER);
-                    linkage.setPosition(Constants.LINKAGE_SHOOT);
-                }
-                break;
             case SpeedFar:
                 intake.setPower(0.6);
                 linkage.setPosition(0.5);
@@ -2037,14 +1990,7 @@ public class Intake implements Subsystem{
                 intake.setPower(0.8);
                 transfer.setPower(0.8);
                 if(gamepad2.right_bumper){
-                    if(true){
-                        setState(IntakeState.OUTTAKE_FAR);
-                        intake.setPower(0);
-                        transfer.setPower(0);
-                    }else{
-                        setState(IntakeState.RAPOD_FAR);
-                    }
-                 ;
+                    setState(IntakeState.RAPOD_FAR);
                     shooting = false;
 
                 }
@@ -2057,70 +2003,46 @@ public class Intake implements Subsystem{
                 intake.setPower(0.8);
                 transfer.setPower(0.8);
                 if(gamepad2.right_bumper){
-                    if(rapid){
-                        setState(IntakeState.OUTTAKE_MID);
-                    }else{
-                        setState(IntakeState.RAPOD_CLOSE);
-                    }
+                    setState(IntakeState.RAPOD_CLOSE);
                     intake.setPower(0);
                     transfer.setPower(0);
                     shooting = false;
                 }
                 break;
 
-            case OUTTAKE:
-                blocker.setPosition(Constants.BLOCKER_OPEN);
-                if (t < 700) {
-                    intake.setPower(-0.500);
-                    shooter.reverse();
-                    linkage.setPosition(Constants.LINKAGE_REST);
-                } else if (t < 2500) {
-                    shooter.spinToRpm(2700);
-                    intake.setPower(0);
-                } else if (t < 3000) {
-                    shooter.spinToRpm(2700);
-                    linkage.setPosition(Constants.LINKAGE_SHOOT);
-                } else if (t < 4000) {
-                    shooter.spinToRpm(2700);
-                    intake.setPower(Constants.INTAKE_FEED_POWER);
-                } else {
-                    shooter.spinToRpm(2700);
-                    intake.setPower(Constants.INTAKE_FEED_POWER);
-                }
-                break;
 
-            case OUTTAKE_MID:
-                blocker.setPosition(Constants.BLOCKER_OPEN);
-                if (t < 0) {
-                    linkage.setPosition(Constants.LINKAGE_MID);
-
-                } else {
-                    shooter.spinToRpm(Constants.shooterMid);
-                    if (shooter.atSpeed(2850, 3050)) {
-                        intake.setPower(Constants.INTAKE_FEED_POWER);
-                        transfer.setPower(Constants.TRANSFER_IN_POWER);
-                    } else {
-                        intake.setPower(0);
-                        transfer.setPower(Constants.TRANSFER_CLOSED);
-                    }
-                }
-                break;
-
-            case OUTTAKE_FAR:
-                blocker.setPosition(Constants.BLOCKER_OPEN);
-                if (t < 0) {
-                    linkage.setPosition(Constants.LINKAGE_MID);
-                } else {
-                    shooter.spinToRpm(2993);
-                    if (shooter.atSpeed(2890, 3200)) {
-                        intake.setPower(Constants.INTAKE_FEED_POWER);
-                        transfer.setPower(Constants.TRANSFER_IN_POWER);
-                    } else {
-                        intake.setPower(0);
-                        transfer.setPower(Constants.TRANSFER_CLOSED);
-                    }
-                }
-                break;
+//            case OUTTAKE_MID:
+//                blocker.setPosition(Constants.BLOCKER_OPEN);
+//                if (t < 0) {
+//                    linkage.setPosition(Constants.LINKAGE_MID);
+//
+//                } else {
+//                    shooter.spinToRpm(Constants.shooterMid);
+//                    if (shooter.atSpeed(2850, 3050)) {
+//                        intake.setPower(Constants.INTAKE_FEED_POWER);
+//                        transfer.setPower(Constants.TRANSFER_IN_POWER);
+//                    } else {
+//                        intake.setPower(0);
+//                        transfer.setPower(Constants.TRANSFER_CLOSED);
+//                    }
+//                }
+//                break;
+//
+//            case OUTTAKE_FAR:
+//                blocker.setPosition(Constants.BLOCKER_OPEN);
+//                if (t < 0) {
+//                    linkage.setPosition(Constants.LINKAGE_MID);
+//                } else {
+//                    shooter.spinToRpm(2993);
+//                    if (shooter.atSpeed(2890, 3200)) {
+//                        intake.setPower(Constants.INTAKE_FEED_POWER);
+//                        transfer.setPower(Constants.TRANSFER_IN_POWER);
+//                    } else {
+//                        intake.setPower(0);
+//                        transfer.setPower(Constants.TRANSFER_CLOSED);
+//                    }
+//                }
+//                break;
             case RAPOD_CLOSE:
                 blocker.setPosition(Constants.BLOCKER_OPEN);
                shooter.spinToRpm(2950);
@@ -2146,7 +2068,6 @@ public class Intake implements Subsystem{
 
         telemetry.addData("Intake State", sm.getState());
         telemetry.addData("Time in State", t);
-        telemetry.addData("Rapid",rapid);
         telemetry.update();
     }
 //    public void resetTime(){
