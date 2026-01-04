@@ -427,7 +427,7 @@ public class ActualBlue extends LinearOpMode {
                             wasPassedThresh = false;
                         }
                         if(count==3){
-                            state = ShootStates.END;
+                            state = ShootStates.LEAVE;
                         }
                         robot.intake.setPower(0);
                         transfer.setPower(0);
