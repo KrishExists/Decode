@@ -1985,7 +1985,10 @@ public class Intake implements Subsystem{
                 break;
 
 
-
+            case RUNSLOW:
+                intake.setPower(-1);
+                transfer.setPower(1);
+                shooter.setPower(-0.5);
             case SpeedFar:
                 intake.setPower(0.6);
                 linkage.setPosition(0.5);

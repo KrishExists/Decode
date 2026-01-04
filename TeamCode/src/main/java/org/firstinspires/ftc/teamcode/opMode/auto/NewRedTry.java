@@ -444,7 +444,7 @@ public class NewRedTry extends LinearOpMode {
                 currentAction = leave.run(packet);
 
                 if (!currentAction) {
-                    state = NewRedTry.ShootStates.END;
+                    state = ShootStates.LEAVE;
                 }
                 break;
             case END:
