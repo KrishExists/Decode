@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
@@ -36,8 +37,7 @@ public class Drivetrain implements Subsystem {
         this.telemetry = t;
 
         drive = new MecanumDrive(hardwareMap, PoseStorage.pose);
-
-        currentPose = startPose;
+        currentPose = PoseStorage.pose;
         currentVelocity = new PoseVelocity2d(new Vector2d(0,0), 0);
 
         headingController = new PIDController(headingKp, headingKi, headingKd);
