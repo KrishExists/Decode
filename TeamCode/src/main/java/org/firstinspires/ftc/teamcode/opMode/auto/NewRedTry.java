@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.opMode.auto;
 
-import android.graphics.drawable.ScaleDrawable;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -15,6 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.Robot;
 
@@ -76,6 +76,7 @@ public class NewRedTry extends LinearOpMode {
             update();
             drive.updatePoseEstimate();
             Pose2d currentPose = drive.localizer.getPose();
+            PoseStorage.pose = currentPose;
 
             telemetry.addData("State", state);
             telemetry.addData("Outtake", robot.outtake.getVelocity());

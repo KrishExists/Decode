@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.Robot;
 
@@ -76,6 +77,7 @@ public class ActualBlue extends LinearOpMode {
             update();
             drive.updatePoseEstimate();
             Pose2d currentPose = drive.localizer.getPose();
+            PoseStorage.pose = currentPose;
 
             telemetry.addData("State", state);
             telemetry.addData("Outtake", robot.outtake.getVelocity());

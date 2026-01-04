@@ -10,8 +10,10 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadRunner.MecanumDrive;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 public class Drivetrain implements Subsystem {
 
@@ -33,7 +35,7 @@ public class Drivetrain implements Subsystem {
         this.hardwareMap = h;
         this.telemetry = t;
 
-        drive = new MecanumDrive(hardwareMap, startPose);
+        drive = new MecanumDrive(hardwareMap, PoseStorage.pose);
 
         currentPose = startPose;
         currentVelocity = new PoseVelocity2d(new Vector2d(0,0), 0);
