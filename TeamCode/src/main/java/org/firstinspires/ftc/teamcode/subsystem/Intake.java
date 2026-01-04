@@ -1958,10 +1958,7 @@ public class Intake implements Subsystem{
                 blocker.setPosition(Constants.BLOCKER_OPEN);
                 transfer.setPower(Constants.TRANSFER_IN_POWER);
                 break;
-            case RUNSLOW:
-                intake.setPower(-1);
-                transfer.setPower(1);
-                shooter.setPower(-0.5);
+
             case AUTORPMRED:
                 intake.setPower(0.6);
                 linkage.setPosition(0.5);

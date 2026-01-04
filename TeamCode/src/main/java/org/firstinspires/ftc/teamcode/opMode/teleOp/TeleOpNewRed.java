@@ -101,7 +101,7 @@ public class TeleOpNewRed extends LinearOpMode {
 
 // Drive: Auto Align OR Manual
             if(detected!=null){
-                drive.combinedDrive(gamepad1, detected);
+                drive.combinedDrive(gamepad1);
                 telemetry.addData("Detected tag ", 1);
 
 

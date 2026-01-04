@@ -1,5 +1,16 @@
 package org.firstinspires.ftc.teamcode.subsystem;
-
+import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.HeadingInterpolator;
+import com.pedropathing.paths.Path;
+import com.pedropathing.paths.PathChain;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import java.util.function.Supplier;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -11,10 +22,18 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.PoseStorage;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.roadRunner.MecanumDrive;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
+
 public class Drivetrain implements Subsystem {
+    private Follower follower;
+    public static Pose startingPose; //See ExampleAuto to understand how to use this
+    private boolean automatedDrive;
+    private Supplier<PathChain> pathChain;
+    private TelemetryManager telemetryM;
+
 
     private final HardwareMap hardwareMap;
     private final Telemetry telemetry;
@@ -30,18 +49,22 @@ public class Drivetrain implements Subsystem {
     public static double headingKd = 0.0;
 
     public Drivetrain(HardwareMap h, Telemetry t, Pose2d startPose) {
+        follower = Constants.createFollower(h);
+        follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
+        follower.update();
+        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
+        pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
+                .addPath(new Path(new BezierLine(follower::getPose, new Pose(72, 22))))
+                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(55), 0.8))
+                .build();
 
         this.hardwareMap = h;
         this.telemetry = t;
-
-        drive = new MecanumDrive(hardwareMap, PoseStorage.pose);
-        currentPose = PoseStorage.pose;
-        currentVelocity = new PoseVelocity2d(new Vector2d(0,0), 0);
-
-        headingController = new PIDController(headingKp, headingKi, headingKd);
+        follower.startTeleopDrive(true);
     }
 
     public Drivetrain(HardwareMap h, Telemetry t) {
+
         this(h, t, new Pose2d(0, 0, 0));
     }
 
@@ -61,52 +84,38 @@ public class Drivetrain implements Subsystem {
         drive.rightBack.setPower((y + x - rx) / denominator);
     }
 
-    public void combinedDrive(Gamepad gamepad1, AprilTagDetection tag) {
-//        Vector2d goalPose = NewRedTry.currentPose.position;
-        Vector2d goalPose = new Vector2d(0,0);
-        if (gamepad1.left_bumper) goalPose = new Vector2d(-72, -72); // blue
-        if (gamepad1.right_bumper) goalPose = new Vector2d(-74, 72); // red
+    public void combinedDrive(Gamepad gamepad1) {
+        follower.update();
+        telemetryM.update();
+        if (!automatedDrive) {
+            //Make the last parameter false for field-centric
+            //In case the drivers want to use a "slowMode" you can scale the vectors
+            //This is the normal version to use in the TeleOp
+            follower.setTeleOpDrive(
+                    -gamepad1.left_stick_y,
+                    -gamepad1.left_stick_x,
+                    -gamepad1.right_stick_x,
+                    true // Robot Centric
+            );
 
-        double lockedHeading = Math.atan2(goalPose.y - currentPose.position.y, goalPose.x - currentPose.position.x);
-
-        double error = AngleUnit.normalizeRadians(lockedHeading - AngleUnit.normalizeRadians(currentPose.heading.log()));
-        double target = error + currentPose.heading.log();
-        double output = Range.clip(headingController.calculate(currentPose.heading.log(), target), -1, 1);
-        if(tag.metadata!=null) {
-            telemetry.addData("Duing tag",true);
-            output = Range.clip(headingController.calculate(tag.ftcPose.bearing,0), -1, 1);
+        }
+        //Automated PathFollowing
+        if (gamepad1.aWasPressed()) {
+            follower.followPath(pathChain.get());
+            automatedDrive = true;
+        }
+        //Stop automated following if the follower is done
+        if (automatedDrive && (gamepad1.bWasPressed() || !follower.isBusy())) {
+            follower.startTeleopDrive();
+            automatedDrive = false;
         }
 
-        drive.setDrivePowers(new PoseVelocity2d(
-                new Vector2d(
-                        -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x * 1.1
 
-                ),
-                (gamepad1.left_bumper || gamepad1.right_bumper) ? output : -gamepad1.right_stick_x
-        ));
+        telemetryM.debug("position", follower.getPose());
+        telemetryM.debug("velocity", follower.getVelocity());
+        telemetryM.debug("automatedDrive", automatedDrive);
     }
-    public void combinedDrive(Gamepad gamepad1) {
-//        Vector2d goalPose = NewRedTry.currentPose.position;
-        Vector2d goalPose = new Vector2d(0,0);
-        if (gamepad1.left_bumper) goalPose = new Vector2d(-72, -72); // blue
-        if (gamepad1.right_bumper) goalPose = new Vector2d(-74, 72); // red
 
-        double lockedHeading = Math.atan2(goalPose.y - currentPose.position.y, goalPose.x - currentPose.position.x);
-
-        double error = AngleUnit.normalizeRadians(lockedHeading - AngleUnit.normalizeRadians(currentPose.heading.log()));
-        double target = error + currentPose.heading.log();
-        double output = Range.clip(headingController.calculate(currentPose.heading.log(), target), -1, 1);
-
-        drive.setDrivePowers(new PoseVelocity2d(
-                new Vector2d(
-                        -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x * 1.1
-
-                ),
-                (gamepad1.left_bumper || gamepad1.right_bumper) ? output : -gamepad1.right_stick_x
-        ));
-    }
 
     private double normalize(double angle) {
         while (angle > Math.PI) angle -= 2 * Math.PI;
