@@ -7,13 +7,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystem.Robot;
 
 public class AutoCommands {
-    private static Robot robot;
+
     private static DcMotorEx transfer;
 
+    private Robot robot;
     private Telemetry telem;
     private HardwareMap hw;
 
-    public AutoCommands(DcMotorEx transfer) {
+    public AutoCommands(DcMotorEx transfer, Robot robot1) {
         transfer = hw.get(DcMotorEx.class, "Transfer");
         robot = new Robot(hw, telem);
     }

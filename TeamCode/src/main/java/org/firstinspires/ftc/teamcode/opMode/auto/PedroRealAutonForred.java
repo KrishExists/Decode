@@ -32,6 +32,8 @@ public class PedroRealAutonForred extends OpMode {
     private final ElapsedTime timer = new ElapsedTime();
     private boolean happend;
 
+    private AutoCommands autoCommands;
+
 
     @Override
     public void init() {
@@ -42,8 +44,9 @@ public class PedroRealAutonForred extends OpMode {
 
         paths = new RedAutoPaths(follower); // Build paths
         robot = new Robot(hardwareMap, telemetry);
-        transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
 
+        transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
+        autoCommands = new AutoCommands(transfer, robot);
 
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
