@@ -85,7 +85,7 @@ public class PedroRealAutonForred extends OpMode {
         ran = true;
         happend = false;
     }
-    public void shoot(int pathState,PathChain nextPath,boolean skip){
+    public void shoot(PathChain nextPath,boolean skip){
         if(follower.isBusy()){
             AutoCommands.prepareToShoot();
         }
@@ -108,7 +108,7 @@ public class PedroRealAutonForred extends OpMode {
 
         }
     }
-    public void shoot(int pathState,PathChain nextPath){
+    public void shoot(PathChain nextPath){
         if(follower.isBusy()){
             AutoCommands.prepareToShoot();
         }
@@ -142,31 +142,32 @@ public class PedroRealAutonForred extends OpMode {
                 follower.followPath(paths.Path1);
                 pathState = 1;
                spinUp(false);
+               resetBooleans();
                happend = true;
             case 1:
                 resetTime();
-                shoot(pathState, paths.Path2);
+                shoot( paths.Path2);
             case 2:
                 spinIntake(paths.Path3);
             case 3:
                 spinIntake(paths.Path4);
             case 4:
                 resetTime();
-                shoot(pathState,paths.Path5);
+                shoot(paths.Path5);
             case 5:
                 spinIntake(paths.Path6);
             case 6:
                 spinIntake(paths.Path7);
             case 7:
                 resetTime();
-                shoot(pathState,paths.Path8);
+                shoot(paths.Path8);
             case 8:
                 spinIntake(paths.Path9);
             case 9:
                 spinIntake(paths.Path10);
             case 10:
                 resetTime();
-                shoot(pathState,paths.Path1,true);
+                shoot(paths.Path1,true);
         }
         // Event markers will automatically trigger at their positions
         // Make sure to register NamedCommands in your RobotContainer
