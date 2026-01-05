@@ -1,53 +1,57 @@
 package org.firstinspires.ftc.teamcode.util;
 
-
 public class Constants {
 
-
-    // ===== Intake =====
+    // =============================
+    // Intake Constants
+    // =============================
     public static final double INTAKE_IN_POWER = 0.8;
-
-    public static final double TRANSFEROPEN = 6;
-
-    public static final double shooterMid = 2950;
-
-    public static final double INTAKE_REVERSE_KEEP = 1;
-
-    public static final double TRANSFER_IN_POWER = -1;
-
-    public static final double TRANSFER_CLOSED = 0;
-
-    public static final double TRANSFER_REV = 1;
     public static final double INTAKE_FEED_POWER = 1.0;
-    public static final double INTAKE_DEFAULT_POWER = 0.0;
-    public static final double INTAKE_REVERSE_TRANSFER = -0.5;
-
-    public static final double TRANSFER_EVEN = 0.8;
-
     public static final double INTAKE_EVEN_POWER = 0.6;
-
-    // ===== Blocker =====
-    public static final double BLOCKER_OPEN = 0.0;
-    public static final double BLOCKER_CLOSE = 0.36;
+    public static final double INTAKE_DEFAULT_POWER = 0.0;
+    public static final double intakeReversed = -1;
 
 
-    // ===== Linkage Positions =====
+    // =============================
+    // Transfer / Outtake Constants
+    // =============================
+    public static final double TRANSFER_IN_POWER = -1;
+    public static final double TRANSFER_EVEN = 0.8;
+    public static final double TRANSFER_CLOSED = 0;
+    public static final double TRANSFER_REV = 1;
+
+    public static final double outtake_Stop = 0;
+    public static final double SLIGHT_REVERSE_OUTTAKE = -0.5;
+
+
+    // =============================
+    // Linkage Servo Positions
+    // =============================
     public static final double LINKAGE_REST = 0.92;
-    public static final double LINKAGE_SHOOT = 0.25;
-    public static final double LINKAGE_MID = 0.47;
+    public static final double LINKAGE_SHOOT = 0.47;
 
 
-    // ===== Shooter RPM Targets =====
-    public static final double SHOOTER_CLOSE_RPM = 2700;
+    // =============================
+    // Shooter RPM Targets
+    // =============================
     public static final double SHOOTER_MID_RPM = 2500;
     public static final double SHOOTER_FAR_RPM = 3000;
 
-    public static final double SLIGHT_REVERSE_OUTTAKE = -0.2;
-    // PID
+
+    // =============================
+    // Shooter PID Constants
+    // =============================
     public static final double SHOOTER_kP = 0.02;
     public static final double SHOOTER_kI = 0.0;
     public static final double SHOOTER_kD = 0.0003;
+    public static double lastError = 0;
+    public static double integral = 0;
 
 
+    // =============================
+    // Sensors
+    // =============================
     public static final double BALL_THRESHOLD_CM = 5.0;
+
+
 }

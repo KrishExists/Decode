@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.Constants;
 
@@ -32,9 +33,9 @@ public class Outtake implements Subsystem {
     public static double kI = Constants.SHOOTER_kI;
     public static double kD = Constants.SHOOTER_kD;
 
-    private double integral = 0;
-    private double lastError = 0;
-    private double lastTime = 0;
+    private double integral = Constants.integral;
+    private double lastError = Constants.lastError;
+    private double lastTime;
 
     private final ElapsedTime timer = new ElapsedTime();
 
@@ -100,14 +101,10 @@ public class Outtake implements Subsystem {
     }
 
     public void stop() {
-        outtake.setPower(0);
-        outtake2.setPower(0);
+        outtake.setPower(Constants.outtake_Stop);
+        outtake2.setPower(Constants.outtake_Stop);
     }
 
-    public void reverse() {
-        outtake.setPower(-0.8);
-        outtake2.setPower(-0.8);
-    }
 
     // =======================
     // Linkage control
