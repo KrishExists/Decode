@@ -8,10 +8,10 @@ import com.bylazar.telemetry.PanelsTelemetry;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystem.Robot;
+import org.firstinspires.ftc.teamcode.util.AutoCommands;
+import org.firstinspires.ftc.teamcode.util.RedAutoPaths;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
-import com.pedropathing.geometry.BezierCurve;
-import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
@@ -25,10 +25,9 @@ public class PedroRealAutonForred extends OpMode {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
     public Follower follower; // Pedro Pathing follower instance
     private int pathState; // Current autonomous path state (state machine)
-    private Paths paths; // Paths defined in the Paths class
+    public RedAutoPaths paths; // Paths defined in the Paths class
     private Robot robot;
     private DcMotorEx transfer;
-
     private boolean ran = true;
     private final ElapsedTime timer = new ElapsedTime();
     private boolean happend;
@@ -41,7 +40,7 @@ public class PedroRealAutonForred extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(72, 8, Math.toRadians(90)));
 
-        paths = new PedroRealAutonForred.Paths(follower); // Build paths
+        paths = new RedAutoPaths(follower); // Build paths
         robot = new Robot(hardwareMap, telemetry);
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
 
@@ -65,125 +64,9 @@ public class PedroRealAutonForred extends OpMode {
     }
 
 
-    public static class Paths {
-        public PathChain Path1;
-        public PathChain Path2;
-        public PathChain Path3;
-        public PathChain Path4;
-        public PathChain Path5;
-        public PathChain Path6;
-        public PathChain Path7;
-        public PathChain Path8;
-        public PathChain Path9;
-        public PathChain Path10;
-
-        public Paths(Follower follower) {
-            Path1 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(124.000, 124.000),
-
-                                    new Pose(96.000, 96.000)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(126), Math.toRadians(45))
-
-                    .build();
-
-            Path2 = follower.pathBuilder().addPath(
-                            new BezierCurve(
-                                    new Pose(96.000, 96.000),
-                                    new Pose(96.000, 84.000),
-                                    new Pose(104.000, 84.000)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
-
-                    .build();
-
-            Path3 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(104.000, 84.000),
-
-                                    new Pose(124.000, 84.000)
-                            )
-                    ).setTangentHeadingInterpolation()
-
-                    .build();
-
-            Path4 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(124.000, 84.000),
-
-                                    new Pose(96.000, 96.000)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
-
-                    .build();
-
-            Path5 = follower.pathBuilder().addPath(
-                            new BezierCurve(
-                                    new Pose(96.000, 96.000),
-                                    new Pose(96.000, 60.000),
-                                    new Pose(105.000, 60.000)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
-
-                    .build();
-
-            Path6 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(105.000, 60.000),
-
-                                    new Pose(124.000, 60.000)
-                            )
-                    ).setTangentHeadingInterpolation()
-
-                    .build();
-
-            Path7 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(124.000, 60.000),
-
-                                    new Pose(96.000, 96.000)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
-
-                    .build();
-
-            Path8 = follower.pathBuilder().addPath(
-                            new BezierCurve(
-                                    new Pose(96.000, 96.000),
-                                    new Pose(96.000, 36.000),
-                                    new Pose(105.000, 36.000)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
-
-                    .build();
-
-            Path9 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(105.000, 36.000),
-
-                                    new Pose(124.000, 36.000)
-                            )
-                    ).setTangentHeadingInterpolation()
-
-                    .build();
-
-            Path10 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(124.000, 36.000),
-
-                                    new Pose(87.0000, 110.000)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
-
-                    .build();
-        }
-    }
-
 
     public void spinUp(boolean withTransfer){
-        robot.outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
-        robot.outtake.setLinkage(TeamConstants.LINKAGE_SHOOT);
+        AutoCommands.spinUpShooter();
         if(withTransfer){
             transfer.setPower(TeamConstants.TRANSFER_REV);
             robot.intake.setPower(TeamConstants.INTAKE_IN_POWER);
@@ -204,12 +87,9 @@ public class PedroRealAutonForred extends OpMode {
     }
     public void shoot(int pathState,PathChain nextPath,boolean skip){
         if(follower.isBusy()){
-            robot.intake.setPower(TeamConstants.INTAKE_FEED_POWER);
-            transfer.setPower(TeamConstants.TRANSFER_REV);
-            robot.outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
+            AutoCommands.prepareToShoot();
         }
         if(!follower.isBusy()) {
-
             if(robot.outtake.getRPM() > TeamConstants.Shooter_BottomThreshold|| happend) {
                 happend = true;
                 spinUp(true);
@@ -230,9 +110,7 @@ public class PedroRealAutonForred extends OpMode {
     }
     public void shoot(int pathState,PathChain nextPath){
         if(follower.isBusy()){
-            robot.intake.setPower(TeamConstants.INTAKE_FEED_POWER);
-            transfer.setPower(TeamConstants.TRANSFER_REV);
-            robot.outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
+            AutoCommands.prepareToShoot();
         }
         if(!follower.isBusy()) {
 
@@ -251,9 +129,7 @@ public class PedroRealAutonForred extends OpMode {
         }
     }
     public void spinIntake(PathChain pathChain){
-        robot.outtake.spinToRpm(TeamConstants.outtake_Stop);
-        robot.intake.setPower(TeamConstants.INTAKE_IN_POWER);
-        transfer.setPower(TeamConstants.TRANSFER_CLOSED);
+        AutoCommands.spinUpIntake();
         if(!follower.isBusy()) {
             follower.followPath(pathChain);
             pathState++;
