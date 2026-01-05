@@ -41,11 +41,10 @@ public class Constants {
 
 
     // PID
-    public static final double SHOOTER_kP = 0.01;
+    public static final double SHOOTER_kP = 0.02;
     public static final double SHOOTER_kI = 0.0;
-    public static final double SHOOTER_kD = 0.0;
+    public static final double SHOOTER_kD = 0.0003;
 
-    public static final double Transfer_STOPPED = 0.0;
 
     public static final double BALL_THRESHOLD_CM = 5.0;
 }
