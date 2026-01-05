@@ -60,39 +60,37 @@ public class Drivetrain implements Subsystem {
 //        drive.rightBack.setPower((y + x - rx) / denominator);
 //    }
 
-    public void combinedDrive(Gamepad gamepad1) {
-        follower.update();
-        telemetryM.update();
-        if (!automatedDrive) {
-            //Make the last parameter false for field-centric
-            //In case the drivers want to use a "slowMode" you can scale the vectors
-            //This is the normal version to use in the TeleOp
-            follower.setTeleOpDrive(
-                    -gamepad1.left_stick_y,
-                    -gamepad1.left_stick_x,
-                    -gamepad1.right_stick_x,
-                    true // Robot Centric
-            );
+    public void combinedDrive(Gamepad gamepad) {
 
-        }else{
-            telemetry.addData("Is following",true);
-            follower.followPath(pathChain.get());
-        }
-        //Automated PathFollowing
-        if (gamepad1.aWasPressed()) {
-            telemetry.addData("Is following",true);
-            follower.followPath(pathChain.get());
+        // Check for path triggers first
+        if (gamepad.aWasPressed() && !automatedDrive) {
             automatedDrive = true;
-        }
-        //Stop automated following if the follower is done
-        if (automatedDrive && (gamepad1.bWasPressed() || !follower.isBusy())) {
-            follower.startTeleopDrive();
+            follower.followPath(pathChain.get());
+        } else if (automatedDrive && (gamepad.bWasPressed() || !follower.isBusy())) {
             automatedDrive = false;
+            follower.startTeleopDrive(true); // ensure teleop drive restarts
         }
 
+        // Drive based on mode
+        if (automatedDrive) {
+            telemetry.addData("Mode", "Automated Path Following");
+        } else {
+            // Robot-centric teleop drive
+            follower.setTeleOpDrive(
+                    -gamepad.left_stick_y,
+                    -gamepad.left_stick_x,
+                    -gamepad.right_stick_x,
+                    true
+            );
+            telemetry.addData("Mode", "Manual Teleop");
+        }
 
-
+        // Always add common telemetry
+        telemetry.addData("Position", follower.getPose());
+        telemetry.addData("Velocity", follower.getVelocity());
+        telemetry.addData("AutomatedDrive", automatedDrive);
     }
+
 
 
     @Override
