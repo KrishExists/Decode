@@ -28,7 +28,7 @@ public class Robot implements Subsystem { //The Rhetorical Situation
         this.outtake = new Outtake(h,t);
 
 
-        subsystems = List.of(drive, (Subsystem) intake);
+        subsystems = List.of(drive, intake);
     }
     public Robot(HardwareMap h, Telemetry t) {
         this.hardwareMap = h;
@@ -39,7 +39,7 @@ public class Robot implements Subsystem { //The Rhetorical Situation
         this.intake = new Intake(hardwareMap,t,outtake);
 
 
-        subsystems = List.of(drive, (Subsystem) intake);
+        subsystems = List.of(drive, intake);
     }
 
 
