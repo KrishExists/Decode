@@ -34,6 +34,7 @@ public class TeleOpNewRed extends LinearOpMode {
         robot = new Robot(hw,telemetry,drive,intake);
         telemetry.addLine("Initialized — Waiting for Start");
         telemetry.update();
+        robot.init();
         waitForStart();
         if (isStopRequested()) return;
 

@@ -8,9 +8,6 @@ import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import java.util.function.Supplier;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -29,13 +26,6 @@ public class Drivetrain implements Subsystem {
     private final Telemetry telemetry;
 
 
-    private Pose2d currentPose;
-    private PoseVelocity2d currentVelocity;
-
-    PIDController headingController;
-    public static double headingKp = 1.5;
-    public static double headingKi = 0.0;
-    public static double headingKd = 0.0;
 
     public Drivetrain(HardwareMap h, Telemetry t) {
         follower = Constants.createFollower(h);

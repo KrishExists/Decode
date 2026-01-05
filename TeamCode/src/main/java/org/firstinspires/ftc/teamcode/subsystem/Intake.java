@@ -16,13 +16,12 @@ public class Intake implements Subsystem{
     ElapsedTime time;
 
     public enum IntakeState {
-        INTAKE, OUTTAKE, RUNSLOW, OUTTAKE1, RAPOD_FAR,RAPOD_CLOSE, OUTTAKE_FAR, OUTTAKE_MID, TRANSFER, IntakeNEXT, REST, INTAKE_LAST, SpeedMid,SpeedFar, RUNSLOW1, AUTORPM, AUTORPMRED;
+        RUNSLOW, RAPOD_FAR,RAPOD_CLOSE, IntakeNEXT, REST, INTAKE_LAST, SpeedMid,SpeedFar, AUTORPMRED
     }
 
     // Hardware
-    private DcMotor intake;
-    private Servo blocker;
-    private Servo linkage;
+    private final DcMotor intake;
+    private final Servo linkage;
 
     private double goodRPM;
     ElapsedTime timer = new ElapsedTime();
@@ -30,12 +29,12 @@ public class Intake implements Subsystem{
     public DcMotorEx transfer;
 
     private final Outtake shooter;
-    private boolean rapid = false;
+    private final boolean rapid = false;
     public boolean AtRPM = false;
     private final Telemetry telemetry;
     private boolean shooting = false;
 
-    private boolean transfer123 = false;
+    private final boolean transfer123 = false;
 
 
 
@@ -52,7 +51,6 @@ public class Intake implements Subsystem{
 
         // Map hardware
         intake = hw.get(DcMotor.class, "Intake");
-        blocker = hw.get(Servo.class, "Blocker");
         linkage = hw.get(Servo.class, "Linkage");
         transfer = hw.get(DcMotorEx.class, "Transfer");
 
@@ -85,7 +83,6 @@ public class Intake implements Subsystem{
 
     public void init() {
         intake.setPower(0);
-        blocker.setPosition(Constants.BLOCKER_CLOSE);
         linkage.setPosition(Constants.LINKAGE_REST);
     }
 
@@ -158,7 +155,6 @@ public class Intake implements Subsystem{
 
 
                 linkage.setPosition(Constants.LINKAGE_REST);
-                blocker.setPosition(Constants.BLOCKER_OPEN);
                 transfer.setPower(Constants.TRANSFER_IN_POWER);
                 break;
 
@@ -253,13 +249,11 @@ public class Intake implements Subsystem{
 //                }
 //                break;
             case RAPOD_CLOSE:
-                blocker.setPosition(Constants.BLOCKER_OPEN);
                shooter.spinToRpm(2950);
                intake.setPower(Constants.INTAKE_IN_POWER);
                transfer.setPower(Constants.TRANSFER_IN_POWER);
                 break;
             case RAPOD_FAR:
-                blocker.setPosition(Constants.BLOCKER_OPEN);
                 shooter.spinToRpm(2993);
                 intake.setPower(Constants.INTAKE_IN_POWER);
                 transfer.setPower(Constants.TRANSFER_IN_POWER);
@@ -269,7 +263,6 @@ public class Intake implements Subsystem{
             default:
                 intake.setPower(0);
                 shooter.stop();
-                blocker.setPosition(Constants.BLOCKER_CLOSE);
                 transfer.setPower(Constants.TRANSFER_CLOSED);
                 linkage.setPosition(Constants.LINKAGE_REST);
                 break;
