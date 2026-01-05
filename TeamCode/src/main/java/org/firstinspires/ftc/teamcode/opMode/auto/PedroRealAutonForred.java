@@ -69,7 +69,7 @@ public class PedroRealAutonForred extends OpMode {
 
 
     public void spinUp(boolean withTransfer){
-        AutoCommands.spinUpShooter();
+        autoCommands.spinUpShooter();
         if(withTransfer){
             transfer.setPower(TeamConstants.TRANSFER_REV);
             robot.intake.setPower(TeamConstants.INTAKE_IN_POWER);
@@ -90,7 +90,7 @@ public class PedroRealAutonForred extends OpMode {
     }
     public void shoot(PathChain nextPath,boolean skip){
         if(follower.isBusy()){
-            AutoCommands.prepareToShoot();
+            autoCommands.prepareToShoot();
         }
         if(!follower.isBusy()) {
             if(robot.outtake.getRPM() > TeamConstants.Shooter_BottomThreshold|| happend) {
@@ -113,7 +113,7 @@ public class PedroRealAutonForred extends OpMode {
     }
     public void shoot(PathChain nextPath){
         if(follower.isBusy()){
-            AutoCommands.prepareToShoot();
+            autoCommands.prepareToShoot();
         }
         if(!follower.isBusy()) {
 
@@ -132,7 +132,7 @@ public class PedroRealAutonForred extends OpMode {
         }
     }
     public void spinIntake(PathChain pathChain){
-        AutoCommands.spinUpIntake();
+        autoCommands.spinUpIntake();
         if(!follower.isBusy()) {
             follower.followPath(pathChain);
             pathState++;

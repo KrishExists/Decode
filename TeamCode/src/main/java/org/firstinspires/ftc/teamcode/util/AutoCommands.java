@@ -19,19 +19,19 @@ public class AutoCommands {
         robot = new Robot(hw, telem);
     }
 
-    public static void prepareToShoot() {
+    public  void prepareToShoot() {
         robot.intake.setPower(TeamConstants.INTAKE_FEED_POWER);
         transfer.setPower(TeamConstants.TRANSFER_REV);
         robot.outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
     }
 
-    public static void spinUpIntake() {
+    public  void spinUpIntake() {
         robot.outtake.spinToRpm(TeamConstants.outtake_Stop);
         robot.intake.setPower(TeamConstants.INTAKE_IN_POWER);
         transfer.setPower(TeamConstants.TRANSFER_CLOSED);
     }
 
-    public static void spinUpShooter() {
+    public  void spinUpShooter() {
         robot.outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
         robot.outtake.setLinkage(TeamConstants.LINKAGE_SHOOT);
     }
