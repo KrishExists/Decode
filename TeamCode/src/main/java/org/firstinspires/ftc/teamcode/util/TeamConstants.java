@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
-public class Constants {
+public class TeamConstants {
 
     // =============================
     // Intake Constants
@@ -36,6 +36,8 @@ public class Constants {
     // =============================
     public static final double SHOOTER_MID_RPM = 2500;
     public static final double SHOOTER_FAR_RPM = 3000;
+
+    public static final double Shooter_BottomThreshold = 2300;
 
 
     // =============================

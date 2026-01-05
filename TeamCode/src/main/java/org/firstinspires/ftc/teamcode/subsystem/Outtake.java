@@ -10,9 +10,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.util.Constants;
+import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
 @Config
 public class Outtake implements Subsystem {
@@ -29,12 +28,12 @@ public class Outtake implements Subsystem {
 
 
     // Shooter PID variables (from Shooter class)
-    public static double kP = Constants.SHOOTER_kP;
-    public static double kI = Constants.SHOOTER_kI;
-    public static double kD = Constants.SHOOTER_kD;
+    public static double kP = TeamConstants.SHOOTER_kP;
+    public static double kI = TeamConstants.SHOOTER_kI;
+    public static double kD = TeamConstants.SHOOTER_kD;
 
-    private double integral = Constants.integral;
-    private double lastError = Constants.lastError;
+    private double integral = TeamConstants.integral;
+    private double lastError = TeamConstants.lastError;
     private double lastTime;
 
     private final ElapsedTime timer = new ElapsedTime();
@@ -101,8 +100,8 @@ public class Outtake implements Subsystem {
     }
 
     public void stop() {
-        outtake.setPower(Constants.outtake_Stop);
-        outtake2.setPower(Constants.outtake_Stop);
+        outtake.setPower(TeamConstants.outtake_Stop);
+        outtake2.setPower(TeamConstants.outtake_Stop);
     }
 
 
@@ -115,7 +114,7 @@ public class Outtake implements Subsystem {
 
     @Override
     public void init() {
-        setLinkage(Constants.LINKAGE_REST);
+        setLinkage(TeamConstants.LINKAGE_REST);
         stop();
     }
 

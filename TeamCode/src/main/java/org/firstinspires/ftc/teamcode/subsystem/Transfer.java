@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.util.Constants;
+import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
 public class Transfer implements Subsystem {
 
@@ -34,7 +34,7 @@ public class Transfer implements Subsystem {
     }
 
     private boolean ballAtTop() {
-        return topSensor.getDistance(DistanceUnit.CM) < Constants.BALL_THRESHOLD_CM;
+        return topSensor.getDistance(DistanceUnit.CM) < TeamConstants.BALL_THRESHOLD_CM;
     }
 
     public void startFeeding() {
@@ -47,7 +47,7 @@ public class Transfer implements Subsystem {
 
     public void stop() {
         state = State.IDLE;
-        transfer.setPower(Constants.TRANSFER_CLOSED);
+        transfer.setPower(TeamConstants.TRANSFER_CLOSED);
     }
 
     @Override
@@ -56,24 +56,24 @@ public class Transfer implements Subsystem {
         switch (state) {
 
             case IDLE:
-                transfer.setPower(Constants.TRANSFER_CLOSED);
+                transfer.setPower(TeamConstants.TRANSFER_CLOSED);
                 break;
 
             case FEEDING:
                 if (ballAtTop()) {
-                    transfer.setPower(Constants.TRANSFER_CLOSED);
+                    transfer.setPower(TeamConstants.TRANSFER_CLOSED);
                     state = State.BALL_HELD_AT_TOP;
                 } else {
-                    transfer.setPower(Constants.TRANSFER_IN_POWER);
+                    transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 }
                 break;
 
             case BALL_HELD_AT_TOP:
-                transfer.setPower(Constants.TRANSFER_CLOSED);
+                transfer.setPower(TeamConstants.TRANSFER_CLOSED);
                 break;
 
             case SHOOTING:
-                transfer.setPower(Constants.TRANSFER_IN_POWER);
+                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
 
                 // Detect ball leaving
                 if (!ballAtTop()) {

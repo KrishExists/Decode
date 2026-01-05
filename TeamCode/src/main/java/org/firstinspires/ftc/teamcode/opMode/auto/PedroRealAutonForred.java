@@ -8,6 +8,7 @@ import com.bylazar.telemetry.PanelsTelemetry;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystem.Robot;
+import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -27,6 +28,7 @@ public class PedroRealAutonForred extends OpMode {
     private Paths paths; // Paths defined in the Paths class
     private Robot robot;
     private DcMotorEx transfer;
+
     private boolean ran = true;
     private final ElapsedTime timer = new ElapsedTime();
     private boolean happend;
@@ -180,11 +182,11 @@ public class PedroRealAutonForred extends OpMode {
 
 
     public void spinUp(boolean withTransfer){
-        robot.outtake.spinToRpm(2500);
-        robot.outtake.setLinkage(0.5);
+        robot.outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
+        robot.outtake.setLinkage(TeamConstants.LINKAGE_SHOOT);
         if(withTransfer){
-            transfer.setPower(1.0);
-            robot.intake.setPower(0.8);
+            transfer.setPower(TeamConstants.TRANSFER_REV);
+            robot.intake.setPower(TeamConstants.INTAKE_IN_POWER);
 
         }
 
@@ -202,18 +204,18 @@ public class PedroRealAutonForred extends OpMode {
     }
     public void shoot(int pathState,PathChain nextPath,boolean skip){
         if(follower.isBusy()){
-            robot.intake.setPower(1);
-            transfer.setPower(1);
-            robot.outtake.spinToRpm(2300);
+            robot.intake.setPower(TeamConstants.INTAKE_FEED_POWER);
+            transfer.setPower(TeamConstants.TRANSFER_REV);
+            robot.outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
         }
         if(!follower.isBusy()) {
 
-            if(robot.outtake.getRPM() > 2200||happend) {
+            if(robot.outtake.getRPM() > TeamConstants.Shooter_BottomThreshold|| happend) {
                 happend = true;
                 spinUp(true);
                 if(timer.milliseconds() > 2000) {
                     if(skip){
-                        pathState =-1;
+                        pathState =67;
                         return;
                     }
                     follower.followPath(nextPath);
@@ -228,13 +230,13 @@ public class PedroRealAutonForred extends OpMode {
     }
     public void shoot(int pathState,PathChain nextPath){
         if(follower.isBusy()){
-            robot.intake.setPower(1);
-            transfer.setPower(1);
-            robot.outtake.spinToRpm(2300);
+            robot.intake.setPower(TeamConstants.INTAKE_FEED_POWER);
+            transfer.setPower(TeamConstants.TRANSFER_REV);
+            robot.outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
         }
         if(!follower.isBusy()) {
 
-            if(robot.outtake.getRPM() > 2200||happend) {
+            if(robot.outtake.getRPM() > TeamConstants.Shooter_BottomThreshold||happend) {
                 happend = true;
                 spinUp(true);
                 if(timer.milliseconds() > 2000) {
@@ -249,9 +251,9 @@ public class PedroRealAutonForred extends OpMode {
         }
     }
     public void spinIntake(PathChain pathChain){
-        robot.outtake.spinToRpm(0);
-        robot.intake.setPower(0.8);
-        transfer.setPower(-0.05);
+        robot.outtake.spinToRpm(TeamConstants.outtake_Stop);
+        robot.intake.setPower(TeamConstants.INTAKE_IN_POWER);
+        transfer.setPower(TeamConstants.TRANSFER_CLOSED);
         if(!follower.isBusy()) {
             follower.followPath(pathChain);
             pathState++;
