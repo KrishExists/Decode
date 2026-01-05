@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.Constants;
 import org.firstinspires.ftc.teamcode.util.StateMachine;
@@ -143,7 +144,7 @@ public class Intake implements Subsystem{
         switch (sm.getState()) {
 
             case INTAKE_LAST:
-                shooter.setPower(-0.2);
+                shooter.setPower(Constants.SLIGHT_REVERSE_OUTTAKE);
 
                 intake.setPower(Constants.INTAKE_IN_POWER);
                 break;
@@ -151,7 +152,7 @@ public class Intake implements Subsystem{
             case IntakeNEXT:
 
                 intake.setPower(Constants.INTAKE_IN_POWER);
-                shooter.setPower(-0.2);
+                shooter.setPower(Constants.SLIGHT_REVERSE_OUTTAKE);
 
 
                 linkage.setPosition(Constants.LINKAGE_REST);
@@ -189,11 +190,11 @@ public class Intake implements Subsystem{
                 break;
 
             case SpeedFar:
-                intake.setPower(0.6);
-                linkage.setPosition(0.5);
-                shooter.spinToRpm(2996);
-                intake.setPower(0.8);
-                transfer.setPower(0.8);
+                intake.setPower(Constants.INTAKE_EVEN_POWER);
+                linkage.setPosition(Constants.LINKAGE_MID);
+                shooter.spinToRpm(Constants.SHOOTER_FAR_RPM);
+                intake.setPower(Constants.INTAKE_IN_POWER);
+                transfer.setPower(Constants.TRANSFER_EVEN);
                 if(gamepad2.right_bumper){
                     setState(IntakeState.RAPOD_FAR);
                     shooting = false;
@@ -201,12 +202,11 @@ public class Intake implements Subsystem{
                 }
                 break;
             case SpeedMid:
-                intake.setPower(0.6);
+                intake.setPower(Constants.INTAKE_EVEN_POWER);
                 linkage.setPosition(Constants.LINKAGE_MID);
 
-                shooter.spinToRpm(2400);
-                intake.setPower(0.8);
-                transfer.setPower(0.8);
+                shooter.spinToRpm(Constants.SHOOTER_MID_RPM);
+                transfer.setPower(Constants.TRANSFER_EVEN);
                 if(gamepad2.right_bumper){
                     setState(IntakeState.RAPOD_CLOSE);
                     intake.setPower(0);
@@ -216,50 +216,19 @@ public class Intake implements Subsystem{
                 break;
 
 
-//            case OUTTAKE_MID:
-//                blocker.setPosition(Constants.BLOCKER_OPEN);
-//                if (t < 0) {
-//                    linkage.setPosition(Constants.LINKAGE_MID);
-//
-//                } else {
-//                    shooter.spinToRpm(Constants.shooterMid);
-//                    if (shooter.atSpeed(2850, 3050)) {
-//                        intake.setPower(Constants.INTAKE_FEED_POWER);
-//                        transfer.setPower(Constants.TRANSFER_IN_POWER);
-//                    } else {
-//                        intake.setPower(0);
-//                        transfer.setPower(Constants.TRANSFER_CLOSED);
-//                    }
-//                }
-//                break;
-//
-//            case OUTTAKE_FAR:
-//                blocker.setPosition(Constants.BLOCKER_OPEN);
-//                if (t < 0) {
-//                    linkage.setPosition(Constants.LINKAGE_MID);
-//                } else {
-//                    shooter.spinToRpm(2993);
-//                    if (shooter.atSpeed(2890, 3200)) {
-//                        intake.setPower(Constants.INTAKE_FEED_POWER);
-//                        transfer.setPower(Constants.TRANSFER_IN_POWER);
-//                    } else {
-//                        intake.setPower(0);
-//                        transfer.setPower(Constants.TRANSFER_CLOSED);
-//                    }
-//                }
-//                break;
             case RAPOD_CLOSE:
-               shooter.spinToRpm(2950);
+               shooter.spinToRpm(Constants.SHOOTER_MID_RPM);
                intake.setPower(Constants.INTAKE_IN_POWER);
                transfer.setPower(Constants.TRANSFER_IN_POWER);
                 break;
             case RAPOD_FAR:
-                shooter.spinToRpm(2993);
+                shooter.spinToRpm(Constants.SHOOTER_FAR_RPM);
                 intake.setPower(Constants.INTAKE_IN_POWER);
                 transfer.setPower(Constants.TRANSFER_IN_POWER);
                 break;
 
             case REST:
+
             default:
                 intake.setPower(0);
                 shooter.stop();

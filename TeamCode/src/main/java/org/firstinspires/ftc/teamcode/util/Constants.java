@@ -22,6 +22,9 @@ public class Constants {
     public static final double INTAKE_DEFAULT_POWER = 0.0;
     public static final double INTAKE_REVERSE_TRANSFER = -0.5;
 
+    public static final double TRANSFER_EVEN = 0.8;
+
+    public static final double INTAKE_EVEN_POWER = 0.6;
 
     // ===== Blocker =====
     public static final double BLOCKER_OPEN = 0.0;
@@ -36,10 +39,10 @@ public class Constants {
 
     // ===== Shooter RPM Targets =====
     public static final double SHOOTER_CLOSE_RPM = 2700;
-    public static final double SHOOTER_MID_RPM = 3100;
-    public static final double SHOOTER_FAR_RPM = 4000;
+    public static final double SHOOTER_MID_RPM = 2500;
+    public static final double SHOOTER_FAR_RPM = 3000;
 
-
+    public static final double SLIGHT_REVERSE_OUTTAKE = -0.2;
     // PID
     public static final double SHOOTER_kP = 0.02;
     public static final double SHOOTER_kI = 0.0;
