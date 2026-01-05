@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.subsystem.Outtake;
 import org.firstinspires.ftc.teamcode.subsystem.Robot;
 
 
-@TeleOp(name = "TeleOpNewRed", group = "Main")
-public class TeleOpNewRed extends LinearOpMode {
+@TeleOp(name = "RedTeleop", group = "Main")
+public class RedTeleop extends LinearOpMode {
     private HardwareMap hw;
     private Drivetrain drive;
     private Outtake shooter;

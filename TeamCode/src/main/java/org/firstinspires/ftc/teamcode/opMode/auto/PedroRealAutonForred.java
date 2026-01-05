@@ -196,7 +196,7 @@ public class PedroRealAutonForred extends OpMode {
             ran =false;
         }
     }
-    public void resetBooleams(){
+    public void resetBooleans(){
         ran = true;
         happend = false;
     }
@@ -218,7 +218,7 @@ public class PedroRealAutonForred extends OpMode {
                     }
                     follower.followPath(nextPath);
                     pathState++;
-                    resetBooleams();
+                    resetBooleans();
                 }
             }else{
                 spinUp(false);
@@ -240,7 +240,7 @@ public class PedroRealAutonForred extends OpMode {
                 if(timer.milliseconds() > 2000) {
                     follower.followPath(nextPath);
                     pathState++;
-                    resetBooleams();
+                    resetBooleans();
                 }
             }else{
                 spinUp(false);
@@ -255,7 +255,7 @@ public class PedroRealAutonForred extends OpMode {
         if(!follower.isBusy()) {
             follower.followPath(pathChain);
             pathState++;
-            resetBooleams();
+            resetBooleans();
         }
     }
     public int autonomousPathUpdate() {
