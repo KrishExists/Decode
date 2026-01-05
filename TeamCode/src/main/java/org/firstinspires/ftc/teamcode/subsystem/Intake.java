@@ -1795,18 +1795,14 @@ package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.opMode.teleOp.TeleopBlue;
-import org.firstinspires.ftc.teamcode.opMode.teleOp.TeleopRed;
+import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.util.Constants;
-import org.firstinspires.ftc.teamcode.util.ShooterConstants;
 import org.firstinspires.ftc.teamcode.util.StateMachine;
 
 public class Intake implements Subsystem{
@@ -1829,7 +1825,6 @@ public class Intake implements Subsystem{
 
     private final Outtake shooter;
     private boolean rapid = false;
-    private  ColorSensor colorSensor;
     public boolean AtRPM = false;
     private final Telemetry telemetry;
     private boolean shooting = false;
@@ -1845,7 +1840,7 @@ public class Intake implements Subsystem{
     // Gamepad updated from OpMode
     private Gamepad gamepad;
 
-    public Intake(HardwareMap hw, Telemetry t, Outtake shooter, ColorSensor colorSensor) {
+    public Intake(HardwareMap hw, Telemetry t, Outtake shooter) {
         this.telemetry = t;
         this.shooter = shooter;
 
@@ -1859,6 +1854,8 @@ public class Intake implements Subsystem{
 
         // Initialize state machine
         sm = new StateMachine<>(IntakeState.REST);
+        timerReset();
+        timerStart();
     }
 
     public void setGamepad(Gamepad g) {
@@ -1959,33 +1956,28 @@ public class Intake implements Subsystem{
                 transfer.setPower(Constants.TRANSFER_IN_POWER);
                 break;
 
-            case RUNSLOW:
-                intake.setPower(-1.0);
-                transfer.setPower(1.0);
-                shooter.setPower(-0.5);
-                break;
 
-            case AUTORPMRED:
-                intake.setPower(0.6);
-                linkage.setPosition(0.5);
-                //shooter.spinToRpm(2996);
-                goodRPM = 8.980589* TeleopRed.distanceFromGoal() + 1847.499;
-                intake.setPower(0.8);
-                transfer.setPower(0.8);
-                shooter.spinToRpm(goodRPM);
-                if(gamepad2.right_bumper){
-                    if(true){
-                        setState(IntakeState.OUTTAKE_FAR);
-                        intake.setPower(0);
-                        transfer.setPower(0);
-                    }else{
-                        setState(IntakeState.RAPOD_FAR);
-                    }
-                    ;
-                    shooting = false;
-
-                }
-                break;
+//            case AUTORPMRED:
+//                intake.setPower(0.6);
+//                linkage.setPosition(0.5);
+//                //shooter.spinToRpm(2996);
+//                goodRPM = 8.980589* TeleopRed.distanceFromGoal() + 1847.499;
+//                intake.setPower(0.8);
+//                transfer.setPower(0.8);
+//                shooter.spinToRpm(goodRPM);
+//                if(gamepad2.right_bumper){
+//                    if(true){
+//                        setState(IntakeState.OUTTAKE_FAR);
+//                        intake.setPower(0);
+//                        transfer.setPower(0);
+//                    }else{
+//                        setState(IntakeState.RAPOD_FAR);
+//                    }
+//                    ;
+//                    shooting = false;
+//
+//                }
+//                break;
 
 
             case RUNSLOW:
@@ -2078,7 +2070,6 @@ public class Intake implements Subsystem{
         telemetry.addData("Intake State", sm.getState());
         telemetry.addData("Time in State", t);
     }
-//    public void resetTime(){
-//        public void .resetTime();
-//    }
+
+
 }

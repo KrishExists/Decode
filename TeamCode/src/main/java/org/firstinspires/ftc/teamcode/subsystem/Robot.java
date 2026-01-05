@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
-import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Hardware;
 
 import java.util.List;
 
@@ -18,25 +18,31 @@ public class Robot implements Subsystem { //The Rhetorical Situation
     public Drivetrain drive;
     public Intake intake;
     public Outtake outtake;
-    public ColorSensor colorSensor;
 
-    public static Pose2d pose = new Pose2d(0, 0, 0);
 
-    public Robot(HardwareMap h, Telemetry t, Pose2d pose) {
+    public Robot(HardwareMap h, Telemetry t, Drivetrain drive, Intake intake) {
         this.hardwareMap = h;
         this.telemetry = t;
 
-        drive = new Drivetrain(h, t, pose);
-        intake = new Intake(h, t, outtake,colorSensor);
-        colorSensor = new ColorSensor(h);
-        outtake = new Outtake(h, t);
+        this.drive = drive;
+        this.intake = intake;
+        this.outtake = new Outtake(h,t);
 
-        subsystems = List.of(drive, (Subsystem) intake, outtake);
+
+        subsystems = List.of(drive, (Subsystem) intake);
     }
-
     public Robot(HardwareMap h, Telemetry t) {
-        this(h, t, new Pose2d(0, 0, 0));
+        this.hardwareMap = h;
+        this.telemetry = t;
+
+        this.drive = new Drivetrain(h,t);
+        this.outtake = new Outtake(h,t);
+        this.intake = new Intake(hardwareMap,t,outtake);
+
+
+        subsystems = List.of(drive, (Subsystem) intake);
     }
+
 
     @Override
     public void init() {
