@@ -252,7 +252,7 @@ public class test extends OpMode {
         panelsTelemetry.debug("Path State", pathState);
         panelsTelemetry.debug("X", follower.getPose().getX());
         panelsTelemetry.debug("Y", follower.getPose().getY());
-        panelsTelemetry.debug("Heading", follower.getPose().getHeading());
+        panelsTelemetry.debug("Heading", Math.toDegrees(follower.getPose().getHeading()));
         panelsTelemetry.debug("Follower Busy", follower.isBusy());
         panelsTelemetry.update(telemetry);
     }
