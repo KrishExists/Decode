@@ -25,7 +25,7 @@ public class RedAutoPaths {
 
                                 new Pose(96.000, 96.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(126), Math.toRadians(45))
+                ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(45))
 
                 .build();
 

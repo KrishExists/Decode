@@ -8,31 +8,16 @@ import org.firstinspires.ftc.teamcode.subsystem.Robot;
 
 public class AutoCommands {
 
-    private static DcMotorEx transfer;
+    private DcMotorEx transfer;
 
     private Robot robot;
     private Telemetry telem;
     private HardwareMap hw;
 
     public AutoCommands(DcMotorEx transfer, Robot robot1) {
-        transfer = hw.get(DcMotorEx.class, "Transfer");
-        robot = new Robot(hw, telem);
+        this.transfer = transfer;
+        robot = robot1;
     }
 
-    public  void prepareToShoot() {
-        robot.intake.setPower(TeamConstants.INTAKE_FEED_POWER);
-        transfer.setPower(TeamConstants.TRANSFER_REV);
-        robot.outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
-    }
 
-    public  void spinUpIntake() {
-        robot.outtake.spinToRpm(TeamConstants.outtake_Stop);
-        robot.intake.setPower(TeamConstants.INTAKE_IN_POWER);
-        transfer.setPower(TeamConstants.TRANSFER_CLOSED);
-    }
-
-    public  void spinUpShooter() {
-        robot.outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
-        robot.outtake.setLinkage(TeamConstants.LINKAGE_SHOOT);
-    }
 }
