@@ -33,7 +33,7 @@ public class PedroRealAutonForred extends OpMode {
     private boolean ran = true;
     private final ElapsedTime timer = new ElapsedTime();
     private boolean happend;
-    private Pose startPose = new Pose(124,124,124);
+    private Pose startPose = new Pose(124,124,Math.toRadians(124));
     public PathChain Path1;
     public PathChain Path2;
     public PathChain Path3;
@@ -159,19 +159,13 @@ public void BuildPaths(){
         panelsTelemetry.debug("Path State", pathState);
         panelsTelemetry.debug("X", follower.getPose().getX());
         panelsTelemetry.debug("Y", follower.getPose().getY());
-        panelsTelemetry.debug("Heading", follower.getPose().getHeading());
+        panelsTelemetry.debug("Heading", Math.toDegrees(follower.getPose().getHeading()));
         panelsTelemetry.debug("Follower is busy",follower.isBusy());
 
         BuildPaths();
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
         pathState = 0;
-        panelsTelemetry.debug("Status", "Initialized2.0");
-        panelsTelemetry.debug("Path State", pathState);
-        panelsTelemetry.debug("X", follower.getPose().getX());
-        panelsTelemetry.debug("Y", follower.getPose().getY());
-        panelsTelemetry.debug("Heading", follower.getPose().getHeading());
-        panelsTelemetry.debug("Follower is busy",follower.isBusy());
-        panelsTelemetry.update(telemetry);
+
 
 
     }
@@ -184,7 +178,7 @@ public void BuildPaths(){
         panelsTelemetry.debug("Path State", pathState);
         panelsTelemetry.debug("X", follower.getPose().getX());
         panelsTelemetry.debug("Y", follower.getPose().getY());
-        panelsTelemetry.debug("Heading", follower.getPose().getHeading());
+        panelsTelemetry.debug("Heading", Math.toDegrees(follower.getPose().getHeading()));
         panelsTelemetry.debug("Follower is busy",follower.isBusy());
         panelsTelemetry.update(telemetry);
     }
