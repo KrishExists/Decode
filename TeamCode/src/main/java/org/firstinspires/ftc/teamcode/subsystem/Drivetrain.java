@@ -28,7 +28,7 @@ public class Drivetrain implements Subsystem {
 
 
     public Drivetrain(HardwareMap h, Telemetry t) {
-        startingPose = new Pose(72,72,0);
+        startingPose = new Pose(72,72,0);//middle
         follower = Constants.createFollower(h);
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
