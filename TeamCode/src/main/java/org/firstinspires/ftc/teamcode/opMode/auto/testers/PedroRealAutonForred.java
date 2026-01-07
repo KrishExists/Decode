@@ -1,5 +1,5 @@
 
-package org.firstinspires.ftc.teamcode.opMode.auto;
+package org.firstinspires.ftc.teamcode.opMode.auto.testers;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -10,7 +10,6 @@ import com.bylazar.telemetry.PanelsTelemetry;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystem.Robot;
-import org.firstinspires.ftc.teamcode.util.AutoCommands;
 import org.firstinspires.ftc.teamcode.util.RedAutoPaths;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
