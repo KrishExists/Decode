@@ -24,6 +24,7 @@ public class Drivetrain implements Subsystem {
 
     private final HardwareMap hardwareMap;
     private final Telemetry telemetry;
+    private static boolean teleDrive = true;
 
 
 
@@ -40,7 +41,7 @@ public class Drivetrain implements Subsystem {
 
         this.hardwareMap = h;
         this.telemetry = t;
-        follower.startTeleopDrive(true);
+        follower.startTeleopDrive(teleDrive);
     }
 
 
