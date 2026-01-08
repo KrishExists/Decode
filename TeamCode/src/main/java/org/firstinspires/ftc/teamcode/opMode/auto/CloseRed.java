@@ -35,7 +35,7 @@ public class CloseRed extends OpMode {
 
     private DcMotorEx transfer;
 
-    private final Pose startPose = new Pose(124, 124, Math.toRadians(45));
+    private final Pose startPose = new Pose(124, 124, Math.toRadians(35));
 
     // Paths
     private PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9, Path10;
@@ -44,36 +44,36 @@ public class CloseRed extends OpMode {
     public void buildPaths() {
         Path1 = follower.pathBuilder()
                 .addPath(new BezierLine(new Pose(124, 124), new Pose(96, 96)))
-                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(45))
+                .setLinearHeadingInterpolation(Math.toRadians(35), Math.toRadians(45))
                 .build();
 
         Path2 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Pose(96, 96), new Pose(96, 84), new Pose(104, 84)))
+                .addPath(new BezierCurve(new Pose(96, 96), new Pose(96, 81), new Pose(104, 81)))
                 .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
                 .build();
 
         Path3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(104, 84), new Pose(124, 84)))
+                .addPath(new BezierLine(new Pose(104, 81), new Pose(132, 81)))
                 .setTangentHeadingInterpolation()
                 .build();
 
         Path4 = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(124, 84), new Pose(96, 96)))
+                .addPath(new BezierLine(new Pose(140, 81), new Pose(96, 96)))
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
                 .build();
 
         Path5 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Pose(96, 96), new Pose(96, 60), new Pose(105, 60)))
+                .addPath(new BezierCurve(new Pose(96, 96), new Pose(96, 57), new Pose(105, 57)))
                 .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
                 .build();
 
         Path6 = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(105, 60), new Pose(124, 60)))
+                .addPath(new BezierLine(new Pose(105, 57), new Pose(140, 57)))
                 .setTangentHeadingInterpolation()
                 .build();
 
         Path7 = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(124, 60), new Pose(96, 96)))
+                .addPath(new BezierLine(new Pose(140, 57), new Pose(96, 96)))
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
                 .build();
 
@@ -83,21 +83,21 @@ public class CloseRed extends OpMode {
                 .build();
 
         Path9 = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(105, 36), new Pose(124, 36)))
+                .addPath(new BezierLine(new Pose(105, 36), new Pose(140, 36)))
                 .setTangentHeadingInterpolation()
                 .build();
 
         Path10 = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(124, 36), new Pose(87, 110)))
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
+                .addPath(new BezierLine(new Pose(140, 36), new Pose(87, 110)))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(30))
                 .build();
     }
 
     // ---------------- Robot Actions ----------------
     private void prepareToShoot() {
-        intake.setPower(TeamConstants.INTAKE_FEED_POWER);
-        transfer.setPower(TeamConstants.TRANSFER_REV);
-        outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
+        intake.setPower(TeamConstants.INTAKE_FEED_POWER); // Good
+        transfer.setPower(TeamConstants.TRANSFER_REV); // Good
+        outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM-150); // Good
     }
 
     private void spinUpIntake() {
@@ -107,14 +107,16 @@ public class CloseRed extends OpMode {
     }
 
     private void spinUpShooter() {
-        outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
+        telemetry.addLine("Ready to shoot");
+        outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM-150);
         outtake.setLinkage(TeamConstants.LINKAGE_SHOOT);
     }
 
     private void spinUp(boolean withTransfer) {
         spinUpShooter();
         if (withTransfer) {
-            transfer.setPower(TeamConstants.TRANSFER_REV);
+            telemetry.addLine("It is at the transfer state where it is about to shoot");
+            transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
             intake.setPower(TeamConstants.INTAKE_IN_POWER);
         }
     }
@@ -132,14 +134,19 @@ public class CloseRed extends OpMode {
     }
 
     private void shoot(PathChain nextPath, boolean skip) {
-        if (follower.isBusy()) prepareToShoot();
+        if (follower.isBusy()) {
+            prepareToShoot(); // It comes here
+            telemetry.addLine("Preparing");
+        }
 
         if (!follower.isBusy()) {
-            if (outtake.getRPM() > TeamConstants.Shooter_BottomThreshold || happened) {
-                happened = true;
+            if ((true) ) { // Good
+                telemetry.addLine("Outtake above threshold"); // Good
+                outtake.setLinkage(TeamConstants.LINKAGE_SHOOT);
                 spinUp(true);
+                transfer.setPower(-1);
 
-                if (actionTimer.milliseconds() > 800) {
+                if (actionTimer.milliseconds()>1000 ) {
                     if (skip) {
                         pathState = 67;
                         return;
@@ -149,6 +156,7 @@ public class CloseRed extends OpMode {
                     resetBooleans();
                 }
             } else {
+                telemetry.addLine("OUttake not above"); // Code never reaches here
                 spinUp(false);
             }
         }
@@ -158,10 +166,11 @@ public class CloseRed extends OpMode {
         shoot(nextPath, false);
     }
 
-    private void spinIntake(PathChain path) {
+    private void spinIntake(PathChain path, boolean b) {
         spinUpIntake();
         if (!follower.isBusy()) {
-            follower.followPath(path);
+
+            follower.followPath(path,b);
             pathState++;
             resetBooleans();
         }
@@ -172,6 +181,7 @@ public class CloseRed extends OpMode {
         switch (pathState) {
             case 0:
                 follower.followPath(Path1);
+                outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
                 pathState++;
                 break;
             case 1:
@@ -179,30 +189,30 @@ public class CloseRed extends OpMode {
                 shoot(Path2);
                 break;
             case 2:
-                spinIntake(Path3);
+                spinIntake(Path3, true);
                 break;
             case 3:
-                spinIntake(Path4);
+                spinIntake(Path4,false);
                 break;
             case 4:
                 resetTimers();
                 shoot(Path5);
                 break;
             case 5:
-                spinIntake(Path6);
+                spinIntake(Path6, true);
                 break;
             case 6:
-                spinIntake(Path7);
+                spinIntake(Path7, false);
                 break;
             case 7:
                 resetTimers();
                 shoot(Path8);
                 break;
             case 8:
-                spinIntake(Path9);
+                spinIntake(Path9, true);
                 break;
             case 9:
-                spinIntake(Path10);
+                spinIntake(Path10, false);
                 break;
             case 10:
                 resetTimers();
@@ -217,6 +227,7 @@ public class CloseRed extends OpMode {
         outtake = new Outtake(hardwareMap,telemetry);
         intake = new Intake(hardwareMap,telemetry,outtake);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
+        outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
 
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
@@ -252,6 +263,8 @@ public class CloseRed extends OpMode {
         panelsTelemetry.debug("Y", follower.getPose().getY());
         panelsTelemetry.debug("Heading", Math.toDegrees(follower.getPose().getHeading()));
         panelsTelemetry.debug("Follower Busy", follower.isBusy());
+        panelsTelemetry.debug("Shooter rpm",outtake.getRPM());
+        panelsTelemetry.debug("Transfer",transfer.getVelocity());
         panelsTelemetry.update(telemetry);
     }
 

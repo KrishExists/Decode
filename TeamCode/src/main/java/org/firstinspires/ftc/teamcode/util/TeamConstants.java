@@ -21,13 +21,13 @@ public class TeamConstants {
     public static final double TRANSFER_REV = 1;
 
     public static final double outtake_Stop = 0;
-    public static final double SLIGHT_REVERSE_OUTTAKE = -0.5;
+    public static final double SLIGHT_REVERSE_OUTTAKE = -0.8;
 
 
     // =============================
     // Linkage Servo Positions
     // =============================
-    public static final double LINKAGE_REST = 0.92;
+    public static final double LINKAGE_REST = 0.5;
     public static final double LINKAGE_SHOOT = 0.47;
 
 

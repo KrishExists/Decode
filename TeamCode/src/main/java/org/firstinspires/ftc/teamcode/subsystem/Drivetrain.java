@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystem;
+import com.acmerobotics.dashboard.config.Config;
+import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
@@ -13,7 +15,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-
+@Config
+@Configurable
 public class Drivetrain implements Subsystem {
     private Follower follower;
     public static Pose startingPose; //See ExampleAuto to understand how to use this

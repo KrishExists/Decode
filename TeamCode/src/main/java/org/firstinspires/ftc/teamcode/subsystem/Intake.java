@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.util.StateMachine;
 public class Intake implements Subsystem{
 
     ElapsedTime time;
+    private boolean happend;
 
     public enum IntakeState {
         RUNSLOW, RAPOD_FAR,RAPOD_CLOSE, IntakeNEXT, REST, INTAKE_LAST, SpeedMid,SpeedFar, AUTORPMRED
@@ -146,6 +147,7 @@ public class Intake implements Subsystem{
                 shooter.setPower(TeamConstants.SLIGHT_REVERSE_OUTTAKE);
 
                 intake.setPower(TeamConstants.INTAKE_IN_POWER);
+                transfer.setPower(0);
                 break;
 
             case IntakeNEXT:
@@ -193,9 +195,14 @@ public class Intake implements Subsystem{
 
 
             case RAPOD_CLOSE:
-               shooter.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
-               intake.setPower(TeamConstants.INTAKE_IN_POWER);
-               transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+                if(shooter.getRPM()>TeamConstants.SHOOTER_MID_RPM-100){
+                    happend = true;
+                }
+                if (happend){
+                    shooter.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
+                    intake.setPower(TeamConstants.INTAKE_IN_POWER);
+                    transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+                }
                 break;
             case RAPOD_FAR:
                 shooter.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
@@ -206,6 +213,8 @@ public class Intake implements Subsystem{
             case REST:
 
             default:
+                happend = false;
+
                 intake.setPower(TeamConstants.INTAKE_DEFAULT_POWER);
                 shooter.stop();
                 transfer.setPower(TeamConstants.TRANSFER_CLOSED);
