@@ -7,6 +7,8 @@ import com.bylazar.telemetry.PanelsTelemetry;
 
 import org.firstinspires.ftc.teamcode.opMode.auto.pathsAuto.SimplySyncPaths;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.util.TeamConstants;
+
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.follower.Follower;
@@ -27,11 +29,12 @@ public class RedSimplySynchronization extends OpMode {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(72, 8, Math.toRadians(90)));
+        follower.setStartingPose(new Pose(80.178, 7.644,Math.toRadians(90)));
 
-        paths = new SimplySyncPaths(follower); // Build paths
+                paths = new SimplySyncPaths(follower); // Build paths
 
         panelsTelemetry.debug("Status", "Initialized");
+        pathState = 0;
         panelsTelemetry.update(telemetry);
     }
 
@@ -53,10 +56,57 @@ public class RedSimplySynchronization extends OpMode {
 
 
     public int autonomousPathUpdate() {
-        // Event markers will automatically trigger at their positions
-        // Make sure to register NamedCommands in your RobotContainer
+        switch (pathState) {
+            case 0:
+                follower.followPath(paths.Path1);
+                pathState++;
+                break;
+            case 1:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths.Path2);
+                    pathState++;
+                }
+                break;
+            case 2:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths.Path3);
+                    pathState++;
+                }
+                break;
+            case 3:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths.Path4);
+                    pathState++;
+                }
+                break;
+            case 4:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths.Path5);
+                    pathState++;
+                }
+                break;
+            case 5:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths.Path6);
+                    pathState++;
+                }
+                break;
+            case 6:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths.Path7);
+                    pathState++;
+                }
+                break;
+            case 7:
+                // Autonomous finished
+                panelsTelemetry.debug("Status", "Finished");
+                pathState = -1; // signal finished
+                break;
+        }
+
         return pathState;
     }
+
 
 
 }
