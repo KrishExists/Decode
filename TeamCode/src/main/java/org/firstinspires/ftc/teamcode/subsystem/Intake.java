@@ -144,7 +144,7 @@ public class Intake implements Subsystem{
         switch (sm.getState()) {
 
             case INTAKE_LAST:
-                shooter.setPower(TeamConstants.SLIGHT_REVERSE_OUTTAKE);
+                shooter.setPower(TeamConstants.SHOOTER_CLOSED);
 
                 intake.setPower(TeamConstants.INTAKE_IN_POWER);
                 transfer.setPower(0);
@@ -153,7 +153,7 @@ public class Intake implements Subsystem{
             case IntakeNEXT:
 
                 intake.setPower(TeamConstants.INTAKE_IN_POWER);
-                shooter.setPower(TeamConstants.SLIGHT_REVERSE_OUTTAKE);
+                shooter.setPower(TeamConstants.SHOOTER_CLOSED);
 
 
                 linkage.setPosition(TeamConstants.LINKAGE_REST);
