@@ -35,7 +35,7 @@ public class CloseRed extends OpMode {
 
     private DcMotorEx transfer;
 
-    private final Pose startPose = new Pose(124, 124, Math.toRadians(35));
+    private final Pose startPose = new Pose(123.733, 127.822, Math.toRadians(35));
 
     // Paths
     private PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7;
