@@ -101,7 +101,7 @@ public class Drivetrain implements Subsystem {
             automatedDrive = true;
             follower.followPath(gate.get());
         }
-        else if (automatedDrive && (gamepad.bWasPressed() || !follower.isBusy())) {
+        else if (automatedDrive && (gamepad.bWasPressed())) {
             automatedDrive = false;
             follower.startTeleopDrive(true); // ensure teleop drive restarts
         }
