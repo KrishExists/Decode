@@ -21,7 +21,12 @@ public class Drivetrain implements Subsystem {
     private Follower follower;
     public static Pose startingPose; //See ExampleAuto to understand how to use this
     private boolean automatedDrive;
-    private Supplier<PathChain> pathChain;
+    private Supplier<PathChain> far;
+    private Supplier<PathChain> mid;
+    private Supplier<PathChain> park;
+
+    private Supplier<PathChain> gate;
+
     private TelemetryManager telemetryM;
 
 
@@ -37,9 +42,21 @@ public class Drivetrain implements Subsystem {
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-        pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
+        far = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(72, 22))))
                 .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(70), 0.8))
+                .build();
+        mid = () -> follower.pathBuilder() //Lazy Curve Generation
+                .addPath(new Path(new BezierLine(follower::getPose, new Pose(75, 75))))
+                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(45), 0.8))
+                .build();
+        park = () -> follower.pathBuilder() //Lazy Curve Generation
+                .addPath(new Path(new BezierLine(follower::getPose, new Pose(38, 33))))
+                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(90), 0.8))
+                .build();
+        gate = () -> follower.pathBuilder() //Lazy Curve Generation
+                .addPath(new Path(new BezierLine(follower::getPose, new Pose(130, 69))))
+                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, follower::getHeading, 0.8))
                 .build();
 
         this.hardwareMap = h;
@@ -70,8 +87,21 @@ public class Drivetrain implements Subsystem {
         // Check for path triggers first
         if (gamepad.aWasPressed() && !automatedDrive) {
             automatedDrive = true;
-            follower.followPath(pathChain.get());
-        } else if (automatedDrive && (gamepad.bWasPressed() || !follower.isBusy())) {
+            follower.followPath(far.get());
+        }
+      else  if (gamepad.xWasPressed() && !automatedDrive) {
+            automatedDrive = true;
+            follower.followPath(mid.get());
+        }
+    else    if (gamepad.yWasPressed() && !automatedDrive) {
+            automatedDrive = true;
+            follower.followPath(park.get());
+        }
+        else    if (gamepad.rightBumperWasPressed() && !automatedDrive) {
+            automatedDrive = true;
+            follower.followPath(gate.get());
+        }
+        else if (automatedDrive && (gamepad.bWasPressed() || !follower.isBusy())) {
             automatedDrive = false;
             follower.startTeleopDrive(true); // ensure teleop drive restarts
         }
