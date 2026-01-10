@@ -19,18 +19,18 @@ public class PedroTest extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
 
     private int pathState;
-    private final Pose startPose = new Pose(124.0, 124.0, Math.toRadians(45)); // Start Pose of our robot.
+    private final Pose startPose = new Pose(124.0, 124.0, Math.toRadians(35)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(96.0, 96.0, Math.toRadians(45)); // Scoring Pose of our robot.
-    private final Pose Bez1End = new Pose(104.0,84.0,0);
+    private final Pose Bez1End = new Pose(98.0,84.0,0);
     private final Pose Bez1Control = new Pose(96.0,84.0,0);
     private final Pose Spike1End = new Pose(124.0,84.0,0);
-    private final Pose Bez2End = new Pose(105.0,60.0,0);
+    private final Pose Bez2End = new Pose(98.0,60.0,0);
     private final Pose Bez2Control = new Pose(96.0,60.0,0);
     private final Pose Spike2End = new Pose(124.0,60.0,0);
-    private final Pose Bez3End = new Pose(105.0,36.0,0);
+    private final Pose Bez3End = new Pose(98.0,36.0,0);
     private final Pose Bez3Control = new Pose(96.0,36.0,0);
     private final Pose Spike3End = new Pose(124.0,36.0,0);
-    private final Pose scorePoseend = new Pose(90.0, 108.0, Math.toRadians(45)); // Scoring Pose of our robot.
+    private final Pose scorePoseend = new Pose(90.0, 108.0, Math.toRadians(35)); // Scoring Pose of our robot.
 
     private Path scorePreload;
     private PathChain

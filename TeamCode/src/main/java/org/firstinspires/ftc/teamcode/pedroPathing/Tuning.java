@@ -44,13 +44,11 @@ import java.util.List;
 public class Tuning extends SelectableOpMode {
     public static Follower follower;
 
-    @IgnoreConfigurable
     static PoseHistory poseHistory;
 
-    @IgnoreConfigurable
+
     static TelemetryManager telemetryM;
 
-    @IgnoreConfigurable
     static ArrayList<String> changes = new ArrayList<>();
 
     public Tuning() {
@@ -73,12 +71,7 @@ public class Tuning extends SelectableOpMode {
                 p.add("Drive Tuner", DriveTuner::new);
                 p.add("Line Tuner", Line::new);
                 p.add("Centripetal Tuner", CentripetalTuner::new);
-            });
-            s.folder("Tests", p -> {
-                p.add("Line", Line::new);
-                p.add("Triangle", Triangle::new);
-                p.add("Circle", Circle::new);
-            });
+            });;
         });
     }
 
@@ -770,7 +763,7 @@ class TranslationalTuner extends OpMode {
 
     @Override
     public void start() {
-        follower.deactivateAllPIDFs();
+      //  follower.deactivateAllPIDFs();
         follower.activateTranslational();
         forwards = new Path(new BezierLine(new Pose(72,72), new Pose(DISTANCE + 72,72)));
         forwards.setConstantHeadingInterpolation(0);

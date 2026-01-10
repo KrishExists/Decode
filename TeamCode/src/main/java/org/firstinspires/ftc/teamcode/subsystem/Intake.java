@@ -211,7 +211,13 @@ public class Intake implements Subsystem{
                 break;
 
             case REST:
+                happend = false;
 
+                intake.setPower(TeamConstants.INTAKE_DEFAULT_POWER);
+                shooter.stop();
+                transfer.setPower(TeamConstants.TRANSFER_CLOSED);
+                linkage.setPosition(TeamConstants.LINKAGE_REST);
+                break;
             default:
                 happend = false;
 
