@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -46,6 +47,10 @@ public class Intake implements Subsystem{
     // Gamepad updated from OpMode
     private Gamepad gamepad;
 
+    private TouchSensor touchLeft;
+
+    private TouchSensor touchRight;
+
     public Intake(HardwareMap hw, Telemetry t, Outtake shooter) {
         this.telemetry = t;
         this.shooter = shooter;
@@ -54,6 +59,8 @@ public class Intake implements Subsystem{
         intake = hw.get(DcMotor.class, "Intake");
         linkage = hw.get(Servo.class, "Linkage");
         transfer = hw.get(DcMotorEx.class, "Transfer");
+        touchLeft = hw.get(TouchSensor.class, "TouchSensorLeft");
+        touchRight = hw.get(TouchSensor.class, "TouchSensorRight");
 
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
@@ -158,6 +165,10 @@ public class Intake implements Subsystem{
 
                 linkage.setPosition(TeamConstants.LINKAGE_REST);
                 transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+
+                if(touchLeft.isPressed() || touchRight.isPressed()) {
+                    setState(IntakeState.INTAKE_LAST);
+                }
                 break;
 
 

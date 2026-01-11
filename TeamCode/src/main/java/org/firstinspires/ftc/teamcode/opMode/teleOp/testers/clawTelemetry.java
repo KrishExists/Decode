@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.opMode.teleOp.testers;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.Range;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -35,7 +37,13 @@ public class clawTelemetry extends LinearOpMode {
     private DcMotor intake;
     private DcMotorEx leftFront, rightFront, leftRear, rightRear;
 
+    private TouchSensor touchRight;
+
+    private TouchSensor touchLeft;
+
     private DcMotorEx transfer;
+
+    private ColorSensor colorSensor;
 
     // === Dashboard ===
     FtcDashboard dashboard;
@@ -68,6 +76,8 @@ public class clawTelemetry extends LinearOpMode {
         linkage = hardwareMap.get(Servo.class, "Linkage");
         blocker = hardwareMap.get(Servo.class, "Blocker");
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
+        touchLeft = hardwareMap.get(TouchSensor.class, "TouchSensorLeft");
+        touchRight = hardwareMap.get(TouchSensor.class, "TouchSensorRight");
 
         shooter = hardwareMap.get(DcMotorEx.class, "Outtake");
         shooter2 = hardwareMap.get(DcMotorEx.class, "Outtake2");
@@ -87,6 +97,7 @@ public class clawTelemetry extends LinearOpMode {
         rightFront = hardwareMap.get(DcMotorEx.class, "frontRightMotor");
         leftRear = hardwareMap.get(DcMotorEx.class, "backLeftMotor");
         rightRear = hardwareMap.get(DcMotorEx.class, "backRightMotor");
+        colorSensor = hardwareMap.get(ColorSensor.class, "colors");
 
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setDirection(DcMotor.Direction.REVERSE);
@@ -151,6 +162,11 @@ public class clawTelemetry extends LinearOpMode {
             telemetry.addData("Shooter RPM", currentRPM());
             telemetry.addData("Shooter Power Output", shooter.getPower());
             telemetry.addData("Transfer Motor Current: ", transfer.getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("Is Touch Sensor (Left) touched? ", touchLeft.isPressed());
+            telemetry.addData("Is Touch Sensor (Right) touched? ", touchRight.isPressed());
+            telemetry.addData("Color Sensor Red: ", colorSensor.red());
+            telemetry.addData("Color Sensor Blue: ", colorSensor.blue());
+            telemetry.addData("Color Sensor Green: ", colorSensor.green());
             telemetry.update();
         }
 
