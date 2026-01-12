@@ -210,7 +210,7 @@ public class CloseRed extends OpMode {
                 shoot(PrepSpike1);
                 break;
             case 2:
-                spinIntake(FinishSpike1, false);
+                spinIntake(FinishSpike1, true);
                 break;
             case 3:
                 spinIntake(ScoreSpike1, false);
@@ -220,7 +220,7 @@ public class CloseRed extends OpMode {
                 shoot(PrepSpike1);
                 break;
             case 5:
-                spinIntake(FinishSpike2, false);
+                spinIntake(FinishSpike2, true);
                 break;
             case 6:
                 spinIntake(ScoreSpike3, false);
@@ -230,7 +230,7 @@ public class CloseRed extends OpMode {
                 shoot(PrepSpike3);
                 break;
             case 8:
-                spinIntake(FinishSpike3, false);
+                spinIntake(FinishSpike3, true);
                 break;
             case 9:
                 spinIntake(ScoreSpike3, false);
