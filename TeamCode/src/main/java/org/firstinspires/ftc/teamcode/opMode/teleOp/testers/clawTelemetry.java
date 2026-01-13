@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opMode.teleOp.testers;
 
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -37,9 +39,6 @@ public class clawTelemetry extends LinearOpMode {
     private DcMotor intake;
     private DcMotorEx leftFront, rightFront, leftRear, rightRear;
 
-    private TouchSensor touchRight;
-
-    private TouchSensor touchLeft;
 
     private DcMotorEx transfer;
 
@@ -49,8 +48,6 @@ public class clawTelemetry extends LinearOpMode {
     FtcDashboard dashboard;
 
     // === Vision ===
-    private VisionPortal visionPortal;
-    private AprilTagProcessor aprilTagProcessor;
 
     // === PID Coefficients (Tunable in Dashboard) ===
     public static double kP = 0.01;
@@ -69,27 +66,26 @@ public class clawTelemetry extends LinearOpMode {
     public static double blockerPos = 0.0;
     public static double shooterPower = 0.0;   // <-- NOW interpreted as TARGET RPM
     public static double intakePower = 0.0;
+    private static PIDController pidController;
 
     @Override
     public void runOpMode() {
 
         linkage = hardwareMap.get(Servo.class, "Linkage");
-        blocker = hardwareMap.get(Servo.class, "Blocker");
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
-        touchLeft = hardwareMap.get(TouchSensor.class, "TouchSensorLeft");
-        touchRight = hardwareMap.get(TouchSensor.class, "TouchSensorRight");
 
         shooter = hardwareMap.get(DcMotorEx.class, "Outtake");
         shooter2 = hardwareMap.get(DcMotorEx.class, "Outtake2");
+        pidController = new PIDController(0,0,0);
 
         shooter.setDirection(DcMotorSimple.Direction.FORWARD);
         shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         shooter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        shooter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         shooter2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        shooter2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        shooter2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         intake = hardwareMap.get(DcMotor.class, "Intake");
 
@@ -97,7 +93,7 @@ public class clawTelemetry extends LinearOpMode {
         rightFront = hardwareMap.get(DcMotorEx.class, "frontRightMotor");
         leftRear = hardwareMap.get(DcMotorEx.class, "backLeftMotor");
         rightRear = hardwareMap.get(DcMotorEx.class, "backRightMotor");
-        colorSensor = hardwareMap.get(ColorSensor.class, "colors");
+//        colorSensor = hardwareMap.get(ColorSensor.class, "colors");
 
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setDirection(DcMotor.Direction.REVERSE);
@@ -105,7 +101,6 @@ public class clawTelemetry extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         dashboard = FtcDashboard.getInstance();
 
-        initAprilTag();
 
 
         telemetry.addLine("Init Complete");
@@ -115,6 +110,7 @@ public class clawTelemetry extends LinearOpMode {
         lastTime = getRuntime();
 
         while (opModeIsActive()) {
+            pidController.setPID(kP,kI,kD);
 
             // === SERVO ===
             linkage.setPosition(linkagePos);
@@ -162,15 +158,12 @@ public class clawTelemetry extends LinearOpMode {
             telemetry.addData("Shooter RPM", currentRPM());
             telemetry.addData("Shooter Power Output", shooter.getPower());
             telemetry.addData("Transfer Motor Current: ", transfer.getCurrent(CurrentUnit.AMPS));
-            telemetry.addData("Is Touch Sensor (Left) touched? ", touchLeft.isPressed());
-            telemetry.addData("Is Touch Sensor (Right) touched? ", touchRight.isPressed());
-            telemetry.addData("Color Sensor Red: ", colorSensor.red());
-            telemetry.addData("Color Sensor Blue: ", colorSensor.blue());
-            telemetry.addData("Color Sensor Green: ", colorSensor.green());
+//            telemetry.addData("Color Sensor Red: ", colorSensor.red());
+//            telemetry.addData("Color Sensor Blue: ", colorSensor.blue());
+//            telemetry.addData("Color Sensor Green: ", colorSensor.green());
             telemetry.update();
         }
 
-        visionPortal.close();
     }
 
     // ════════════════════════════════
@@ -185,21 +178,8 @@ public class clawTelemetry extends LinearOpMode {
     public void spinToRpm(double targetRPM) {
         double currRPM = currentRPM();
         double error = targetRPM - currRPM;
-
-        double currentTime = getRuntime();
-        double dt = currentTime - lastTime;
-
-        integralSum += error * dt;
-        double derivative = (error - lastError) / dt;
-
-        double output = (kP * error) + (kI * integralSum) + (kD * derivative);
-        output = Range.clip(output, 0, 1);
-
-        shooter.setPower(output);
-        shooter2.setPower(output);
-
-        lastError = error;
-        lastTime = currentTime;
+      double output=   pidController.calculate(currRPM,error);
+      shooter.setPower(output);
     }
 
     // ════════════════════════════════
@@ -213,33 +193,6 @@ public class clawTelemetry extends LinearOpMode {
         rightRear.setPower(0);
     }
 
-    private void initAprilTag() {
-        aprilTagProcessor = new AprilTagProcessor.Builder()
-                .setDrawAxes(true)
-                .setDrawTagOutline(true)
-                .setDrawCubeProjection(true)
-                .build();
 
-        visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .addProcessor(aprilTagProcessor)
-                .build();
 
-        while (opModeInInit() && visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
-            telemetry.addData("Camera", visionPortal.getCameraState());
-            telemetry.update();
-            sleep(20);
-        }
-
-        ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
-        GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
-
-        if (exposureControl != null) {
-            exposureControl.setMode(ExposureControl.Mode.Manual);
-            exposureControl.setExposure(15, TimeUnit.MILLISECONDS);
-        }
-        if (gainControl != null) {
-            gainControl.setGain(25);
-        }
-    }
 }

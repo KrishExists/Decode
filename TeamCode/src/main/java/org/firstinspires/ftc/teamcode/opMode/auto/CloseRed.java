@@ -36,25 +36,32 @@ public class CloseRed extends OpMode {
 
     private DcMotorEx transfer;
 
+    private final Pose startPose = new Pose(124, 124, Math.toRadians(35));
+    private final Pose scorePose = new Pose(96, 96, Math.toRadians(45));
+    private final Pose scorePoseEnd = new Pose(90, 115, Math.toRadians(20));
 
-    private final Pose startPose = new Pose(124.0, 124.0, Math.toRadians(35)); // Start Pose of our robot.
-    private final Pose scorePose = new Pose(96.0, 96.0, Math.toRadians(45)); // Scoring Pose of our robot.
-    private final Pose Bez1End = new Pose(98.0,84.0,0);
-    private final Pose Bez1Control = new Pose(96.0,84.0,0);
-    private final Pose Spike1End = new Pose(124.0,84.0,0);
-    private final Pose Bez2End = new Pose(98.0,60.0,0);
-    private final Pose Bez2Control = new Pose(96.0,60.0,0);
-    private final Pose Spike2End = new Pose(124.0,60.0,0);
-    private final Pose Bez3End = new Pose(98.0,36.0,0);
-    private final Pose Bez3Control = new Pose(96.0,36.0,0);
-    private final Pose Spike3End = new Pose(124.0,36.0,0);
-    private final Pose scorePoseend = new Pose(90.0, 108.0, Math.toRadians(35)); // Scoring Pose of our robot.
+    private final Pose Bez1End = new Pose(98, 84, 0);
+    private final Pose Bez1Control = new Pose(85, 84, 0);
+    private final Pose Spike1End = new Pose(120, 84, 0);
+
+    private final Pose Bez2End = new Pose(98, 60, 0);
+    private final Pose Bez2Control = new Pose(85, 58, 0);
+    private final Pose Spike2End = new Pose(120, 58, 0);
+
+    private final Pose Bez3End = new Pose(98, 36, 0);
+    private final Pose Bez3Control = new Pose(78, 36, 0);
+    private final Pose Spike3End = new Pose(120, 36, 0);
+    private final Pose Gate = new Pose(127,62,Math.toRadians(20));
+    private final Pose GateControl = new Pose(98,69,0);
+    private final Pose backGate = new Pose(96,67,0);
+
     private Path scorePreload;
 
     // Paths
     private PathChain
             PrepSpike1, FinishSpike1, ScoreSpike1,
             PrepSpike2, FinishSpike2, ScoreSpike2,
+            GoGate,BackGate,
             PrepSpike3, FinishSpike3, ScoreSpike3;
 
     // ---------------- Path Building ----------------
@@ -62,33 +69,29 @@ public class CloseRed extends OpMode {
         scorePreload = new Path(new BezierLine(startPose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
-    /* Here is an example for Constant Interpolation
-    scorePreload.setConstantInterpolation(startPose.getHeading()); */
-
-        /* This is our grabPickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         PrepSpike1 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, Bez1Control,Bez1End))
+                .addPath(new BezierCurve(scorePose, Bez1Control, Bez1End))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Bez1End.getHeading())
-                .build();
-
-        /* This is our scorePickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
-        FinishSpike1 = follower.pathBuilder()
                 .addPath(new BezierLine(Bez1End, Spike1End))
                 .setTangentHeadingInterpolation()
                 .build();
+
         ScoreSpike1 = follower.pathBuilder()
                 .addPath(new BezierLine(Spike1End, scorePose))
-                .setLinearHeadingInterpolation(Spike1End.getHeading(),scorePose.getHeading())
+                .setLinearHeadingInterpolation(Spike1End.getHeading(), scorePose.getHeading())
                 .build();
-
+        GoGate = follower.pathBuilder()
+                .addPath(new BezierCurve(scorePose,GateControl,Gate))
+                .setLinearHeadingInterpolation(scorePose.getHeading(),Gate.getHeading())
+                .build();
+        BackGate = follower.pathBuilder()
+                .addPath(new BezierCurve(Gate,backGate,scorePose))
+                .setLinearHeadingInterpolation(Gate.getHeading(),scorePose.getHeading())
+                .build();
 
         PrepSpike2 = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, Bez2Control, Bez2End))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Bez2End.getHeading())
-                .build();
-
-        /* This is our scorePickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
-        FinishSpike2 = follower.pathBuilder()
                 .addPath(new BezierLine(Bez2End, Spike2End))
                 .setTangentHeadingInterpolation()
                 .build();
@@ -97,19 +100,16 @@ public class CloseRed extends OpMode {
                 .addPath(new BezierLine(Spike2End, scorePose))
                 .setLinearHeadingInterpolation(Spike2End.getHeading(), scorePose.getHeading())
                 .build();
+
         PrepSpike3 = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, Bez3Control, Bez3End))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Bez3End.getHeading())
-                .build();
-
-        /* This is our scorePickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
-        FinishSpike3 = follower.pathBuilder()
                 .addPath(new BezierLine(Bez3End, Spike3End))
                 .setTangentHeadingInterpolation()
                 .build();
 
         ScoreSpike3 = follower.pathBuilder()
-                .addPath(new BezierLine(Spike3End, scorePoseend))
+                .addPath(new BezierLine(Spike3End, scorePoseEnd))
                 .setLinearHeadingInterpolation(Spike3End.getHeading(), scorePose.getHeading())
                 .build();
     }
@@ -207,33 +207,35 @@ public class CloseRed extends OpMode {
                 break;
             case 1:
                 resetTimers();
-                shoot(PrepSpike1);
+                shoot(PrepSpike2);
                 break;
             case 2:
-                spinIntake(FinishSpike1, true);
+                spinIntake(ScoreSpike2, false);
                 break;
             case 3:
-                spinIntake(ScoreSpike1, false);
+                resetTimers();
+                shoot(GoGate);
                 break;
             case 4:
-                resetTimers();
-                shoot(PrepSpike1);
+                spinIntake(BackGate,false);
                 break;
             case 5:
-                spinIntake(FinishSpike2, true);
+                resetTimers();
+                shoot(GoGate);
                 break;
             case 6:
-                spinIntake(ScoreSpike3, false);
+                spinIntake(BackGate, false);
                 break;
             case 7:
                 resetTimers();
-                shoot(PrepSpike3);
+                shoot(PrepSpike1);
                 break;
             case 8:
-                spinIntake(FinishSpike3, true);
+                spinIntake(ScoreSpike1, false);
                 break;
             case 9:
-                spinIntake(ScoreSpike3, false);
+                resetTimers();
+                shoot(PrepSpike3);
                 break;
             case 10:
                 resetTimers();

@@ -75,25 +75,25 @@ public class RedSimplySynchronization extends OpMode {
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.Path4);
+                    follower.followPath(paths.Path2);
                     pathState++;
                 }
                 break;
             case 4:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.Path5);
+                    follower.followPath(paths.Path3);
                     pathState++;
                 }
                 break;
             case 5:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.Path6);
+                    follower.followPath(paths.Path2);
                     pathState++;
                 }
                 break;
             case 6:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.Path7);
+                    follower.followPath(paths.Path3);
                     pathState++;
                 }
                 break;
