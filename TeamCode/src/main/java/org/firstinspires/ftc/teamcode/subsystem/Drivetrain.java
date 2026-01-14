@@ -107,23 +107,23 @@ public class Drivetrain implements Subsystem {
     public void combinedDrive(Gamepad gamepad) {
 
         // Check for path triggers first
-        if (gamepad.aWasPressed() && !automatedDrive) {
+        if (gamepad.rightBumperWasPressed() && !automatedDrive) {
             automatedDrive = true;
             Intake.far = true;
 
             follower.followPath(far.get());
         }
-      else  if (gamepad.xWasPressed() && !automatedDrive) {
+      else  if (gamepad.leftBumperWasPressed() && !automatedDrive) {
             Intake.close = true;
 
             automatedDrive = true;
             follower.followPath(mid.get());
         }
-      else    if (gamepad.yWasPressed() && !automatedDrive) {
+      else    if (gamepad.right_trigger>0.2 && !automatedDrive) {
             automatedDrive = true;
             follower.followPath(park.get());
         }
-        else    if (gamepad.rightBumperWasPressed() && !automatedDrive) {
+        else    if (gamepad.left_trigger>0.2 && !automatedDrive) {
             automatedDrive = true;
             follower.followPath(gate.get());
         }
