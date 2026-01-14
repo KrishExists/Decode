@@ -43,6 +43,7 @@ public class Drivetrain implements Subsystem {
     public Drivetrain(HardwareMap h, Telemetry t, boolean red) {
         if(PoseStorage.pose!=null){
             startingPose = PoseStorage.pose;
+            t.addData("Got pose",startingPose);
         }else{
             startingPose = new Pose(72,72,0);//middle
         }
