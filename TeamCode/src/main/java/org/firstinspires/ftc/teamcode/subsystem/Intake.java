@@ -24,6 +24,8 @@ public class Intake implements Subsystem{
     // Hardware
     private final DcMotor intake;
     private final Servo linkage;
+    public static boolean far;
+    public static boolean close;
 
     private double goodRPM;
     ElapsedTime timer = new ElapsedTime();
@@ -50,10 +52,14 @@ public class Intake implements Subsystem{
     private TouchSensor touchLeft;
 
     private TouchSensor touchRight;
+    public static boolean next;
 
     public Intake(HardwareMap hw, Telemetry t, Outtake shooter) {
         this.telemetry = t;
         this.shooter = shooter;
+        next = false;
+        far = false;
+        close= false;
 
         // Map hardware
         intake = hw.get(DcMotor.class, "Intake");
@@ -120,7 +126,7 @@ public class Intake implements Subsystem{
             shooting = false;
         }
         else if (gamepad2.dpad_down) setState(IntakeState.RUNSLOW);
-        else if (gamepad2.right_bumper){
+        else if (gamepad2.right_bumper||next){
             //IS CURCIAL PLEASE DO NOT DELETE. I REPEAT DO NOT DELETE. IS HELPING US PLEASE MURDUKUR
         }
 
@@ -141,7 +147,14 @@ public class Intake implements Subsystem{
             //do nothing AGAIN IS CRUCIAL MURDURKUR
         }
         else setState(IntakeState.REST);
-
+        if(far){
+            setState(IntakeState.SpeedFar);
+            shooting = true;
+        }
+        if(close){
+            setState(IntakeState.SpeedMid);
+            shooting = true;
+        }
 
         long t = sm.timeInStateMs();
 
@@ -184,9 +197,10 @@ public class Intake implements Subsystem{
                 shooter.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
                 intake.setPower(TeamConstants.INTAKE_IN_POWER);
                 transfer.setPower(TeamConstants.TRANSFER_EVEN);
-                if(gamepad2.right_bumper){
+                if(gamepad2.right_bumper||next){
                     setState(IntakeState.RAPOD_FAR);
                     shooting = false;
+                    far = false;
 
                 }
                 break;
@@ -196,11 +210,12 @@ public class Intake implements Subsystem{
 
                 shooter.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
                 transfer.setPower(TeamConstants.TRANSFER_EVEN);
-                if(gamepad2.right_bumper){
+                if(gamepad2.right_bumper||next){
                     setState(IntakeState.RAPOD_CLOSE);
                     intake.setPower(TeamConstants.INTAKE_DEFAULT_POWER);
                     transfer.setPower(TeamConstants.TRANSFER_CLOSED);
                     shooting = false;
+                    close = false;
                 }
                 break;
 

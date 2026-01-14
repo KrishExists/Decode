@@ -109,13 +109,17 @@ public class Drivetrain implements Subsystem {
         // Check for path triggers first
         if (gamepad.aWasPressed() && !automatedDrive) {
             automatedDrive = true;
+            Intake.far = true;
+
             follower.followPath(far.get());
         }
       else  if (gamepad.xWasPressed() && !automatedDrive) {
+            Intake.close = true;
+
             automatedDrive = true;
             follower.followPath(mid.get());
         }
-    else    if (gamepad.yWasPressed() && !automatedDrive) {
+      else    if (gamepad.yWasPressed() && !automatedDrive) {
             automatedDrive = true;
             follower.followPath(park.get());
         }
@@ -127,11 +131,19 @@ public class Drivetrain implements Subsystem {
             automatedDrive = false;
             follower.startTeleopDrive(true); // ensure teleop drive restarts
         }
+        if(automatedDrive&&!follower.isBusy()){
+            Intake.next = true;
+
+        }
 
         // Drive based on mode
         if (automatedDrive) {
             telemetry.addData("Mode", "Automated Path Following");
         } else {
+            Intake.far = false;
+            Intake.close = false;
+            Intake.next = false;
+
             // Robot-centric teleop drive
             follower.setTeleOpDrive(
                     -gamepad.left_stick_y,
