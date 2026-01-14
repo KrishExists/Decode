@@ -133,6 +133,8 @@ public class Drivetrain implements Subsystem {
         }
         if(automatedDrive&&!follower.isBusy()){
             Intake.next = true;
+            Intake.far = false;
+            Intake.close = false;
 
         }
 
