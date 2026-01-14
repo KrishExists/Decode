@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Robot;
 
 
 @TeleOp(name = "RedTeleop", group = "Main")
-public class RedTeleop extends LinearOpMode {
+public class BlueTele extends LinearOpMode {
     private HardwareMap hw;
     private Drivetrain drive;
     private Outtake shooter;
@@ -29,7 +29,7 @@ public class RedTeleop extends LinearOpMode {
 // ===== Initialize Hardware & Subsystems =====
         hw = hardwareMap;
         shooter = new Outtake(hw, telemetry);
-        drive = new Drivetrain(hardwareMap, telemetry,true);
+        drive = new Drivetrain(hardwareMap, telemetry,false);
         intake = new Intake(hw, telemetry, shooter);
         robot = new Robot(hw,telemetry,drive,intake);
         telemetry.addLine("Initialized — Waiting for Start");
