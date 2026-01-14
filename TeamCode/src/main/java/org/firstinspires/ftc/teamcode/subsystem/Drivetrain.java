@@ -74,15 +74,15 @@ public class Drivetrain implements Subsystem {
                     .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(110), 0.8))
                     .build();
             mid = () -> follower.pathBuilder() //Lazy Curve Generation
-                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(75, 75))))
+                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(69, 75))))
                     .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(135), 0.8))
                     .build();
             park = () -> follower.pathBuilder() //Lazy Curve Generation
-                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(38, 33))))
+                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(72-38+72, 33))))
                     .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(90), 0.8))
                     .build();
             gate = () -> follower.pathBuilder() //Lazy Curve Generation
-                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(130, 69))))
+                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(72-130+72, 69))))
                     .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, follower::getHeading, 0.8))
                     .build();
         }
