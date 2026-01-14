@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.util.PoseStorage;
 
 @Config
 @Configurable
@@ -40,7 +41,11 @@ public class Drivetrain implements Subsystem {
         this(h,t,false);
     }
     public Drivetrain(HardwareMap h, Telemetry t, boolean red) {
-        startingPose = new Pose(72,72,0);//middle
+        if(PoseStorage.pose!=null){
+            startingPose = PoseStorage.pose;
+        }else{
+            startingPose = new Pose(72,72,0);//middle
+        }
         follower = Constants.createFollower(h);
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();

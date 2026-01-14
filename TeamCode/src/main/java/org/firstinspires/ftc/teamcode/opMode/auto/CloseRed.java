@@ -18,6 +18,7 @@ import com.bylazar.telemetry.TelemetryManager;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Outtake;
+import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
 @Autonomous(name = "Pedro Pathing Auto (Integrated)", group = "Autonomous")
@@ -284,6 +285,7 @@ public class CloseRed extends OpMode {
     public void loop() {
         follower.update();
         autonomousPathUpdate();
+        PoseStorage.pose = follower.getPose();
 
         // Telemetry
         panelsTelemetry.debug("Path State", pathState);
