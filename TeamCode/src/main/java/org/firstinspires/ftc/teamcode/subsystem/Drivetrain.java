@@ -112,6 +112,7 @@ public class Drivetrain implements Subsystem {
 
     public void combinedDrive(Gamepad gamepad) {
 
+
         // Check for path triggers first
         if (gamepad.rightBumperWasPressed() && !automatedDrive) {
             automatedDrive = true;
@@ -162,6 +163,11 @@ public class Drivetrain implements Subsystem {
             telemetry.addData("Mode", "Manual Teleop");
         }
 
+        if(gamepad.dpad_up){
+            Intake.far = false;
+            Intake.close = false;
+            Intake.next = false;
+        }
         // Always add common telemetry
         telemetry.addData("Position", follower.getPose());
         telemetry.addData("Velocity", follower.getVelocity());
