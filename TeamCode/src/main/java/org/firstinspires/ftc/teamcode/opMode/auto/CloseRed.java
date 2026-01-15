@@ -37,7 +37,7 @@ public class CloseRed extends OpMode {
 
     private DcMotorEx transfer;
 
-    private final Pose startPose = new Pose(124, 124, Math.toRadians(35));
+    private final Pose startPose = new Pose(125, 125, Math.toRadians(35));
     private final Pose scorePose = new Pose(96, 96, Math.toRadians(45));
     private final Pose scorePoseEnd = new Pose(90, 115, Math.toRadians(20));
 
@@ -46,8 +46,8 @@ public class CloseRed extends OpMode {
     private final Pose Spike1End = new Pose(120, 84, 0);
 
     private final Pose Bez2End = new Pose(98, 60, 0);
-    private final Pose Bez2Control = new Pose(85, 58, 0);
-    private final Pose Spike2End = new Pose(120, 58, 0);
+    private final Pose Bez2Control = new Pose(85, 60, 0);
+    private final Pose Spike2End = new Pose(120, 60, 0);
 
     private final Pose Bez3End = new Pose(98, 36, 0);
     private final Pose Bez3Control = new Pose(78, 36, 0);
