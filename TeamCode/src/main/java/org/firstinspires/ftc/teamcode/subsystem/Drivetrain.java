@@ -19,22 +19,27 @@ import org.firstinspires.ftc.teamcode.util.PoseStorage;
 @Config
 @Configurable
 public class Drivetrain implements Subsystem {
-    private Follower follower;
+    private final Supplier<PathChain> start;
+    private final Follower follower;
     public static Pose startingPose; //See ExampleAuto to understand how to use this
     private boolean automatedDrive;
-    private Supplier<PathChain> far;
-    private Supplier<PathChain> mid;
-    private Supplier<PathChain> park;
+    private final Supplier<PathChain> far;
+    private final Supplier<PathChain> mid;
+    private final Supplier<PathChain> park;
 
-    private Supplier<PathChain> gate;
+    private final Supplier<PathChain> gate;
+    private boolean startFlag = false;
+    private boolean parkFlag = false;
+    private boolean gateFlag = false;
+    private boolean closeFlag = false; // your "mid/close"
+    private boolean farFlag = false;
 
-    private TelemetryManager telemetryM;
+    private final TelemetryManager telemetryM;
 
 
     private final HardwareMap hardwareMap;
     private final Telemetry telemetry;
-    private static boolean teleDrive = true;
-    private boolean doAuto = false;
+    private static final boolean teleDrive = true;
 
 
     public Drivetrain(HardwareMap h, Telemetry t) {
@@ -86,6 +91,10 @@ public class Drivetrain implements Subsystem {
                     .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, follower::getHeading, 0.8))
                     .build();
         }
+        start = () -> follower.pathBuilder() //Lazy Curve Generation
+                .addPath(new Path(new BezierLine(follower::getPose, new Pose(72, 72))))
+                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, follower::getHeading, 0.8))
+                .build();
 
         this.hardwareMap = h;
         this.telemetry = t;
@@ -111,70 +120,72 @@ public class Drivetrain implements Subsystem {
 //    }
 
     public void combinedDrive(Gamepad gamepad) {
-        if(gamepad.dpad_down){
-            follower.setStartingPose(new Pose(72,72,0));
+
+        // ====== BUTTONS SET FLAGS ======
+        if (gamepad.yWasPressed()) startFlag = true;
+        if (gamepad.right_trigger > 0.2) parkFlag = true;
+        if (gamepad.left_trigger > 0.2) gateFlag = true;
+        if (gamepad.leftBumperWasPressed()) closeFlag = true;
+        if (gamepad.rightBumperWasPressed()) farFlag = true;
+
+        // ====== PRIORITY EXECUTION (NO ELSE-IFS) ======
+        if (!automatedDrive) {
+
+            if (startFlag) {
+                automatedDrive = true;
+                follower.followPath(start.get());
+                startFlag = false;
+            }
+
+            if (parkFlag) {
+                automatedDrive = true;
+                follower.followPath(park.get());
+                parkFlag = false;
+            }
+
+            if (gateFlag) {
+                automatedDrive = true;
+                follower.followPath(gate.get());
+                gateFlag = false;
+            }
+
+            if (closeFlag) {
+                automatedDrive = true;
+                follower.followPath(mid.get());
+                closeFlag = false;
+            }
+
+            if (farFlag) {
+                automatedDrive = true;
+                follower.followPath(far.get());
+                farFlag = false;
+            }
         }
 
-        // Check for path triggers first
-        if (gamepad.rightBumperWasPressed() && !automatedDrive) {
-            automatedDrive = true;
-            Intake.far = true;
-
-            follower.followPath(far.get());
-        }
-      else  if (gamepad.leftBumperWasPressed() && !automatedDrive) {
-            Intake.close = true;
-
-            automatedDrive = true;
-            follower.followPath(mid.get());
-        }
-      else    if (gamepad.right_trigger>0.2 && !automatedDrive) {
-            automatedDrive = true;
-            follower.followPath(park.get());
-        }
-        else    if (gamepad.left_trigger>0.2 && !automatedDrive) {
-            automatedDrive = true;
-            follower.followPath(gate.get());
-        }
-        else if (automatedDrive && (gamepad.bWasPressed())) {
-            automatedDrive = false;
-            follower.startTeleopDrive(true); // ensure teleop drive restarts
-        }
-        if(automatedDrive&&!follower.isBusy()){
-            Intake.next = true;
-            Intake.far = false;
-            Intake.close = false;
-
-        }
-
-        // Drive based on mode
         if (automatedDrive) {
-            telemetry.addData("Mode", "Automated Path Following");
-        } else {
-            Intake.far = false;
-            Intake.close = false;
-            Intake.next = false;
+            // check if driver moved sticks beyond deadzone
+            boolean joystickInput = Math.abs(gamepad.left_stick_x) > 0.1
+                    || Math.abs(gamepad.left_stick_y) > 0.1
+                    || Math.abs(gamepad.right_stick_x) > 0.1;
 
-            // Robot-centric teleop drive
+            // or pressed B to cancel
+            if (joystickInput || gamepad.bWasPressed()) {
+                automatedDrive = false;
+                follower.startTeleopDrive(true); // ensure teleop drive restarts
+            }
+        }
+
+// ====== MANUAL DRIVE ======
+        if (!automatedDrive) {
             follower.setTeleOpDrive(
                     -gamepad.left_stick_y,
                     -gamepad.left_stick_x,
                     -gamepad.right_stick_x,
                     true
             );
-            telemetry.addData("Mode", "Manual Teleop");
         }
 
-        if(gamepad.dpad_up){
-            doAuto = !doAuto;
-        }
-        if(!doAuto){
-            Intake.far = false;
-            Intake.close = false;
-            Intake.next = false;
-
-        }
-        // Always add common telemetry
+        telemetry.addData("Mode", automatedDrive ? "Auto" : "Manual");
         telemetry.addData("Position", follower.getPose());
         telemetry.addData("Velocity", follower.getVelocity());
         telemetry.addData("AutomatedDrive", automatedDrive);
