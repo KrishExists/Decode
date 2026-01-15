@@ -34,7 +34,7 @@ public class Drivetrain implements Subsystem {
     private final HardwareMap hardwareMap;
     private final Telemetry telemetry;
     private static boolean teleDrive = true;
-
+    private boolean doAuto = false;
 
 
     public Drivetrain(HardwareMap h, Telemetry t) {
@@ -61,7 +61,7 @@ public class Drivetrain implements Subsystem {
                     .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(45), 0.8))
                     .build();
             park = () -> follower.pathBuilder() //Lazy Curve Generation
-                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(38, 33))))
+                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(32, 37))))
                     .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(90), 0.8))
                     .build();
             gate = () -> follower.pathBuilder() //Lazy Curve Generation
@@ -111,7 +111,9 @@ public class Drivetrain implements Subsystem {
 //    }
 
     public void combinedDrive(Gamepad gamepad) {
-
+        if(gamepad.dpad_down){
+            follower.setStartingPose(new Pose(72,72,0));
+        }
 
         // Check for path triggers first
         if (gamepad.rightBumperWasPressed() && !automatedDrive) {
@@ -164,9 +166,13 @@ public class Drivetrain implements Subsystem {
         }
 
         if(gamepad.dpad_up){
+            doAuto = !doAuto;
+        }
+        if(!doAuto){
             Intake.far = false;
             Intake.close = false;
             Intake.next = false;
+
         }
         // Always add common telemetry
         telemetry.addData("Position", follower.getPose());

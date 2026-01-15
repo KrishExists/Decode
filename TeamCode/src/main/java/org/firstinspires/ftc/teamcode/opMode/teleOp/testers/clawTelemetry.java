@@ -114,7 +114,6 @@ public class clawTelemetry extends LinearOpMode {
 
             // === SERVO ===
             linkage.setPosition(linkagePos);
-            blocker.setPosition(blockerPos);
             transfer.setPower(transferPower);
 
             // === SHOOTER RPM CONTROL ===

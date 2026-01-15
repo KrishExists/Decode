@@ -48,9 +48,9 @@ public void BuildPaths(){
                     new BezierLine(
                             new Pose(124.000, 124.000),
 
-                            new Pose(96.000, 96.000)
+                            new Pose(72, 72)
                     )
-            ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(45))
+            ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
 
             .build();
 
