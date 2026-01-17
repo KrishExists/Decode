@@ -189,14 +189,14 @@ public class Intake implements Subsystem{
                 intake.setPower(TeamConstants.intakeReversed);
                 transfer.setPower(TeamConstants.TRANSFER_REV);
                 shooter.setPower(TeamConstants.SLIGHT_REVERSE_OUTTAKE);
+
                 break;
 
             case SpeedFar:
                 intake.setPower(TeamConstants.INTAKE_EVEN_POWER);
                 linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
                 shooter.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
-                intake.setPower(TeamConstants.INTAKE_IN_POWER);
-                transfer.setPower(TeamConstants.TRANSFER_EVEN);
+                transfer.setPower(-1);
                 if(gamepad2.right_bumper||next){
                     setState(IntakeState.RAPOD_FAR);
                     shooting = false;
@@ -207,9 +207,8 @@ public class Intake implements Subsystem{
             case SpeedMid:
                 intake.setPower(TeamConstants.INTAKE_EVEN_POWER);
                 linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
-
                 shooter.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
-                transfer.setPower(TeamConstants.TRANSFER_EVEN);
+                transfer.setPower(-1);
                 if(gamepad2.right_bumper||next){
                     setState(IntakeState.RAPOD_CLOSE);
                     intake.setPower(TeamConstants.INTAKE_DEFAULT_POWER);
@@ -231,9 +230,14 @@ public class Intake implements Subsystem{
                 }
                 break;
             case RAPOD_FAR:
-                shooter.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
-                intake.setPower(TeamConstants.INTAKE_IN_POWER);
-                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+                if(shooter.getRPM()>TeamConstants.SHOOTER_FAR_RPM-100){
+                    happend = true;
+                }
+                if(happend){
+                    shooter.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
+                    intake.setPower(TeamConstants.INTAKE_IN_POWER);
+                    transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+                }
                 break;
 
             case REST:

@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.changes;
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.draw;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawOnlyCurrent;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.draw;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.stopRobot;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.telemetryM;
-
-
 
 import com.bylazar.configurables.PanelsConfigurables;
 import com.bylazar.configurables.annotations.Configurable;
@@ -17,16 +15,13 @@ import com.bylazar.field.PanelsField;
 import com.bylazar.field.Style;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.ErrorCalculator;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
-import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.Pose;
-import com.pedropathing.math.Vector;
-import com.pedropathing.paths.HeadingInterpolator;
-import com.pedropathing.paths.Path;
-import com.pedropathing.paths.PathChain;
+import com.pedropathing.geometry.*;
+import com.pedropathing.math.*;
+import com.pedropathing.paths.*;
 import com.pedropathing.telemetry.SelectableOpMode;
-import com.pedropathing.util.PoseHistory;
+import com.pedropathing.util.*;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -44,11 +39,13 @@ import java.util.List;
 public class Tuning extends SelectableOpMode {
     public static Follower follower;
 
+    @IgnoreConfigurable
     static PoseHistory poseHistory;
 
-
+    @IgnoreConfigurable
     static TelemetryManager telemetryM;
 
+    @IgnoreConfigurable
     static ArrayList<String> changes = new ArrayList<>();
 
     public Tuning() {
@@ -71,7 +68,12 @@ public class Tuning extends SelectableOpMode {
                 p.add("Drive Tuner", DriveTuner::new);
                 p.add("Line Tuner", Line::new);
                 p.add("Centripetal Tuner", CentripetalTuner::new);
-            });;
+            });
+            s.folder("Tests", p -> {
+                p.add("Line", Line::new);
+                p.add("Triangle", Triangle::new);
+                p.add("Circle", Circle::new);
+            });
         });
     }
 
@@ -763,7 +765,7 @@ class TranslationalTuner extends OpMode {
 
     @Override
     public void start() {
-      //  follower.deactivateAllPIDFs();
+        follower.deactivateAllPIDFs();
         follower.activateTranslational();
         forwards = new Path(new BezierLine(new Pose(72,72), new Pose(DISTANCE + 72,72)));
         forwards.setConstantHeadingInterpolation(0);
@@ -1221,10 +1223,10 @@ class Drawing {
     private static final FieldManager panelsField = PanelsField.INSTANCE.getField();
 
     private static final Style robotLook = new Style(
-            "", "#3F51B5", 0.0
+            "", "#3F51B5", 0.75
     );
     private static final Style historyLook = new Style(
-            "", "#4CAF50", 0.0
+            "", "#4CAF50", 0.75
     );
 
     /**
@@ -1236,7 +1238,7 @@ class Drawing {
 
     /**
      * This draws everything that will be used in the Follower's telemetryDebug() method. This takes
-     * a Follower as an input, so an instance of the DashboardDrawingHandler class is not needed.
+     * a Follower as an input, so an instance of the DashbaordDrawingHandler class is not needed.
      *
      * @param follower Pedro Follower instance.
      */

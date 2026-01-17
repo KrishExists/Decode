@@ -50,8 +50,9 @@ public class Drivetrain implements Subsystem {
             startingPose = PoseStorage.pose;
             t.addData("Got pose",startingPose);
         }else{
-            startingPose = new Pose(72,72,0);//to fix subtract 10 from x and add 10 to y. however this should not be thte case. for some reason its misinterpeting the pose by 10
         }
+        startingPose = new Pose(72,72,0);//to fix subtract 10 from x and add 10 to y. however this should not be thte case. for some reason its misinterpeting the pose by 10
+
         follower = Constants.createFollower(h);
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
@@ -93,7 +94,7 @@ public class Drivetrain implements Subsystem {
         }
         start = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(72, 72))))
-                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, follower::getHeading, 0.8))
+                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, 0, 0.8))
                 .build();
 
         this.hardwareMap = h;

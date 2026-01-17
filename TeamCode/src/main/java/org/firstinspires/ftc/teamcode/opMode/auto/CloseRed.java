@@ -38,7 +38,7 @@ public class CloseRed extends OpMode {
     private DcMotorEx transfer;
 
     private final Pose startPose = new Pose(125, 125, Math.toRadians(35));
-    private final Pose scorePose = new Pose(96, 96, Math.toRadians(45));
+    private final Pose scorePose = new Pose(84, 84, Math.toRadians(45));
     private final Pose scorePoseEnd = new Pose(90, 115, Math.toRadians(20));
 
     private final Pose Bez1End = new Pose(98, 84, 0);
@@ -154,7 +154,27 @@ public class CloseRed extends OpMode {
         ran = true;
         happened = false;
     }
+    private void shootPreLoad(){
+        spinUpShooter();
+        if(outtake.atSpeed(2400,2500)||happened){
+            spinUp(true);
+            happened = true;
+            telemetry.addLine("Outtake above threshold"); // Good
+            outtake.setLinkage(TeamConstants.LINKAGE_SHOOT);
+            spinUp(true);
+            transfer.setPower(-1);
 
+            if (actionTimer.milliseconds()>1000 ) {
+                follower.followPath(ScoreSpike2,true);
+                pathState++;
+                resetBooleans();
+            }
+            else{
+                spinUp(false);
+            }
+        }
+
+    }
     private void shoot(PathChain nextPath, boolean skip) {
         if (follower.isBusy()) {
             prepareToShoot(); // It comes here
@@ -162,7 +182,8 @@ public class CloseRed extends OpMode {
         }
 
         if (!follower.isBusy()) {
-            if ((true) ) { // Good
+            if ((outtake.atSpeed(2000,3000)||happened) ) { // Good
+                happened = true;
                 telemetry.addLine("Outtake above threshold"); // Good
                 outtake.setLinkage(TeamConstants.LINKAGE_SHOOT);
                 spinUp(true);
@@ -173,7 +194,7 @@ public class CloseRed extends OpMode {
                         pathState = 67;
                         return;
                     }
-                    follower.followPath(nextPath);
+                    follower.followPath(nextPath,true);
                     pathState++;
                     resetBooleans();
                 }
@@ -188,11 +209,11 @@ public class CloseRed extends OpMode {
         shoot(nextPath, false);
     }
 
-    private void spinIntake(PathChain path, boolean b) {
+    private void spinIntake(PathChain path) {
         spinUpIntake();
         if (!follower.isBusy()) {
 
-            follower.followPath(path,b);
+            follower.followPath(path);
             pathState++;
             resetBooleans();
         }
@@ -211,34 +232,35 @@ public class CloseRed extends OpMode {
                 shoot(PrepSpike2);
                 break;
             case 2:
-                spinIntake(ScoreSpike2, false);
+                resetTimers();
+                spinIntake(ScoreSpike2);
                 break;
             case 3:
-                resetTimers();
-                shoot(GoGate);
+//                resetTimers();
+//                shoot(GoGate);
+                pathState++;
                 break;
             case 4:
-                spinIntake(BackGate,false);
-                break;
-            case 5:
-                resetTimers();
-                shoot(GoGate);
-                break;
-            case 6:
-                spinIntake(BackGate, false);
+//                spinIntake(BackGate);
+                pathState++;
                 break;
             case 7:
                 resetTimers();
-                shoot(PrepSpike1);
+                shoot(PrepSpike3);
                 break;
             case 8:
-                spinIntake(ScoreSpike1, false);
+                resetTimers();
+                spinIntake(ScoreSpike3);
                 break;
             case 9:
                 resetTimers();
-                shoot(PrepSpike3);
+                shoot(PrepSpike1);
                 break;
             case 10:
+                resetTimers();
+                spinIntake(ScoreSpike1);
+                break;
+            case 11:
                 resetTimers();
                 shoot(ScoreSpike3,true);
                 pathState = 67;
