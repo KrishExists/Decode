@@ -3,7 +3,9 @@
 package org.firstinspires.ftc.teamcode.opMode.teleOp.testers;
 
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -25,7 +27,7 @@ public class ester extends LinearOpMode {
     private Intake intake;
 
     private Robot robot;
-    private ColorSensor colorSensor;
+    public static int val;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -37,9 +39,11 @@ public class ester extends LinearOpMode {
         drive = new Drivetrain(hardwareMap, telemetry,true);
         intake = new Intake(hw, telemetry, shooter);
         robot = new Robot(hw,telemetry,drive,intake);
-        colorSensor = hardwareMap.get(ColorSensor.class, "colors");
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
         telemetry.addLine("Initialized — Waiting for Start");
         telemetry.update();
+
         robot.init();
         waitForStart();
         if (isStopRequested()) return;
@@ -48,10 +52,7 @@ public class ester extends LinearOpMode {
 // ===== Main Loop =====
         while (opModeIsActive()) {
             telemetry.update();
-
-            telemetry.addData("Color Sensor Red: ", colorSensor.red());
-            telemetry.addData("Color Sensor Blue: ", colorSensor.blue());
-            telemetry.addData("Color Sensor Green: ", colorSensor.green());
+            telemetry.addData("Val" ,val);
 
 
         }
