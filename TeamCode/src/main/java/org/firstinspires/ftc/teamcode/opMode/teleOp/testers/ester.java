@@ -37,7 +37,7 @@ public class ester extends LinearOpMode {
         drive = new Drivetrain(hardwareMap, telemetry,true);
         intake = new Intake(hw, telemetry, shooter);
         robot = new Robot(hw,telemetry,drive,intake);
-           colorSensor = hardwareMap.get(ColorSensor.class, "colors");
+        colorSensor = hardwareMap.get(ColorSensor.class, "colors");
         telemetry.addLine("Initialized — Waiting for Start");
         telemetry.update();
         robot.init();
