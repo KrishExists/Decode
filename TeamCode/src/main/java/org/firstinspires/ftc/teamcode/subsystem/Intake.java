@@ -16,6 +16,7 @@ public class Intake implements Subsystem{
 
     ElapsedTime time;
     private boolean happend;
+    private Servo blocker;
 
     public enum IntakeState {
         RUNSLOW, RAPOD_FAR,RAPOD_CLOSE, IntakeNEXT, REST, INTAKE_LAST, SpeedMid,SpeedFar, AUTORPMRED
@@ -65,8 +66,7 @@ public class Intake implements Subsystem{
         intake = hw.get(DcMotor.class, "Intake");
         linkage = hw.get(Servo.class, "Linkage");
         transfer = hw.get(DcMotorEx.class, "Transfer");
-        touchLeft = hw.get(TouchSensor.class, "TouchSensorLeft");
-        touchRight = hw.get(TouchSensor.class, "TouchSensorRight");
+        blocker = hw.get(Servo.class, "blocker");
 
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
@@ -220,6 +220,7 @@ public class Intake implements Subsystem{
 
 
             case RAPOD_CLOSE:
+                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 if(shooter.getRPM()>TeamConstants.SHOOTER_MID_RPM-100){
                     happend = true;
                 }
@@ -230,6 +231,7 @@ public class Intake implements Subsystem{
                 }
                 break;
             case RAPOD_FAR:
+                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 if(shooter.getRPM()>TeamConstants.SHOOTER_FAR_RPM-100){
                     happend = true;
                 }
@@ -250,6 +252,7 @@ public class Intake implements Subsystem{
                 break;
             default:
                 happend = false;
+                blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
 
                 intake.setPower(TeamConstants.INTAKE_DEFAULT_POWER);
                 shooter.stop();

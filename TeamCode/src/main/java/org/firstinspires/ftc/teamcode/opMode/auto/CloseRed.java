@@ -10,6 +10,7 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -64,6 +65,7 @@ public class CloseRed extends OpMode {
             PrepSpike2, FinishSpike2, ScoreSpike2,
             GoGate,BackGate,
             PrepSpike3, FinishSpike3, ScoreSpike3;
+    private Servo blocker;
 
     // ---------------- Path Building ----------------
     public void buildPaths() {
@@ -126,6 +128,7 @@ public class CloseRed extends OpMode {
         outtake.spinToRpm(TeamConstants.outtake_Stop);
         intake.setPower(TeamConstants.INTAKE_IN_POWER);
         transfer.setPower(TeamConstants.TRANSFER_CLOSED);
+        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
     }
 
     private void spinUpShooter() {
@@ -183,6 +186,7 @@ public class CloseRed extends OpMode {
 
         if (!follower.isBusy()) {
             if ((outtake.atSpeed(2000,3000)||happened) ) { // Good
+                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 happened = true;
                 telemetry.addLine("Outtake above threshold"); // Good
                 outtake.setLinkage(TeamConstants.LINKAGE_SHOOT);
@@ -283,6 +287,8 @@ public class CloseRed extends OpMode {
         follower.setPose(startPose);
 
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
+        blocker = hardwareMap.get(Servo.class, "blocker");
+
         pathTimer = new Timer();
         actionTimer = new ElapsedTime();
 
