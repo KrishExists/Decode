@@ -232,38 +232,36 @@ public class CloseRed extends OpMode {
                 shoot(PrepSpike2);
                 break;
             case 2:
-                resetTimers();
                 spinIntake(ScoreSpike2);
                 break;
             case 3:
-//                resetTimers();
-//                shoot(GoGate);
-                pathState++;
+                resetTimers();
+                shoot(GoGate);
                 break;
             case 4:
-//                spinIntake(BackGate);
-                pathState++;
+                spinIntake(BackGate);
+                break;
+            case 5:
+                resetTimers();
+                shoot(GoGate);
+                break;
+            case 6:
+                spinIntake(BackGate);
                 break;
             case 7:
                 resetTimers();
-                shoot(PrepSpike3);
+                shoot(PrepSpike1);
                 break;
             case 8:
-                resetTimers();
-                spinIntake(ScoreSpike3);
+                spinIntake(ScoreSpike1);
                 break;
             case 9:
                 resetTimers();
-                shoot(PrepSpike1);
+                shoot(PrepSpike3);
                 break;
             case 10:
                 resetTimers();
-                spinIntake(ScoreSpike1);
-                break;
-            case 11:
-                resetTimers();
-                shoot(ScoreSpike3,true);
-                pathState = 67;
+                spinIntake(ScoreSpike3);
                 break;
 
             default:

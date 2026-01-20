@@ -52,6 +52,7 @@ public class clawTelemetry extends LinearOpMode {
     // === PID Coefficients (Tunable in Dashboard) ===
     public static double kP = 0.01;
     public static double kI = 0.0;
+
     public static double kD = 0.0;
 
     private double integralSum = 0;
@@ -76,6 +77,7 @@ public class clawTelemetry extends LinearOpMode {
 
         shooter = hardwareMap.get(DcMotorEx.class, "Outtake");
         shooter2 = hardwareMap.get(DcMotorEx.class, "Outtake2");
+        blocker = hardwareMap.get(Servo.class, "blocker");
         pidController = new PIDController(0,0,0);
 
         shooter.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -115,6 +117,7 @@ public class clawTelemetry extends LinearOpMode {
             // === SERVO ===
             linkage.setPosition(linkagePos);
             transfer.setPower(transferPower);
+            blocker.setPosition(blockerPos);
 
             // === SHOOTER RPM CONTROL ===
             spinToRpm(shooterPower);   // <-- shooterPower is TARGET RPM
