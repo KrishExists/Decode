@@ -50,9 +50,6 @@ public class Intake implements Subsystem{
     // Gamepad updated from OpMode
     private Gamepad gamepad;
 
-    private TouchSensor touchLeft;
-
-    private TouchSensor touchRight;
     public static boolean next;
 
     public Intake(HardwareMap hw, Telemetry t, Outtake shooter) {
@@ -69,6 +66,7 @@ public class Intake implements Subsystem{
         blocker = hw.get(Servo.class, "blocker");
 
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        blocker.setPosition(0.5);
 
         // Initialize state machine
         sm = new StateMachine<>(IntakeState.REST);
@@ -179,9 +177,7 @@ public class Intake implements Subsystem{
                 linkage.setPosition(TeamConstants.LINKAGE_REST);
                 transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
 
-                if(touchLeft.isPressed() || touchRight.isPressed()) {
-                    setState(IntakeState.INTAKE_LAST);
-                }
+
                 break;
 
 

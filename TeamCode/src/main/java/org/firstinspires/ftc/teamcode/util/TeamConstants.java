@@ -10,8 +10,8 @@ public class TeamConstants {
     public static final double INTAKE_EVEN_POWER = 0.6;
     public static final double INTAKE_DEFAULT_POWER = 0.0;
     public static final double intakeReversed = -1;
-    public static final double BLOCKER_CLOSE = 0;
-    public static final double BLOCKER_OPEN = 1;
+    public static final double BLOCKER_CLOSE = 0.55;
+    public static final double BLOCKER_OPEN = 0.63;
 
     // =============================
     // Transfer / Outtake Constants

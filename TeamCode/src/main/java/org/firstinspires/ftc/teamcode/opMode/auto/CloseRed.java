@@ -113,7 +113,7 @@ public class CloseRed extends OpMode {
 
         ScoreSpike3 = follower.pathBuilder()
                 .addPath(new BezierLine(Spike3End, scorePoseEnd))
-                .setLinearHeadingInterpolation(Spike3End.getHeading(), scorePose.getHeading())
+                .setLinearHeadingInterpolation(Spike3End.getHeading(), scorePoseEnd.getHeading())
                 .build();
     }
 
@@ -193,7 +193,7 @@ public class CloseRed extends OpMode {
                 spinUp(true);
                 transfer.setPower(-1);
 
-                if (actionTimer.milliseconds()>1000 ) {
+                if (actionTimer.milliseconds()>8000 ) {
                     if (skip) {
                         pathState = 67;
                         return;
@@ -291,6 +291,7 @@ public class CloseRed extends OpMode {
 
         pathTimer = new Timer();
         actionTimer = new ElapsedTime();
+        blocker.setPosition(0.5);
 
         buildPaths();
         pathState = 0;

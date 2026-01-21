@@ -54,6 +54,7 @@ public class clawTelemetry extends LinearOpMode {
     public static double kI = 0.0;
 
     public static double kD = 0.0;
+    public static double kF = 0.0;
 
     private double integralSum = 0;
     private double lastError = 0;
@@ -67,7 +68,7 @@ public class clawTelemetry extends LinearOpMode {
     public static double blockerPos = 0.0;
     public static double shooterPower = 0.0;   // <-- NOW interpreted as TARGET RPM
     public static double intakePower = 0.0;
-    private static PIDController pidController;
+    private static PIDFController pidController;
 
     @Override
     public void runOpMode() {
@@ -99,6 +100,7 @@ public class clawTelemetry extends LinearOpMode {
 
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setDirection(DcMotor.Direction.REVERSE);
+        blocker.setPosition(0.5);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         dashboard = FtcDashboard.getInstance();
@@ -112,7 +114,7 @@ public class clawTelemetry extends LinearOpMode {
         lastTime = getRuntime();
 
         while (opModeIsActive()) {
-            pidController.setPID(kP,kI,kD);
+            pidController.setPIDF(kP,kI,kD,kF);
 
             // === SERVO ===
             linkage.setPosition(linkagePos);
