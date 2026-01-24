@@ -193,7 +193,7 @@ public class CloseRed extends OpMode {
                 spinUp(true);
                 transfer.setPower(-1);
 
-                if (actionTimer.milliseconds()>8000 ) {
+                if (actionTimer.milliseconds()>1000 ) {
                     if (skip) {
                         pathState = 67;
                         return;

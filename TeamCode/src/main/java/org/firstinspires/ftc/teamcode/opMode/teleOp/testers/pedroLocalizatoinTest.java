@@ -35,7 +35,7 @@ import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import java.util.function.Supplier;
 
 
-@TeleOp(name = "RedTeleop", group = "Main")
+@TeleOp(name = "pedroTestHelper", group = "Main")
 public class pedroLocalizatoinTest extends LinearOpMode {
     private HardwareMap hw;
     private driveTests drive;

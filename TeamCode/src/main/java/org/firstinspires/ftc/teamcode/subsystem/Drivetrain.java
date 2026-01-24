@@ -10,6 +10,8 @@ import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import java.util.function.Supplier;
+
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -33,6 +35,11 @@ public class Drivetrain implements Subsystem {
     private boolean gateFlag = false;
     private boolean closeFlag = false; // your "mid/close"
     private boolean farFlag = false;
+
+    public DcMotor leftFront;
+    public DcMotor rightFront;
+    public DcMotor leftBack;
+    public DcMotor rightBack;
 
     private final TelemetryManager telemetryM;
 
@@ -107,18 +114,18 @@ public class Drivetrain implements Subsystem {
     // ----------------------------------------
     // MANUAL DRIVE (converted from your old Drive.java)
     // ----------------------------------------
-//    public void manualDrive(Gamepad gamepad1) {
-//        double y = -gamepad1.left_stick_y;
-//        double x = gamepad1.left_stick_x * 1.1;
-//        double rx = gamepad1.right_stick_x;
-//
-//        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1.0);
-//
-//        drive.leftFront.setPower((y + x + rx) / denominator);
-//        drive.leftBack.setPower((y - x + rx) / denominator);
-//        drive.rightFront.setPower((y - x - rx) / denominator);
-//        drive.rightBack.setPower((y + x - rx) / denominator);
-//    }
+    public void manualDrive(Gamepad gamepad1) {
+        double y = -gamepad1.left_stick_y;
+        double x = gamepad1.left_stick_x * 1.1;
+        double rx = gamepad1.right_stick_x;
+
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1.0);
+
+        leftFront.setPower((y + x + rx) / denominator);
+        leftBack.setPower((y - x + rx) / denominator);
+        rightFront.setPower((y - x - rx) / denominator);
+        rightBack.setPower((y + x - rx) / denominator);
+    }
 
     public void combinedDrive(Gamepad gamepad) {
 
@@ -187,6 +194,10 @@ public class Drivetrain implements Subsystem {
         }
 
         telemetry.addData("Mode", automatedDrive ? "Auto" : "Manual");
+        telemetry.addData("Gamepad leftX", gamepad.left_stick_x);
+        telemetry.addData("Gamepad lefty", gamepad.left_stick_y);
+        telemetry.addData("Gamepad rX", gamepad.right_stick_x);
+
         telemetry.addData("Position", follower.getPose());
         telemetry.addData("Velocity", follower.getVelocity());
         telemetry.addData("AutomatedDrive", automatedDrive);
@@ -195,7 +206,12 @@ public class Drivetrain implements Subsystem {
 
 
     @Override
-    public void init() {}
+    public void init() {
+        rightBack = hardwareMap.get(DcMotor.class, "backRightMotor");
+        rightFront = hardwareMap.get(DcMotor.class, "frontRightMotor");
+        leftBack = hardwareMap.get(DcMotor.class, "backLeftMotor");
+        leftFront = hardwareMap.get(DcMotor.class, "frontLeftMotor");
+    }
 
     @Override
     public void update(Gamepad gamepad1, Gamepad gamepad2) {
