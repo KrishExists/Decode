@@ -180,6 +180,7 @@ public class CloseRed extends OpMode {
             }
         }
 
+
     }
     private void shoot(PathChain nextPath, boolean skip) {
         if (follower.isBusy()) {
