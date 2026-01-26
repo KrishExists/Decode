@@ -47,33 +47,55 @@ public class Tuning extends SelectableOpMode {
 
     @IgnoreConfigurable
     static ArrayList<String> changes = new ArrayList<>();
-
+    static int chooseTuner = 0;
+    static int chooseSecondary=0;
     public Tuning() {
         super("Select a Tuning OpMode", s -> {
+            if(chooseTuner==-1)
             s.folder("Localization", l -> {
                 l.add("Localization Test", LocalizationTest::new);
                 l.add("Forward Tuner", ForwardTuner::new);
                 l.add("Lateral Tuner", LateralTuner::new);
                 l.add("Turn Tuner", TurnTuner::new);
             });
-            s.folder("Automatic", a -> {
-                a.add("Forward Velocity Tuner", ForwardVelocityTuner::new);
-                a.add("Lateral Velocity Tuner", LateralVelocityTuner::new);
-                a.add("Forward Zero Power Acceleration Tuner", ForwardZeroPowerAccelerationTuner::new);
-                a.add("Lateral Zero Power Acceleration Tuner", LateralZeroPowerAccelerationTuner::new);
-            });
-            s.folder("Manual", p -> {
-                p.add("Translational Tuner", TranslationalTuner::new);
-                p.add("Heading Tuner", HeadingTuner::new);
-                p.add("Drive Tuner", DriveTuner::new);
-                p.add("Line Tuner", Line::new);
-                p.add("Centripetal Tuner", CentripetalTuner::new);
-            });
-            s.folder("Tests", p -> {
-                p.add("Line", Line::new);
-                p.add("Triangle", Triangle::new);
-                p.add("Circle", Circle::new);
-            });
+            if(chooseTuner==0){
+                s.folder("Automatic", a -> {
+                    if(chooseSecondary ==0){
+                        a.add("Forward Velocity Tuner", ForwardVelocityTuner::new);
+                        a.add("Lateral Velocity Tuner", LateralVelocityTuner::new);
+                    }
+                    if(chooseSecondary==1){
+                        a.add("Forward Zero Power Acceleration Tuner", ForwardZeroPowerAccelerationTuner::new);
+                        a.add("Lateral Zero Power Acceleration Tuner", LateralZeroPowerAccelerationTuner::new);
+                    }
+                });
+            }
+            if(chooseTuner == 1){
+                s.folder("Manual", p -> {
+                    if(chooseSecondary==0){
+                        p.add("Translational Tuner", TranslationalTuner::new);
+                        p.add("Heading Tuner", HeadingTuner::new);
+                    }
+                    if(chooseSecondary == 1){
+                        p.add("Drive Tuner", DriveTuner::new);
+                        p.add("Line Tuner", Line::new);
+                    }
+                    if(chooseSecondary==2){
+                        p.add("Centripetal Tuner", CentripetalTuner::new);
+                    }
+                });
+            }
+           if(chooseTuner==2){
+               s.folder("Tests", p -> {
+                   p.add("Line", Line::new);
+                   if(chooseSecondary==1){
+                       p.add("Triangle", Triangle::new);
+                       p.add("Circle", Circle::new);
+                   }
+
+               });
+           }
+
         });
     }
 
