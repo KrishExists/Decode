@@ -10,7 +10,6 @@ import com.bylazar.telemetry.PanelsTelemetry;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystem.Robot;
-import org.firstinspires.ftc.teamcode.util.RedAutoPaths;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
 import com.pedropathing.follower.Follower;
@@ -26,7 +25,7 @@ public class PedroRealAutonForred extends OpMode {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
     public Follower follower; // Pedro Pathing follower instance
     private int pathState; // Current autonomous path state (state machine)
-    public RedAutoPaths paths; // Paths defined in the Paths class
+    //public RedAutoPaths paths; // Paths defined in the Paths class
     private Robot robot;
     private DcMotorEx transfer;
     private boolean ran = true;
