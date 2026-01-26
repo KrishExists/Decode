@@ -163,6 +163,7 @@ public class Intake implements Subsystem{
 
             case INTAKE_LAST:
                 shooter.setPower(TeamConstants.SHOOTER_CLOSED);
+                blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
 
                 intake.setPower(TeamConstants.INTAKE_IN_POWER);
                 transfer.setPower(0);
@@ -172,6 +173,7 @@ public class Intake implements Subsystem{
 
                 intake.setPower(TeamConstants.INTAKE_IN_POWER);
                 shooter.setPower(TeamConstants.SHOOTER_CLOSED);
+                blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
 
 
                 linkage.setPosition(TeamConstants.LINKAGE_REST);
@@ -190,9 +192,10 @@ public class Intake implements Subsystem{
 
             case SpeedFar:
                 intake.setPower(TeamConstants.INTAKE_EVEN_POWER);
+                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
                 shooter.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
-                transfer.setPower(-1);
+                transfer.setPower(1);
                 if(gamepad2.right_bumper||next){
                     setState(IntakeState.RAPOD_FAR);
                     shooting = false;
@@ -203,8 +206,9 @@ public class Intake implements Subsystem{
             case SpeedMid:
                 intake.setPower(TeamConstants.INTAKE_EVEN_POWER);
                 linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
+                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 shooter.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
-                transfer.setPower(-1);
+                transfer.setPower(1);
                 if(gamepad2.right_bumper||next){
                     setState(IntakeState.RAPOD_CLOSE);
                     intake.setPower(TeamConstants.INTAKE_DEFAULT_POWER);
@@ -243,6 +247,7 @@ public class Intake implements Subsystem{
 
                 intake.setPower(TeamConstants.INTAKE_DEFAULT_POWER);
                 shooter.stop();
+                blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
                 transfer.setPower(TeamConstants.TRANSFER_CLOSED);
                 linkage.setPosition(TeamConstants.LINKAGE_REST);
                 break;
