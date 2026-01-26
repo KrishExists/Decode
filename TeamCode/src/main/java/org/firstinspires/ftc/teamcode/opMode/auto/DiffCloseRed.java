@@ -38,6 +38,8 @@ public class DiffCloseRed extends OpMode {
     private boolean ran = true;
     private boolean happened = false;
 
+    private boolean timerFallingEdge = true;
+
     private DcMotorEx transfer;
 
     private final Pose startPose = new Pose(125, 125, Math.toRadians(35));
@@ -55,9 +57,9 @@ public class DiffCloseRed extends OpMode {
     private final Pose Bez3End = new Pose(98, 36, 0);
     private final Pose Bez3Control = new Pose(78, 36, 0);
     private final Pose Spike3End = new Pose(120, 36, 0);
-    private final Pose Gate = new Pose(127,62,Math.toRadians(20));
-    private final Pose GateControl = new Pose(98,69,0);
-    private final Pose backGate = new Pose(96,67,0);
+    private final Pose Gate = new Pose(127, 62, Math.toRadians(20));
+    private final Pose GateControl = new Pose(98, 69, 0);
+    private final Pose backGate = new Pose(96, 67, 0);
 
     private Path scorePreload;
 
@@ -65,7 +67,7 @@ public class DiffCloseRed extends OpMode {
     private PathChain
             PrepSpike1, FinishSpike1, ScoreSpike1,
             PrepSpike2, FinishSpike2, ScoreSpike2,
-            GoGate,BackGate,
+            GoGate, BackGate,
             PrepSpike3, FinishSpike3, ScoreSpike3;
     private Servo blocker;
 
@@ -86,12 +88,12 @@ public class DiffCloseRed extends OpMode {
                 .setLinearHeadingInterpolation(Spike1End.getHeading(), scorePose.getHeading())
                 .build();
         GoGate = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose,GateControl,Gate))
-                .setLinearHeadingInterpolation(scorePose.getHeading(),Gate.getHeading())
+                .addPath(new BezierCurve(scorePose, GateControl, Gate))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), Gate.getHeading())
                 .build();
         BackGate = follower.pathBuilder()
-                .addPath(new BezierCurve(Gate,backGate,scorePose))
-                .setLinearHeadingInterpolation(Gate.getHeading(),scorePose.getHeading())
+                .addPath(new BezierCurve(Gate, backGate, scorePose))
+                .setLinearHeadingInterpolation(Gate.getHeading(), scorePose.getHeading())
                 .build();
 
         PrepSpike2 = follower.pathBuilder()
@@ -124,27 +126,119 @@ public class DiffCloseRed extends OpMode {
     private void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
+                telemetry.addLine("Case 0 Started");
                 follower.followPath(scorePreload);
-                pathState++;
+                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
+                transfer.setPower(TeamConstants.TRANSFER_REV);
+                intake.setPower(TeamConstants.INTAKE_FEED_POWER);
+                outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
+
+                if (!follower.isBusy() && timerFallingEdge) {
+                    actionTimer.reset();
+                    actionTimer.startTime();
+                    timerFallingEdge = false;
+                    transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+
+                }
+
+                if (actionTimer.milliseconds() >= 1000) {
+                    telemetry.addLine("Case 0 Ended");
+                    pathState++;
+                }
+                telemetry.addLine("Case 0 Ended");
                 break;
+
             case 1:
+                telemetry.addLine("Case 1 Started");
+                follower.followPath(PrepSpike2);
+                blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+                intake.setPower(TeamConstants.INTAKE_IN_POWER);
+                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+
+                if (!follower.isBusy()) {
+                    telemetry.addLine("Case 1 Ended");
+                    timerFallingEdge = true;
+                    pathState++;
+                }
                 break;
+
             case 2:
+                telemetry.addLine("Case 2 Started");
+                follower.followPath(ScoreSpike2);
+                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
+                transfer.setPower(TeamConstants.TRANSFER_REV);
+                intake.setPower(TeamConstants.INTAKE_FEED_POWER);
+                outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
+
+                if (!follower.isBusy() && timerFallingEdge) {
+                    actionTimer.reset();
+                    actionTimer.startTime();
+                    timerFallingEdge = false;
+                    transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+
+                }
+
+                if (actionTimer.milliseconds() >= 1000) {
+                    telemetry.addLine("Case 2 Ended");
+                    pathState++;
+                }
+                telemetry.addLine("Case 2 Ended");
                 break;
+
             case 3:
+                telemetry.addLine("Case 3 Started");
+                follower.followPath(PrepSpike2);
+                blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+                intake.setPower(TeamConstants.INTAKE_IN_POWER);
+                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+
+                if (!follower.isBusy()) {
+                    telemetry.addLine("Case 3 Ended");
+                    timerFallingEdge = true;
+                    pathState++;
+                }
                 break;
             case 4:
+                telemetry.addLine("Case 4 Started");
+                follower.followPath(scorePreload);
+                telemetry.addLine("Case 4 Ended");
+                pathState++;
+                break;
             case 5:
+                telemetry.addLine("Case 5 Started");
+                follower.followPath(scorePreload);
+                telemetry.addLine("Case 5 Ended");
+                pathState++;
                 break;
             case 6:
+                telemetry.addLine("Case 6 Started");
+                follower.followPath(scorePreload);
+                telemetry.addLine("Case 6 Ended");
+                pathState++;
                 break;
             case 7:
+                telemetry.addLine("Case 7 Started");
+                follower.followPath(scorePreload);
+                telemetry.addLine("Case 7 Ended");
+                pathState++;
                 break;
             case 8:
+                telemetry.addLine("Case 8 Started");
+                follower.followPath(scorePreload);
+                telemetry.addLine("Case 8 Ended");
+                pathState++;
                 break;
             case 9:
+                telemetry.addLine("Case 9 Started");
+                follower.followPath(scorePreload);
+                telemetry.addLine("Case 9 Ended");
+                pathState++;
                 break;
             case 10:
+                telemetry.addLine("Case 10 Started");
+                follower.followPath(scorePreload);
+                telemetry.addLine("Case 10 Ended");
+                pathState++;
                 break;
 
             default:
@@ -156,8 +250,8 @@ public class DiffCloseRed extends OpMode {
     // ---------------- OpMode Methods ----------------
     @Override
     public void init() {
-        outtake = new Outtake(hardwareMap,telemetry);
-        intake = new Intake(hardwareMap,telemetry,outtake);
+        outtake = new Outtake(hardwareMap, telemetry);
+        intake = new Intake(hardwareMap, telemetry, outtake);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
 
@@ -180,7 +274,8 @@ public class DiffCloseRed extends OpMode {
     }
 
     @Override
-    public void init_loop() {}
+    public void init_loop() {
+    }
 
     @Override
     public void start() {
@@ -199,8 +294,8 @@ public class DiffCloseRed extends OpMode {
         panelsTelemetry.debug("Y", follower.getPose().getY());
         panelsTelemetry.debug("Heading", Math.toDegrees(follower.getPose().getHeading()));
         panelsTelemetry.debug("Follower Busy", follower.isBusy());
-        panelsTelemetry.debug("Shooter rpm",outtake.getRPM());
-        panelsTelemetry.debug("Transfer",transfer.getVelocity());
+        panelsTelemetry.debug("Shooter rpm", outtake.getRPM());
+        panelsTelemetry.debug("Transfer", transfer.getVelocity());
         panelsTelemetry.update(telemetry);
     }
 
