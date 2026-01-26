@@ -250,12 +250,8 @@ public class RedSimplySynchronization extends OpMode {
                     pathState++;
                 }
                 break;
-
             case 11:
                 break;
-
-
-
         }
 
         return pathState;

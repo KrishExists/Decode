@@ -189,7 +189,6 @@ public class CloseRed extends OpMode {
 
         if (!follower.isBusy()) {
             if ((outtake.atSpeed(2000,3000)||happened) ) { // Good
-                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 happened = true;
                 telemetry.addLine("Outtake above threshold"); // Good
                 outtake.setLinkage(TeamConstants.LINKAGE_SHOOT);
