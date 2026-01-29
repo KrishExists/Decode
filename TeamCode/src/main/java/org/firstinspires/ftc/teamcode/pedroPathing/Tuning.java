@@ -49,6 +49,8 @@ public class Tuning extends SelectableOpMode {
     static ArrayList<String> changes = new ArrayList<>();
     static int chooseTuner = 0;
     static int chooseSecondary=0;
+
+    static int chooseThird = 0;
     public Tuning() {
         super("Select a Tuning OpMode", s -> {
             if(chooseTuner==-1)
@@ -61,24 +63,36 @@ public class Tuning extends SelectableOpMode {
             if(chooseTuner==0){
                 s.folder("Automatic", a -> {
                     if(chooseSecondary ==0){
-                        a.add("Forward Velocity Tuner", ForwardVelocityTuner::new);
-                        a.add("Lateral Velocity Tuner", LateralVelocityTuner::new);
+                        if(chooseThird == 0)
+                            a.add("Forward Velocity Tuner", ForwardVelocityTuner::new);
+                        if(chooseThird == 1)
+                            a.add("Lateral Velocity Tuner", LateralVelocityTuner::new);
                     }
                     if(chooseSecondary==1){
-                        a.add("Forward Zero Power Acceleration Tuner", ForwardZeroPowerAccelerationTuner::new);
-                        a.add("Lateral Zero Power Acceleration Tuner", LateralZeroPowerAccelerationTuner::new);
+                        if(chooseThird == 0)
+                            a.add("Forward Zero Power Acceleration Tuner", ForwardZeroPowerAccelerationTuner::new);
+                        if(chooseThird == 1)
+                            a.add("Lateral Zero Power Acceleration Tuner", LateralZeroPowerAccelerationTuner::new);
                     }
                 });
             }
             if(chooseTuner == 1){
                 s.folder("Manual", p -> {
                     if(chooseSecondary==0){
-                        p.add("Translational Tuner", TranslationalTuner::new);
-                        p.add("Heading Tuner", HeadingTuner::new);
+                        if(chooseThird==0){
+                            p.add("Translational Tuner", TranslationalTuner::new);
+
+                        }else{
+                            p.add("Heading Tuner", HeadingTuner::new);
+                        }
                     }
                     if(chooseSecondary == 1){
-                        p.add("Drive Tuner", DriveTuner::new);
-                        p.add("Line Tuner", Line::new);
+                        if(chooseThird ==1){
+                            p.add("Drive Tuner", DriveTuner::new);
+
+                        }else{
+                            p.add("Line Tuner", Line::new);
+                        }
                     }
                     if(chooseSecondary==2){
                         p.add("Centripetal Tuner", CentripetalTuner::new);

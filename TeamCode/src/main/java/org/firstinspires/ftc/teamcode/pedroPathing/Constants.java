@@ -67,14 +67,22 @@ import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.pedropathing.control.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(10.88)
-                .forwardZeroPowerAcceleration(-44.1422210)
-                .lateralZeroPowerAcceleration(-70.660132);
+            .forwardZeroPowerAcceleration(-51.79219486028157)
+            .lateralZeroPowerAcceleration(-66.1634807374069)
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.15,0,0.015,0.015))
+            .headingPIDFCoefficients(new PIDFCoefficients(1.25, 0, 0.1, 0.01));
+
+
+    // heading is p at 0.5 and f 0.01
+
+    /// secpnd d0.2 f 0.01  i 0 p 3
 
         public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
@@ -87,8 +95,8 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-                .xVelocity(56.41013077)
-                .yVelocity(39.5215982);
+                .xVelocity(61.116120586245074)
+                .yVelocity(43.232616514671506);
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(5.6663)
             .strafePodX(-2)//2
