@@ -11,13 +11,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "Example Auto", group = "Examples")
-public class PedroTest extends OpMode {
+@Autonomous(name = "Paths Red", group = "Examples")
+public class RedClosePaths extends OpMode {
 
     private Follower follower;
     private int pathState;
 
-    private final Pose startPose = new Pose(125, 125, Math.toRadians(35));
+    private final Pose startPose = new Pose(120.8, 128.7, Math.toRadians(35));
     private final Pose scorePose = new Pose(84, 84, Math.toRadians(45));
     private final Pose scorePoseEnd = new Pose(90, 115, Math.toRadians(20));
 
@@ -83,7 +83,7 @@ public class PedroTest extends OpMode {
 
         ScoreSpike3 = follower.pathBuilder()
                 .addPath(new BezierLine(Spike3End, scorePoseEnd))
-                .setLinearHeadingInterpolation(Spike3End.getHeading(), scorePose.getHeading())
+                .setLinearHeadingInterpolation(Spike3End.getHeading(), scorePoseEnd.getHeading())
                 .build();
     }
 
@@ -95,63 +95,63 @@ public class PedroTest extends OpMode {
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    follower.followPath(PrepSpike2, false);
+                    follower.followPath(PrepSpike2, true);
                     setPathState(2);
                 }
                 break;
             case 2:
                 if (!follower.isBusy()) {
-                    follower.followPath(ScoreSpike2, false);
+                    follower.followPath(ScoreSpike2, true);
                     setPathState(3);
                 }
                 break;
 
             case 3:
                 if (!follower.isBusy()) {
-                    follower.followPath(GoGate, false);
+                    follower.followPath(GoGate, true);
                     setPathState(4);
                 }
                 break;
             case 4:
                 if (!follower.isBusy()) {
-                    follower.followPath(BackGate, false);
+                    follower.followPath(BackGate, true);
                     setPathState(5);
                 }
                 break;
             case 5:
                 if (!follower.isBusy()) {
-                    follower.followPath(GoGate, false);
+                    follower.followPath(GoGate, true);
                     setPathState(6);
                 }
                 break;
             case 6:
                 if (!follower.isBusy()) {
-                    follower.followPath(BackGate, false);
+                    follower.followPath(BackGate, true);
                     setPathState(7);
                 }
                 break;
             case 7:
                 if (!follower.isBusy()) {
-                    follower.followPath(PrepSpike1, false);
+                    follower.followPath(PrepSpike1, true);
                     setPathState(8);
                 }
                 break;
             case 8:
                 if (!follower.isBusy()) {
-                    follower.followPath(ScoreSpike1, false);
+                    follower.followPath(ScoreSpike1, true);
                     setPathState(9);
                 }
                 break;
             case 9:
                 if (!follower.isBusy()) {
-                    follower.followPath(PrepSpike3, false);
+                    follower.followPath(PrepSpike3, true);
                     setPathState(10);
                 }
                 break;
             case 10:
 
                 if (!follower.isBusy()) {
-                    follower.followPath(ScoreSpike3, false);
+                    follower.followPath(ScoreSpike3, true);
                     setPathState(-1);
                 }
                 break;

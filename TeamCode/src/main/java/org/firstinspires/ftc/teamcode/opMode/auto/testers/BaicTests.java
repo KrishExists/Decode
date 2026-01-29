@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "BasicTests", group = "Examples")
+@Autonomous(name = "Goes To Center", group = "Examples")
 public class BaicTests extends OpMode {
 
     private Follower follower;

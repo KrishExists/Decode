@@ -17,6 +17,8 @@ public class TeamConstants {
     // Transfer / Outtake Constants
     // =============================
     public static final double TRANSFER_IN_POWER = -1;
+    public static final double TRANSFER_IN_POWER_AUTO = -0.8;
+
     public static final double TRANSFER_EVEN = 0.8;
     public static final double TRANSFER_CLOSED = 0;
     public static final double TRANSFER_REV = 1;

@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Outtake;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
-@Autonomous(name = "Pedro Pathing Auto (Integrated)", group = "Autonomous")
+@Autonomous(name = "Pedro Pathing Auto Main", group = "Autonomous")
 public class CloseRed extends OpMode {
 
     private Follower follower;
@@ -63,10 +63,10 @@ public class CloseRed extends OpMode {
 
     // Paths
     private PathChain
-            PrepSpike1, FinishSpike1, ScoreSpike1,
-            PrepSpike2, FinishSpike2, ScoreSpike2,
+            PrepSpike1, ScoreSpike1,
+            PrepSpike2, ScoreSpike2,
             GoGate,BackGate,
-            PrepSpike3, FinishSpike3, ScoreSpike3;
+            PrepSpike3, ScoreSpike3;
     private Servo blocker;
 
     // ---------------- Path Building ----------------
@@ -121,29 +121,26 @@ public class CloseRed extends OpMode {
 
     // ---------------- Robot Actions ----------------
     private void prepareToShoot() {
-        intake.setPower(TeamConstants.INTAKE_FEED_POWER); // Good
-        transfer.setPower(TeamConstants.TRANSFER_REV); // Good
-        outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM-50); // Good
+        intake.setPower(TeamConstants.INTAKE_FEED_POWER);
+        outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
         blocker.setPosition(TeamConstants.BLOCKER_OPEN);
     }
 
     private void spinUpIntake() {
         outtake.spinToRpm(TeamConstants.outtake_Stop);
         intake.setPower(TeamConstants.INTAKE_IN_POWER);
-        transfer.setPower(TeamConstants.TRANSFER_CLOSED);
+        transfer.setPower(TeamConstants.TRANSFER_IN_POWER_AUTO);
         blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
     }
 
     private void spinUpShooter() {
         telemetry.addLine("Ready to shoot");
-        outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM-150);
-        outtake.setLinkage(TeamConstants.LINKAGE_SHOOT);
+        outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
     }
 
     private void spinUp(boolean withTransfer) {
         spinUpShooter();
         if (withTransfer) {
-            telemetry.addLine("It is at the transfer state where it is about to shoot");
             transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
             intake.setPower(TeamConstants.INTAKE_IN_POWER);
         }
@@ -160,28 +157,7 @@ public class CloseRed extends OpMode {
         ran = true;
         happened = false;
     }
-    private void shootPreLoad(){
-        spinUpShooter();
-        if(outtake.atSpeed(2400,2500)||happened){
-            spinUp(true);
-            happened = true;
-            telemetry.addLine("Outtake above threshold"); // Good
-            outtake.setLinkage(TeamConstants.LINKAGE_SHOOT);
-            spinUp(true);
-            transfer.setPower(-1);
 
-            if (actionTimer.milliseconds()>1000 ) {
-                follower.followPath(ScoreSpike2,true);
-                pathState++;
-                resetBooleans();
-            }
-            else{
-                spinUp(false);
-            }
-        }
-
-
-    }
     private void shoot(PathChain nextPath, boolean skip) {
         if (follower.isBusy()) {
             prepareToShoot(); // It comes here
@@ -191,8 +167,6 @@ public class CloseRed extends OpMode {
         if (!follower.isBusy()) {
             if ((outtake.atSpeed(2000,3000)||happened) ) { // Good
                 happened = true;
-                telemetry.addLine("Outtake above threshold"); // Good
-                outtake.setLinkage(TeamConstants.LINKAGE_SHOOT);
                 spinUp(true);
                 transfer.setPower(-1);
 
@@ -219,7 +193,15 @@ public class CloseRed extends OpMode {
     private void spinIntake(PathChain path) {
         spinUpIntake();
         if (!follower.isBusy()) {
-            follower.followPath(path);
+            follower.followPath(path,true);
+            pathState++;
+            resetBooleans();
+        }
+    }
+    private void spinIntakeGate(PathChain path) {
+        spinUpIntake();
+        if (!follower.isBusy()&&actionTimer.milliseconds()>1000) {
+            follower.followPath(path,true);
             pathState++;
             resetBooleans();
         }
@@ -244,14 +226,15 @@ public class CloseRed extends OpMode {
                 shoot(GoGate);
                 break;
             case 4:
-                spinIntake(BackGate);
+                resetTimers();
+                spinIntakeGate(BackGate);
                 break;
             case 5:
                 resetTimers();
                 shoot(GoGate);
                 break;
             case 6:
-                spinIntake(BackGate);
+                spinIntakeGate(BackGate);
                 break;
             case 7:
                 resetTimers();
@@ -296,6 +279,7 @@ public class CloseRed extends OpMode {
 
         buildPaths();
         pathState = 0;
+        outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
 
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
