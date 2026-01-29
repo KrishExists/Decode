@@ -124,6 +124,7 @@ public class CloseRed extends OpMode {
         intake.setPower(TeamConstants.INTAKE_FEED_POWER);
         outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
         blocker.setPosition(TeamConstants.BLOCKER_OPEN);
+        transfer.setPower(0);
     }
 
     private void spinUpIntake() {
@@ -168,8 +169,6 @@ public class CloseRed extends OpMode {
             if ((outtake.atSpeed(2000,3000)||happened) ) { // Good
                 happened = true;
                 spinUp(true);
-                transfer.setPower(-1);
-
                 if (actionTimer.milliseconds()>1000 ) {
                     if (skip) {
                         pathState = 67;
@@ -312,5 +311,6 @@ public class CloseRed extends OpMode {
 
     @Override
     public void stop() {
+
     }
 }
