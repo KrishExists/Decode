@@ -191,11 +191,10 @@ public class Intake implements Subsystem{
                 break;
 
             case SpeedFar:
-                intake.setPower(TeamConstants.INTAKE_EVEN_POWER);
-                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
+                intake.setPower(TeamConstants.INTAKE_IN_POWER);
                 linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
                 shooter.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
-                transfer.setPower(1);
+                transfer.setPower(-1);
                 if(gamepad2.right_bumper||next){
                     setState(IntakeState.RAPOD_FAR);
                     shooting = false;
@@ -206,9 +205,8 @@ public class Intake implements Subsystem{
             case SpeedMid:
                 intake.setPower(TeamConstants.INTAKE_EVEN_POWER);
                 linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
-                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 shooter.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
-                transfer.setPower(1);
+                transfer.setPower(-1);
                 if(gamepad2.right_bumper||next){
                     setState(IntakeState.RAPOD_CLOSE);
                     intake.setPower(TeamConstants.INTAKE_DEFAULT_POWER);
@@ -220,22 +218,22 @@ public class Intake implements Subsystem{
 
 
             case RAPOD_CLOSE:
-                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 if(shooter.getRPM()>TeamConstants.SHOOTER_MID_RPM-100){
                     happend = true;
                 }
                 if (happend){
+                    blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                     shooter.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
                     intake.setPower(TeamConstants.INTAKE_IN_POWER);
                     transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 }
                 break;
             case RAPOD_FAR:
-                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 if(shooter.getRPM()>TeamConstants.SHOOTER_FAR_RPM-100){
                     happend = true;
                 }
                 if(happend){
+                    blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                     shooter.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
                     intake.setPower(TeamConstants.INTAKE_IN_POWER);
                     transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
