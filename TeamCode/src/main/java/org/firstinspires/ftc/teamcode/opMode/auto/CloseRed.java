@@ -121,10 +121,11 @@ public class CloseRed extends OpMode {
 
     // ---------------- Robot Actions ----------------
     private void prepareToShoot() {
-        transfer.setPower(TeamConstants.TRANSFER_IN_POWER); //GOOD
         intake.setPower(TeamConstants.INTAKE_FEED_POWER);
         outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
-        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+        blocker.setPosition(TeamConstants.BLOCKER_OPEN);
+        transfer.setPower(0.4);
+        telemetry.addLine("transfer poewr 0");
     }
 
     private void spinUpIntake() {
@@ -144,6 +145,12 @@ public class CloseRed extends OpMode {
         if (withTransfer) {
             transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
             intake.setPower(TeamConstants.INTAKE_IN_POWER);
+            telemetry.addLine("transfer at -1");
+
+        }else{
+            intake.setPower(0);
+            transfer.setPower(0);
+            telemetry.addLine("transfer at 0");
         }
     }
 
@@ -161,18 +168,13 @@ public class CloseRed extends OpMode {
 
     private void shoot(PathChain nextPath, boolean skip) {
         if (follower.isBusy()) {
-            blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
-            transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
-            prepareToShoot(); // It comes here
-            telemetry.addLine("Preparing");
+            prepareToShoot();
         }
-
         if (!follower.isBusy()) {
-            if ((outtake.atSpeed(2000,3000)||happened) ) { // Good
+            if ((outtake.atSpeed(2000,3000)||happened) ) {
                 happened = true;
                 spinUp(true);
-                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
-
+                transfer.setPower(-1);
                 if (actionTimer.milliseconds()>1000 ) {
                     if (skip) {
                         pathState = 67;
@@ -185,10 +187,10 @@ public class CloseRed extends OpMode {
             } else {
                 telemetry.addLine("OUttake not above"); // Code never reaches here
                 spinUp(false);
+                transfer.setPower(0);
             }
         }
 
-        telemetry.addData("Transfer Good Power: ", transfer.getVelocity());
     }
 
     private void shoot(PathChain nextPath) {
@@ -220,50 +222,40 @@ public class CloseRed extends OpMode {
                 pathState++;
                 break;
             case 1:
-                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 resetTimers();
                 shoot(PrepSpike2);
                 break;
             case 2:
-                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 spinIntake(ScoreSpike2);
                 break;
             case 3:
-                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 resetTimers();
                 shoot(GoGate);
                 break;
             case 4:
-                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 resetTimers();
                 spinIntakeGate(BackGate);
                 break;
             case 5:
-                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 resetTimers();
                 shoot(GoGate);
                 break;
             case 6:
-                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 resetTimers();
                 spinIntakeGate(BackGate);
                 break;
             case 7:
-                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 resetTimers();
                 shoot(PrepSpike1);
                 break;
             case 8:
-                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 spinIntake(ScoreSpike1);
                 break;
             case 9:
-                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 resetTimers();
                 shoot(PrepSpike3);
                 break;
             case 10:
-                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 resetTimers();
                 spinIntake(ScoreSpike3);
                 break;
@@ -271,7 +263,6 @@ public class CloseRed extends OpMode {
             default:
                 outtake.stop();
                 intake.setPower(TeamConstants.SHOOTER_CLOSED);
-                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
         }
     }
 

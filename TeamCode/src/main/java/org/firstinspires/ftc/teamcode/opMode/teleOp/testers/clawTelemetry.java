@@ -50,11 +50,10 @@ public class clawTelemetry extends LinearOpMode {
     // === Vision ===
 
     // === PID Coefficients (Tunable in Dashboard) ===
-    public static double kP = 0.01;
+    public static double kP = 0.05;
     public static double kI = 0.0;
 
-    public static double kD = 0.0;
-    public static double kF = 0.0;
+    public static double kD = 0.01;
 
     private double integralSum = 0;
     private double lastError = 0;
@@ -68,7 +67,10 @@ public class clawTelemetry extends LinearOpMode {
     public static double blockerPos = 0.0;
     public static double shooterPower = 0.0;   // <-- NOW interpreted as TARGET RPM
     public static double intakePower = 0.0;
-    private static PIDFController pidController;
+    private static PIDController pidController;
+    private static boolean test;
+    private boolean testBefore;
+    private boolean testActive;
 
     @Override
     public void runOpMode() {
@@ -114,7 +116,11 @@ public class clawTelemetry extends LinearOpMode {
         lastTime = getRuntime();
 
         while (opModeIsActive()) {
-            pidController.setPIDF(kP,kI,kD,kF);
+
+
+
+
+            pidController.setPID(kP,kI,kD);
 
             // === SERVO ===
             linkage.setPosition(linkagePos);
