@@ -40,7 +40,7 @@ public class CloseRed extends OpMode {
 
     private DcMotorEx transfer;
 
-    private final Pose startPose = new Pose(125, 125, Math.toRadians(35));
+    private final Pose startPose = new Pose(121.2, 130, Math.toRadians(36));
     private final Pose scorePose = new Pose(84, 84, Math.toRadians(45));
     private final Pose scorePoseEnd = new Pose(90, 115, Math.toRadians(20));
 
@@ -121,16 +121,16 @@ public class CloseRed extends OpMode {
 
     // ---------------- Robot Actions ----------------
     private void prepareToShoot() {
+        transfer.setPower(TeamConstants.TRANSFER_IN_POWER); //GOOD
         intake.setPower(TeamConstants.INTAKE_FEED_POWER);
         outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
-        blocker.setPosition(TeamConstants.BLOCKER_OPEN);
-        transfer.setPower(0);
+        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
     }
 
     private void spinUpIntake() {
         outtake.spinToRpm(TeamConstants.outtake_Stop);
         intake.setPower(TeamConstants.INTAKE_IN_POWER);
-        transfer.setPower(TeamConstants.TRANSFER_IN_POWER_AUTO);
+        transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
         blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
     }
 
@@ -161,6 +161,8 @@ public class CloseRed extends OpMode {
 
     private void shoot(PathChain nextPath, boolean skip) {
         if (follower.isBusy()) {
+            blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+            transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
             prepareToShoot(); // It comes here
             telemetry.addLine("Preparing");
         }
@@ -169,6 +171,8 @@ public class CloseRed extends OpMode {
             if ((outtake.atSpeed(2000,3000)||happened) ) { // Good
                 happened = true;
                 spinUp(true);
+                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
+
                 if (actionTimer.milliseconds()>1000 ) {
                     if (skip) {
                         pathState = 67;
@@ -183,6 +187,8 @@ public class CloseRed extends OpMode {
                 spinUp(false);
             }
         }
+
+        telemetry.addData("Transfer Good Power: ", transfer.getVelocity());
     }
 
     private void shoot(PathChain nextPath) {
@@ -214,39 +220,50 @@ public class CloseRed extends OpMode {
                 pathState++;
                 break;
             case 1:
+                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 resetTimers();
                 shoot(PrepSpike2);
                 break;
             case 2:
+                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 spinIntake(ScoreSpike2);
                 break;
             case 3:
+                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 resetTimers();
                 shoot(GoGate);
                 break;
             case 4:
+                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 resetTimers();
                 spinIntakeGate(BackGate);
                 break;
             case 5:
+                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 resetTimers();
                 shoot(GoGate);
                 break;
             case 6:
+                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+                resetTimers();
                 spinIntakeGate(BackGate);
                 break;
             case 7:
+                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 resetTimers();
                 shoot(PrepSpike1);
                 break;
             case 8:
+                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 spinIntake(ScoreSpike1);
                 break;
             case 9:
+                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 resetTimers();
                 shoot(PrepSpike3);
                 break;
             case 10:
+                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 resetTimers();
                 spinIntake(ScoreSpike3);
                 break;
@@ -254,6 +271,7 @@ public class CloseRed extends OpMode {
             default:
                 outtake.stop();
                 intake.setPower(TeamConstants.SHOOTER_CLOSED);
+                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
         }
     }
 
@@ -274,7 +292,8 @@ public class CloseRed extends OpMode {
 
         pathTimer = new Timer();
         actionTimer = new ElapsedTime();
-        blocker.setPosition(0.5);
+        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+        //transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
 
         buildPaths();
         pathState = 0;
@@ -311,6 +330,5 @@ public class CloseRed extends OpMode {
 
     @Override
     public void stop() {
-
     }
 }
