@@ -134,7 +134,9 @@ public class Drivetrain implements Subsystem {
     }
 
     public void combinedDrive(Gamepad gamepad) {
-
+        if(gamepad.dpad_up){
+            follower.setPose(new Pose(72,72,0));
+        }
         // ====== BUTTONS SET FLAGS ======
         if (gamepad.yWasPressed()) startFlag = true;
         if (gamepad.right_trigger > 0.2) parkFlag = true;
