@@ -58,7 +58,8 @@ public class Drivetrain implements Subsystem {
         if(PoseStorage.pose!=null){
             startingPose = PoseStorage.pose;
             t.addData("Got pose",startingPose);
-        }else{
+        }
+        else{ // I t is
         }
         startingPose = new Pose(72,72,0);//to fix subtract 10 from x and add 10 to y. however this should not be thte case. for some reason its misinterpeting the pose by 10
 

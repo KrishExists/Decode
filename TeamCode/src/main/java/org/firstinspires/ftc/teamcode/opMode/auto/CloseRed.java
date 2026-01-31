@@ -55,7 +55,7 @@ public class CloseRed extends OpMode {
     private final Pose Bez3End = new Pose(98, 36, 0);
     private final Pose Bez3Control = new Pose(78, 36, 0);
     private final Pose Spike3End = new Pose(130, 36, 0);
-    private final Pose Gate = new Pose(127,62,Math.toRadians(20));
+    private final Pose Gate = new Pose(127,62,Math.toRadians(0));
     private final Pose GateControl = new Pose(98,69,0);
     private final Pose backGate = new Pose(96,67,0);
 
