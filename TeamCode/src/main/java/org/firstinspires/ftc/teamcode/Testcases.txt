@@ -1,0 +1,6 @@
+1. Shoot from the designated position
+2. Put a dummy robot in designated position and then try to shoot.
+3. Put a dummy robot in designated position and opposition reboot in its position. Then try to shoot
+4. Do (2) & (3) in auto mode.
+5. Do (2) & (3) in tele op mode.
+6. Any changes to the shooter, try shooting from desired positions to see if it is accurate. Then repeat steps (1-4)

@@ -1,0 +1,10 @@
+1. Add Blockers to the side of the robot for gate intake
+2. Finally Finish 18 Ball
+3. Maximize time somehow by reducing shooting in some states
+4. Fix the Far shooting using inertia wheels
+5. Finally run Chinmays Paths
+6. Transfer everything over to blue side
+7. Change and implement logic for chinmay’s path
+8. Change the waypointing reset point
+9. PROG FINISHED
+
