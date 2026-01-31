@@ -330,7 +330,7 @@ public class KrishFarRedWithChin extends OpMode {
 
     private void prepareToShoot() {
         intake.setPower(TeamConstants.INTAKE_FEED_POWER);
-        outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
+        outtake.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
         blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
         transfer.setPower(-1);
         telemetry.addLine("transfer poewr 0");
@@ -345,7 +345,7 @@ public class KrishFarRedWithChin extends OpMode {
 
     private void spinUpShooter() {
         telemetry.addLine("Ready to shoot");
-        outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
+        outtake.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
     }
 
     private void spinUp(boolean withTransfer) {
