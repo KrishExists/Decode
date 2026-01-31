@@ -9,6 +9,10 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+
+import org.firstinspires.ftc.teamcode.subsystem.Intake;
+import org.firstinspires.ftc.teamcode.subsystem.Outtake;
+
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 
@@ -18,6 +22,8 @@ public class Navale extends OpMode {
     private Follower follower;
     private static Timer pathtimer;
     private Timer opmodetimer;
+    private Outtake outtake;
+    private Intake intake;
 
     public static void setPathState(PathState newState2){
         pathState = newState2;
@@ -97,6 +103,16 @@ public class Navale extends OpMode {
 
                 if (!follower.isBusy()) {
                     // ADD FLYWHEEL LOGIC
+
+                    //if ((outtake.atSpeed(2000,3000)||happened) ) {
+                        //happened = true;
+                        //spinUp(true);
+                        //transfer.setPower(-1);
+                        //if (actionTimer.milliseconds()>1000 ) {
+                            //if (skip) {
+                                //pathState = 67;
+                                //return;
+                            //}
                     telemetry.addLine("DONE Path 1");
                     telemetry.update();
                     //transition to next state

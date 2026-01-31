@@ -1,15 +1,11 @@
 package org.firstinspires.ftc.teamcode.opMode.teleOp.testers;
 
-import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.Range;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -39,21 +35,19 @@ public class clawTelemetry extends LinearOpMode {
     private DcMotor intake;
     private DcMotorEx leftFront, rightFront, leftRear, rightRear;
 
-
     private DcMotorEx transfer;
-
-    private ColorSensor colorSensor;
 
     // === Dashboard ===
     FtcDashboard dashboard;
 
     // === Vision ===
+    private VisionPortal visionPortal;
+    private AprilTagProcessor aprilTagProcessor;
 
     // === PID Coefficients (Tunable in Dashboard) ===
-    public static double kP = 0.05;
+    public static double kP = 0.01;
     public static double kI = 0.0;
-
-    public static double kD = 0.01;
+    public static double kD = 0.0;
 
     private double integralSum = 0;
     private double lastError = 0;
@@ -64,33 +58,28 @@ public class clawTelemetry extends LinearOpMode {
 
     public static double transferPower = 0.0;
 
-    public static double blockerPos = 0.0;
+    public static double blockerPos = 0.55;
     public static double shooterPower = 0.0;   // <-- NOW interpreted as TARGET RPM
     public static double intakePower = 0.0;
-    private static PIDController pidController;
-    private static boolean test;
-    private boolean testBefore;
-    private boolean testActive;
 
     @Override
     public void runOpMode() {
 
         linkage = hardwareMap.get(Servo.class, "Linkage");
+        blocker = hardwareMap.get(Servo.class, "blocker");
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
 
         shooter = hardwareMap.get(DcMotorEx.class, "Outtake");
         shooter2 = hardwareMap.get(DcMotorEx.class, "Outtake2");
-        blocker = hardwareMap.get(Servo.class, "blocker");
-        pidController = new PIDController(0,0,0);
 
         shooter.setDirection(DcMotorSimple.Direction.FORWARD);
         shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         shooter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        shooter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         shooter2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        shooter2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        shooter2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         intake = hardwareMap.get(DcMotor.class, "Intake");
 
@@ -98,17 +87,13 @@ public class clawTelemetry extends LinearOpMode {
         rightFront = hardwareMap.get(DcMotorEx.class, "frontRightMotor");
         leftRear = hardwareMap.get(DcMotorEx.class, "backLeftMotor");
         rightRear = hardwareMap.get(DcMotorEx.class, "backRightMotor");
-//        colorSensor = hardwareMap.get(ColorSensor.class, "colors");
 
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setDirection(DcMotor.Direction.REVERSE);
-        blocker.setPosition(0.5);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         dashboard = FtcDashboard.getInstance();
-
-
-
+        blocker.setPosition(0.55);
         telemetry.addLine("Init Complete");
         telemetry.update();
         waitForStart();
@@ -117,15 +102,10 @@ public class clawTelemetry extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-
-
-
-            pidController.setPID(kP,kI,kD);
-
             // === SERVO ===
             linkage.setPosition(linkagePos);
-            transfer.setPower(transferPower);
             blocker.setPosition(blockerPos);
+            transfer.setPower(transferPower);
 
             // === SHOOTER RPM CONTROL ===
             spinToRpm(shooterPower);   // <-- shooterPower is TARGET RPM
@@ -166,14 +146,13 @@ public class clawTelemetry extends LinearOpMode {
 
             telemetry.addData("Target RPM", shooterPower);
             telemetry.addData("Shooter RPM", currentRPM());
+            telemetry.addData("Shooter1 RPM", currentRPM1());
             telemetry.addData("Shooter Power Output", shooter.getPower());
             telemetry.addData("Transfer Motor Current: ", transfer.getCurrent(CurrentUnit.AMPS));
-//            telemetry.addData("Color Sensor Red: ", colorSensor.red());
-//            telemetry.addData("Color Sensor Blue: ", colorSensor.blue());
-//            telemetry.addData("Color Sensor Green: ", colorSensor.green());
             telemetry.update();
         }
 
+        visionPortal.close();
     }
 
     // ════════════════════════════════
@@ -184,12 +163,30 @@ public class clawTelemetry extends LinearOpMode {
         // Your team uses *velocity * 2.2* in the main code
         return shooter.getVelocity() * 2.2;
     }
+    public double currentRPM1() {
+        // Your team uses *velocity * 2.2* in the main code
+        return shooter2.getVelocity() * 2.2;
+    }
 
     public void spinToRpm(double targetRPM) {
         double currRPM = currentRPM();
         double error = targetRPM - currRPM;
-      double output=   pidController.calculate(currRPM,error);
-      shooter.setPower(output);
+
+        double currentTime = getRuntime();
+        double dt = currentTime - lastTime;
+
+        integralSum += error * dt;
+        double derivative = (error - lastError) / dt;
+
+        double output = (kP * error) + (kI * integralSum) + (kD * derivative);
+        output = Range.clip(output, 0, 1);
+
+        shooter.setPower(output);
+        shooter2.setPower(output);
+        telemetry.addData("output",output);
+
+        lastError = error;
+        lastTime = currentTime;
     }
 
     // ════════════════════════════════
@@ -202,7 +199,5 @@ public class clawTelemetry extends LinearOpMode {
         leftRear.setPower(0);
         rightRear.setPower(0);
     }
-
-
 
 }

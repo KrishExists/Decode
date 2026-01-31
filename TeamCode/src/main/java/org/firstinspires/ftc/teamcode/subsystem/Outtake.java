@@ -74,6 +74,7 @@ public class Outtake implements Subsystem {
     }
 
     public void spinToRpm(double targetRPM) {
+
         double current = getRPM();
         double error = targetRPM - current;
 

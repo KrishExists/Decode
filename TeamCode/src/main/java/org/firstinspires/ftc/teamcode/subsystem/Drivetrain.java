@@ -30,6 +30,8 @@ public class Drivetrain implements Subsystem {
     private final Supplier<PathChain> park;
 
     private final Supplier<PathChain> gate;
+    private final Supplier<PathChain> align;
+
     private boolean startFlag = false;
     private boolean parkFlag = false;
     private boolean gateFlag = false;
@@ -103,6 +105,10 @@ public class Drivetrain implements Subsystem {
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(72, 72))))
                 .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, 0, 0.8))
                 .build();
+        align = () -> follower.pathBuilder() //Lazy Curve Generation
+                .addPath(new Path(new BezierLine(follower::getPose, follower::getPose)))
+                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(50), 0.8))
+                .build();
 
         this.hardwareMap = h;
         this.telemetry = t;
@@ -135,6 +141,7 @@ public class Drivetrain implements Subsystem {
         if (gamepad.left_trigger > 0.2) gateFlag = true;
         if (gamepad.leftBumperWasPressed()) closeFlag = true;
         if (gamepad.rightBumperWasPressed()) farFlag = true;
+
 
         // ====== PRIORITY EXECUTION (NO ELSE-IFS) ======
         if (!automatedDrive) {

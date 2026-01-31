@@ -48,9 +48,9 @@ public class TeamConstants {
     // =============================
     // Shooter PID Constants
     // =============================
-    public static final double SHOOTER_kP = 0.02;
+    public static final double SHOOTER_kP = 0.05;
     public static final double SHOOTER_kI = 0.0;
-    public static final double SHOOTER_kD = 0.0003;
+    public static final double SHOOTER_kD = 0.0;
     public static double lastError = 0;
     public static double integral = 0;
 

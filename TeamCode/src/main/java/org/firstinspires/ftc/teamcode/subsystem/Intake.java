@@ -191,10 +191,15 @@ public class Intake implements Subsystem{
                 break;
 
             case SpeedFar:
+                //kp is 0.07
+                //kd is 0.00001
+                Outtake.kD = 0.00001;
+                Outtake.kP  = 0.07;
                 intake.setPower(TeamConstants.INTAKE_IN_POWER);
                 linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
                 shooter.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
-                transfer.setPower(-1);
+                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
+                transfer.setPower(1);
                 if(gamepad2.right_bumper||next){
                     setState(IntakeState.RAPOD_FAR);
                     shooting = false;
@@ -203,14 +208,15 @@ public class Intake implements Subsystem{
                 }
                 break;
             case SpeedMid:
+                Outtake.kD = 0.0;
+                Outtake.kP  = 0.05;
                 intake.setPower(TeamConstants.INTAKE_EVEN_POWER);
                 linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
                 shooter.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
-                transfer.setPower(-1);
+                blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+                transfer.setPower(1);
                 if(gamepad2.right_bumper||next){
                     setState(IntakeState.RAPOD_CLOSE);
-                    intake.setPower(TeamConstants.INTAKE_DEFAULT_POWER);
-                    transfer.setPower(TeamConstants.TRANSFER_CLOSED);
                     shooting = false;
                     close = false;
                 }
@@ -218,23 +224,23 @@ public class Intake implements Subsystem{
 
 
             case RAPOD_CLOSE:
+                shooter.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
                 if(shooter.getRPM()>TeamConstants.SHOOTER_MID_RPM-100){
                     happend = true;
                 }
                 if (happend){
                     blocker.setPosition(TeamConstants.BLOCKER_OPEN);
-                    shooter.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
                     intake.setPower(TeamConstants.INTAKE_IN_POWER);
                     transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 }
                 break;
             case RAPOD_FAR:
+                shooter.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
                 if(shooter.getRPM()>TeamConstants.SHOOTER_FAR_RPM-100){
                     happend = true;
                 }
                 if(happend){
                     blocker.setPosition(TeamConstants.BLOCKER_OPEN);
-                    shooter.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
                     intake.setPower(TeamConstants.INTAKE_IN_POWER);
                     transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 }
@@ -242,7 +248,6 @@ public class Intake implements Subsystem{
 
             case REST:
                 happend = false;
-
                 intake.setPower(TeamConstants.INTAKE_DEFAULT_POWER);
                 shooter.stop();
                 blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
@@ -260,8 +265,7 @@ public class Intake implements Subsystem{
                 break;
         }
 
-        telemetry.addData("Intake State", sm.getState());
-        telemetry.addData("Time in State", t);
+        telemetry.addData("Rpm",shooter.getRPM());
     }
 
 

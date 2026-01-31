@@ -46,15 +46,15 @@ public class CloseRed extends OpMode {
 
     private final Pose Bez1End = new Pose(98, 84, 0);
     private final Pose Bez1Control = new Pose(85, 84, 0);
-    private final Pose Spike1End = new Pose(120, 84, 0);
+    private final Pose Spike1End = new Pose(125, 84, 0);
 
     private final Pose Bez2End = new Pose(98, 60, 0);
     private final Pose Bez2Control = new Pose(85, 60, 0);
-    private final Pose Spike2End = new Pose(120, 60, 0);
+    private final Pose Spike2End = new Pose(130, 60, 0);
 
     private final Pose Bez3End = new Pose(98, 36, 0);
     private final Pose Bez3Control = new Pose(78, 36, 0);
-    private final Pose Spike3End = new Pose(120, 36, 0);
+    private final Pose Spike3End = new Pose(130, 36, 0);
     private final Pose Gate = new Pose(127,62,Math.toRadians(20));
     private final Pose GateControl = new Pose(98,69,0);
     private final Pose backGate = new Pose(96,67,0);
@@ -123,8 +123,8 @@ public class CloseRed extends OpMode {
     private void prepareToShoot() {
         intake.setPower(TeamConstants.INTAKE_FEED_POWER);
         outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
-        blocker.setPosition(TeamConstants.BLOCKER_OPEN);
-        transfer.setPower(0.4);
+        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+        transfer.setPower(-1);
         telemetry.addLine("transfer poewr 0");
     }
 
@@ -172,6 +172,7 @@ public class CloseRed extends OpMode {
         }
         if (!follower.isBusy()) {
             if ((outtake.atSpeed(2000,3000)||happened) ) {
+                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 happened = true;
                 spinUp(true);
                 transfer.setPower(-1);
@@ -207,7 +208,7 @@ public class CloseRed extends OpMode {
     }
     private void spinIntakeGate(PathChain path) {
         spinUpIntake();
-        if (!follower.isBusy()&&actionTimer.milliseconds()>1000) {
+        if (!follower.isBusy()&&actionTimer.milliseconds()>1500) {
             follower.followPath(path,true);
             pathState++;
             resetBooleans();
@@ -292,6 +293,7 @@ public class CloseRed extends OpMode {
 
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
+        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
     }
 
     @Override
