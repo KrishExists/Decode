@@ -88,10 +88,12 @@ public class aaravred extends OpMode {
         GoGate = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose,GateControl,Gate))
                 .setLinearHeadingInterpolation(scorePose.getHeading(),Gate.getHeading())
+                .addPath(new BezierLine(Gate,new Pose(135,56)))
+                .setLinearHeadingInterpolation(Gate.getHeading(),Math.toRadians(75))
                 .build();
         BackGate = follower.pathBuilder()
                 .addPath(new BezierCurve(Gate,backGate,scorePose))
-                .setLinearHeadingInterpolation(Gate.getHeading(),scorePose.getHeading())
+                .setLinearHeadingInterpolation(Math.toRadians(75),scorePose.getHeading())
                 .build();
 
         PrepSpike2 = follower.pathBuilder()
