@@ -125,8 +125,8 @@ public class aaravred extends OpMode {
     private void prepareToShoot() {
         intake.setPower(TeamConstants.INTAKE_FEED_POWER);
         outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
-        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
-        transfer.setPower(-1);
+        blocker.setPosition(TeamConstants.BLOCKER_OPEN);
+        transfer.setPower(TeamConstants.TRANSFER_REV);
         telemetry.addLine("transfer poewr 0");
     }
 
