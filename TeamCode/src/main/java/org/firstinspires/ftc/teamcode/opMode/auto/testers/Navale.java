@@ -102,21 +102,20 @@ public class Navale extends OpMode {
                 //check if follower did it's path.
 
                 if (!follower.isBusy()) {
-                    // ADD FLYWHEEL LOGIC
+                    outtake.spinToRpm(4000);
+                    outtake.setLinkage(0.2);
 
-                    //if ((outtake.atSpeed(2000,3000)||happened) ) {
-                        //happened = true;
-                        //spinUp(true);
-                        //transfer.setPower(-1);
-                        //if (actionTimer.milliseconds()>1000 ) {
-                            //if (skip) {
-                                //pathState = 67;
-                                //return;
-                            //}
+                    if (outtake.atSpeed(3900,4000)){
+                        intake.setState(Intake.IntakeState.SpeedMid);
+                        //This transfers the ball  to shooter once rpm is ready.
+                    }
+
+                    // ADD FLYWHEEL LOGIC
                     telemetry.addLine("DONE Path 1");
                     telemetry.update();
                     //transition to next state
                 }
+
                 break;
             //case INTAKE_ARTIFACTS:
 
