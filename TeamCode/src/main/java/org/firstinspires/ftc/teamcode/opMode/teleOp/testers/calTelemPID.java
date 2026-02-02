@@ -58,6 +58,7 @@ public class calTelemPID extends LinearOpMode {
     public static double shooterPower = 0.0;   // <-- NOW interpreted as TARGET RPM
     public static double intakePower = 0.0;
     public static double shooterPoser = 0.0;
+    public static boolean usesecond = true;
 
     @Override
     public void runOpMode() {
@@ -115,8 +116,10 @@ public class calTelemPID extends LinearOpMode {
                 spinToRpm(shooterPower);
             }else{
                 shooter.setPower(shooterPoser);
-                shooter2.setPower(shooterPoser);
+                if(usesecond){
+                    shooter2.setPower(shooterPoser);
 
+                }
             }
 
             // === INTAKE ===
@@ -189,8 +192,9 @@ public class calTelemPID extends LinearOpMode {
         double power = Range.clip(pidPower + ffPower, 0, 1);
 
         shooter.setPower(power);
-        shooter2.setPower(power);
-
+        if(usesecond){
+            shooter2.setPower(power);
+        }
         telemetry.addData("PID Output", pidPower);
         telemetry.addData("Feedforward Output", ffPower);
         telemetry.addData("Combined Power", power);
