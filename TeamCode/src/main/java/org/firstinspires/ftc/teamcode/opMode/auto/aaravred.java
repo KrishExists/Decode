@@ -104,7 +104,7 @@ public class aaravred extends OpMode {
                 .build();
 
         ScoreSpike2 = follower.pathBuilder()
-                .addPath(new BezierLine(Spike2End, scorePose))
+                .addPath(new BezierCurve(Spike2End, Bez2Control,scorePose))
                 .setLinearHeadingInterpolation(Spike2End.getHeading(), scorePose.getHeading())
                 .build();
 
