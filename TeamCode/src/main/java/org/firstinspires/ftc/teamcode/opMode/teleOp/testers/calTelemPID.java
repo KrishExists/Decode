@@ -64,6 +64,7 @@ public class calTelemPID extends LinearOpMode {
     public static double intakePower = 0.0;
     public static double shooterPoser = 0.0;
     public static boolean usesecond = true;
+    public static boolean usefirst = true;
 
     @Override
     public void runOpMode() {
@@ -170,8 +171,6 @@ public class calTelemPID extends LinearOpMode {
             telemetry.addData("Target RPM", shooterPower);
             telemetry.addData("Shooter RPM", currentRPM());
             telemetry.addData("Shooter1 RPM", currentRPM1());
-            telemetry.addData("Shooter PID Output", shooterPIDF.getP());
-            telemetry.addData("Feedforward Power", shooterFF.calculate(shooterPower,0));
             telemetry.update();
         }
 
@@ -200,7 +199,7 @@ public class calTelemPID extends LinearOpMode {
         // Combine and clip
         double power = Range.clip(pidPower , 0, 1);
 
-        double currRPM2 = currentRPM();
+        double currRPM2 = currentRPM1();
 
         // PID feedback
         double pidPower2 = shooterPIDF.calculate(currRPM2, targetRPM);
@@ -209,13 +208,15 @@ public class calTelemPID extends LinearOpMode {
 
         // Combine and clip
         double power2 = Range.clip(pidPower2, 0, 1);
-
-        shooter.setPower(power);
-        if(usesecond){
-            shooter2.setPower(power);
+        if(usefirst){
+            shooter.setPower(power);
         }
-        telemetry.addData("PID Output", pidPower);
+        if(usesecond){
+            shooter2.setPower(power2);
+        }
         telemetry.addData("Combined Power", power);
+        telemetry.addData("Combined Power2", power2);
+
     }
 
     // ════════════════════════════════
