@@ -161,11 +161,11 @@ public class clawTelemetry extends LinearOpMode {
 
     public double currentRPM() {
         // Your team uses *velocity * 2.2* in the main code
-        return shooter.getVelocity() * 2.2;
+        return shooter.getVelocity() * 2.14;
     }
     public double currentRPM1() {
         // Your team uses *velocity * 2.2* in the main code
-        return shooter2.getVelocity() * 2.2;
+        return shooter2.getVelocity() * 2.14;
     }
 
     public void spinToRpm(double targetRPM) {

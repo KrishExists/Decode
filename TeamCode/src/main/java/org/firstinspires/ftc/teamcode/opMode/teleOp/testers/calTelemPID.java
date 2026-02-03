@@ -43,12 +43,17 @@ public class calTelemPID extends LinearOpMode {
     public static double kI = 0.0;
     public static double kD = 0.0;
     public static double kF = 0.0;
+    public static double kP2 = 0.0005;
+    public static double kI2 = 0.0;
+    public static double kD2 = 0.0;
+    public static double kF2 = 0.0;
 
     public static double kS = 0.05;
     public static double kV = 0.0002;
     public static double kA = 0.0;
 
     private PIDFController shooterPIDF;
+    private PIDFController shooter2PIDF;
     private SimpleMotorFeedforward shooterFF;
 
     // === Dashboard Adjustable Settings ===
@@ -59,6 +64,7 @@ public class calTelemPID extends LinearOpMode {
     public static double intakePower = 0.0;
     public static double shooterPoser = 0.0;
     public static boolean usesecond = true;
+    public static boolean usefirst = true;
 
     @Override
     public void runOpMode() {
@@ -89,6 +95,9 @@ public class calTelemPID extends LinearOpMode {
 
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setDirection(DcMotor.Direction.REVERSE);
+        shooter2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         dashboard = FtcDashboard.getInstance();
@@ -98,6 +107,8 @@ public class calTelemPID extends LinearOpMode {
 
         // === Shooter PIDF Init ===
         shooterPIDF = new PIDFController(kP, kI, kD, kF);
+        shooter2PIDF = new PIDFController(kP2, kI2, kD2, kF2);
+
         shooterPIDF.setTolerance(50); // RPM tolerance
         shooterFF = new SimpleMotorFeedforward(kS, kV, kA);
 
@@ -160,8 +171,6 @@ public class calTelemPID extends LinearOpMode {
             telemetry.addData("Target RPM", shooterPower);
             telemetry.addData("Shooter RPM", currentRPM());
             telemetry.addData("Shooter1 RPM", currentRPM1());
-            telemetry.addData("Shooter PID Output", shooterPIDF.getP());
-            telemetry.addData("Feedforward Power", shooterFF.calculate(shooterPower,0));
             telemetry.update();
         }
 
@@ -173,10 +182,10 @@ public class calTelemPID extends LinearOpMode {
     // ════════════════════════════════
 
     public double currentRPM() {
-        return shooter.getVelocity() * 2.2;
+        return shooter.getVelocity() * 2.14;
     }
     public double currentRPM1() {
-        return shooter2.getVelocity() * 2.2;
+        return shooter2.getVelocity() * 2.14;
     }
 
     public void spinToRpm(double targetRPM) {
@@ -186,18 +195,28 @@ public class calTelemPID extends LinearOpMode {
         double pidPower = shooterPIDF.calculate(currRPM, targetRPM);
 
         // Feedforward
-        double ffPower = shooterFF.calculate(targetRPM, 0);
 
         // Combine and clip
-        double power = Range.clip(pidPower + ffPower, 0, 1);
+        double power = Range.clip(pidPower , 0, 1);
 
-        shooter.setPower(power);
-        if(usesecond){
-            shooter2.setPower(power);
+        double currRPM2 = currentRPM1();
+
+        // PID feedback
+        double pidPower2 = shooterPIDF.calculate(currRPM2, targetRPM);
+
+        // Feedforward
+
+        // Combine and clip
+        double power2 = Range.clip(pidPower2, 0, 1);
+        if(usefirst){
+            shooter.setPower(power);
         }
-        telemetry.addData("PID Output", pidPower);
-        telemetry.addData("Feedforward Output", ffPower);
+        if(usesecond){
+            shooter2.setPower(power2);
+        }
         telemetry.addData("Combined Power", power);
+        telemetry.addData("Combined Power2", power2);
+
     }
 
     // ════════════════════════════════
