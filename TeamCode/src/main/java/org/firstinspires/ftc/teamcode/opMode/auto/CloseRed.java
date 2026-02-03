@@ -119,7 +119,6 @@ public class CloseRed extends OpMode {
                 .build();
     }
 
-    // ---------------- Robot Actions ----------------
     private void prepareToShoot() {
         intake.setPower(TeamConstants.INTAKE_FEED_POWER);
         outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
