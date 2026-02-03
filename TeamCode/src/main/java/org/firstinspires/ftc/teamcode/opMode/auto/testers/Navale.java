@@ -136,26 +136,28 @@
 //}
 
 
+
 package org.firstinspires.ftc.teamcode.opMode.auto.testers;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
 import com.bylazar.configurables.annotations.Configurable;
-import com.bylazar.telemetry.TelemetryManager;
 import com.bylazar.telemetry.PanelsTelemetry;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.PathChain;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous(name = "Pedro Pathing Autonomous", group = "Autonomous")
-@Configurable // Panels
+@Configurable
 public class Navale extends OpMode {
-    private TelemetryManager panelsTelemetry; // Panels Telemetry instance
-    public Follower follower; // Pedro Pathing follower instance
-    private int pathState; // Current autonomous path state (state machine)
-    private PathChain paths ; // Paths defined in the Paths class
+    private TelemetryManager panelsTelemetry;
+    private Follower follower;
+    private int pathState;
+    private Paths pathLibrary;
 
     @Override
     public void init() {
@@ -164,7 +166,8 @@ public class Navale extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(72, 8, Math.toRadians(90)));
 
-        paths = new PathChain(follower.getConstraints()); // Build paths
+        pathLibrary = new Paths(follower);
+        pathState = 0;
 
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
@@ -172,15 +175,9 @@ public class Navale extends OpMode {
 
     @Override
     public void loop() {
-        follower.update(); // Update Pedro Pathing
-         // Update autonomous state machine
+        follower.update();
+        autonomousPathUpdate();
 
-        switch(pathState) {
-            //add case statements and flywheel logic
-        }
-
-
-        // Log values to Panels and Driver Station
         panelsTelemetry.debug("Path State", pathState);
         panelsTelemetry.debug("X", follower.getPose().getX());
         panelsTelemetry.debug("Y", follower.getPose().getY());
@@ -188,18 +185,64 @@ public class Navale extends OpMode {
         panelsTelemetry.update(telemetry);
     }
 
+    private void autonomousPathUpdate() {
+        switch (pathState) {
+            case 0:
+                follower.followPath(pathLibrary.path1);
+                pathState = 1;
+                break;
+            case 1:
+                if (!follower.isBusy()) {
+                    follower.followPath(pathLibrary.path2);
+                    pathState = 2;
+                }
+                break;
+            case 2:
+                if (!follower.isBusy()) {
+                    follower.followPath(pathLibrary.path3);
+                    pathState = 3;
+                }
+                break;
+            case 3:
+                if (!follower.isBusy()) {
+                    follower.followPath(pathLibrary.path4);
+                    pathState = 4;
+                }
+                break;
+            case 4:
+                if (!follower.isBusy()) {
+                    follower.followPath(pathLibrary.path5);
+                    pathState = 5;
+                }
+                break;
+            case 5:
+                if (!follower.isBusy()) {
+                    follower.followPath(pathLibrary.path6);
+                    pathState = 6;
+                }
+                break;
+            case 6:
+                if (!follower.isBusy()) {
+                    follower.followPath(pathLibrary.path7);
+                    pathState = 7;
+                }
+                break;
+            default:
+                break;
+        }
+    }
 
     public static class Paths {
-        public PathChain Path1;
-        public PathChain Path2;
-        public PathChain Path3;
-        public PathChain Path4;
-        public PathChain Path5;
-        public PathChain Path6;
-        public PathChain Path7;
+        public final PathChain path1;
+        public final PathChain path2;
+        public final PathChain path3;
+        public final PathChain path4;
+        public final PathChain path5;
+        public final PathChain path6;
+        public final PathChain path7;
 
         public Paths(Follower follower) {
-            Path1 = follower.pathBuilder().addPath(
+            path1 = follower.pathBuilder().addPath(
                             new BezierCurve(
                                     new Pose(88.269, 7.615),
                                     new Pose(88.965, 9.494),
@@ -214,60 +257,50 @@ public class Navale extends OpMode {
                                     new Pose(90.000, 12.288)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(70))
-
                     .build();
 
-            Path2 = follower.pathBuilder().addPath(
+            path2 = follower.pathBuilder().addPath(
                             new BezierLine(
                                     new Pose(90.000, 12.288),
-
                                     new Pose(132.058, 9.038)
                             )
                     ).setTangentHeadingInterpolation()
-
                     .build();
 
-            Path3 = follower.pathBuilder().addPath(
+            path3 = follower.pathBuilder().addPath(
                             new BezierLine(
                                     new Pose(132.058, 9.038),
-
                                     new Pose(134.385, 10.058)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(-3), Math.toRadians(350))
-
+                    ).setLinearHeadingInterpolation(Math.toRadians(357), Math.toRadians(350))
                     .build();
 
-            Path4 = follower.pathBuilder().addPath(
+            path4 = follower.pathBuilder().addPath(
                             new BezierLine(
                                     new Pose(134.385, 10.058),
-
                                     new Pose(89.923, 12.192)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(350), Math.toRadians(70))
                     .setReversed()
                     .build();
 
-            Path5 = follower.pathBuilder().addPath(
+            path5 = follower.pathBuilder().addPath(
                             new BezierLine(
                                     new Pose(89.923, 12.192),
-
                                     new Pose(126.596, 9.404)
                             )
                     ).setTangentHeadingInterpolation()
-
                     .build();
 
-            Path6 = follower.pathBuilder().addPath(
+            path6 = follower.pathBuilder().addPath(
                             new BezierLine(
                                     new Pose(126.596, 9.404),
-
                                     new Pose(134.923, 9.192)
                             )
                     ).setTangentHeadingInterpolation()
-
                     .build();
 
-            Path7 = follower.pathBuilder().addPath(
+            path7 = follower.pathBuilder().addPath(
                             new BezierCurve(
                                     new Pose(134.923, 9.192),
                                     new Pose(127.489, 9.794),
@@ -282,22 +315,4 @@ public class Navale extends OpMode {
                     .build();
         }
     }
-
-    private final Pose scorePose = new Pose(90, 12.288, Math.toRadians(70));
-    private final Pose pickup1Pose = new Pose(132.0576923076923 , 9.038461538461565, Math.toRadians(-4));
-    private final Pose pickup2Pose = new Pose(134.3846153846154,10.057692307692324, Math.toRadians(350));
-    public void autonomousPathUpdate() {
-        // Add your state machine Here
-        // Access paths with paths.pathName
-        // Refer to the Pedro Pathing Docs (Auto Example) for an example state machine
-        paths = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose, pickup1Pose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
-                .addPath(new BezierLine(pickup1Pose, scorePose))
-                .setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose.getHeading())
-                .build();
-
-        follower.followPath(paths);
-    }
 }
-
