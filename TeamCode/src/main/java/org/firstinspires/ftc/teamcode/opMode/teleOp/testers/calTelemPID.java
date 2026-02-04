@@ -116,7 +116,6 @@ public class calTelemPID extends LinearOpMode {
 
         while (opModeIsActive()) {
             shooterPIDF.setPIDF(kP, kI, kD, kF);
-            shooterFF = new SimpleMotorFeedforward(kS, kV, kA);
             // === SERVO ===
             linkage.setPosition(linkagePos);
             blocker.setPosition(blockerPos);
@@ -126,7 +125,10 @@ public class calTelemPID extends LinearOpMode {
             if(shooterPoser==0){
                 spinToRpm(shooterPower);
             }else{
-                shooter.setPower(shooterPoser);
+                if(usefirst){
+                    shooter.setPower(shooterPoser);
+
+                }
                 if(usesecond){
                     shooter2.setPower(shooterPoser);
 

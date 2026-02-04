@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -35,12 +36,13 @@ public class Outtake implements Subsystem {
     private double integral = TeamConstants.integral;
     private double lastError = TeamConstants.lastError;
     private double lastTime;
-
+private PIDFController pidfController;
     private final ElapsedTime timer = new ElapsedTime();
 
     public Outtake(HardwareMap hw, Telemetry t) {
         this.hardwareMap = hw;
         this.telemetry = t;
+        pidfController = new PIDFController(0.05,0,0,0.00024);
 
         // Map motors
         outtake = hardwareMap.get(DcMotorEx.class, "Outtake");
@@ -70,29 +72,21 @@ public class Outtake implements Subsystem {
 
     public double getRPM() {
         // identical to original Shooter logic
-        return outtake.getVelocity() * 2.2;
+        return outtake.getVelocity() * 2.14;
     }
 
     public void spinToRpm(double targetRPM) {
+        double currRPM = getRPM();
 
-        double current = getRPM();
-        double error = targetRPM - current;
+        // PID feedback
+        double pidPower = pidfController.calculate(currRPM, targetRPM);
 
-        double now = timer.seconds();
-        double dt = now - lastTime;
+        // Feedforward
 
-        // PID calculations
-        integral += error * dt;
-        double derivative = (error - lastError) / dt;
+        // Combine and clip
+        double power = Range.clip(pidPower , 0, 1);
+        outtake.setPower(power);
 
-        double output = kP * error + kI * integral + kD * derivative;
-        output = Range.clip(output, 0, 1);
-
-        outtake.setPower(output);
-        outtake2.setPower(output);
-
-        lastError = error;
-        lastTime = now;
     }
 
     public boolean atSpeed(double low, double high) {

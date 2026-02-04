@@ -88,8 +88,6 @@ public class aaravred extends OpMode {
         GoGate = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose,GateControl,Gate))
                 .setLinearHeadingInterpolation(scorePose.getHeading(),Gate.getHeading())
-                .addPath(new BezierLine(Gate,new Pose(135,56)))
-                .setLinearHeadingInterpolation(Gate.getHeading(),Math.toRadians(75))
                 .build();
         BackGate = follower.pathBuilder()
                 .addPath(new BezierCurve(Gate,backGate,scorePose))
@@ -170,13 +168,7 @@ public class aaravred extends OpMode {
 
     private void shoot(PathChain nextPath, boolean skip) {
         if (follower.isBusy()) {
-            if(follower.getPose().getY()>70){
                 prepareToShoot();
-            }else{
-                transfer.setPower(0);
-                intake.setPower(0);
-                outtake.setPower(0);
-            }
         }
         if (!follower.isBusy()) {
             if ((outtake.atSpeed(2000,3000)||happened) ) {

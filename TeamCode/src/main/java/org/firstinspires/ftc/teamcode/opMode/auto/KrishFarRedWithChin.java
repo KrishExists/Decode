@@ -60,6 +60,7 @@ public class KrishFarRedWithChin extends OpMode {
         pathTimer = new Timer();
         actionTimer = new ElapsedTime();
         blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+        Paths paths1 = new Paths(follower);
         //transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
 
         pathState = 0;
