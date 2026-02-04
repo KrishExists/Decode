@@ -247,26 +247,18 @@ public class aaravred extends OpMode {
                 resetTimers();
                 spinIntakeGate(BackGate);
                 break;
-            case 5:
-                resetTimers();
-                shoot(GoGate);
-                break;
             case 6:
-                resetTimers();
-                spinIntakeGate(BackGate);
-                break;
-            case 7:
                 resetTimers();
                 shoot(PrepSpike1);
                 break;
-            case 8:
+            case 7:
                 spinIntake(ScoreSpike1,89);
                 break;
-            case 9:
+            case 8:
                 resetTimers();
                 shoot(PrepSpike3);
                 break;
-            case 10:
+            case 9:
                 resetTimers();
                 spinIntake(ScoreSpike3,37);
                 break;
