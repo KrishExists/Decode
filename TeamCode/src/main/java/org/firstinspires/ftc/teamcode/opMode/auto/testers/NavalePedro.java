@@ -12,6 +12,8 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystem.Intake;
+import org.firstinspires.ftc.teamcode.subsystem.Outtake;
 
 @Autonomous(name = "Pedro Pathing Autonomous", group = "Autonomous")
 @Configurable
@@ -20,6 +22,8 @@ public class NavalePedro extends OpMode {
     private Follower follower;
     private int pathState;
     private Paths pathLibrary;
+    private Outtake outtake;
+    private Intake intake;
 
     @Override
     public void init() {
@@ -57,6 +61,8 @@ public class NavalePedro extends OpMode {
                 if (!follower.isBusy()) {
                     follower.followPath(pathLibrary.path2);
                     pathState = 2;
+                    outtake.setPower(0.9);
+                    outtake.setLinkage(0.42);
                 }
                 break;
             case 2:
@@ -69,6 +75,9 @@ public class NavalePedro extends OpMode {
                 if (!follower.isBusy()) {
                     follower.followPath(pathLibrary.path4);
                     pathState = 4;
+                    intake.setPower(1);
+                    intake.transfer.setPower(1);
+
                 }
                 break;
             case 4:
@@ -176,5 +185,6 @@ public class NavalePedro extends OpMode {
                     .setReversed()
                     .build();
         }
+
     }
 }

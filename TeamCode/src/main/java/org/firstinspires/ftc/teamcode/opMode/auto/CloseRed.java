@@ -124,7 +124,7 @@ public class CloseRed extends OpMode {
         outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
         blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
         transfer.setPower(-1);
-        telemetry.addLine("transfer poewr 0");
+        telemetry.addLine("transfer power 0");
     }
 
     private void spinUpIntake() {

@@ -25,7 +25,7 @@ public class NavaleBroganTest extends OpMode {
     private Outtake outtake;
     private Intake intake;
 
-    public static void setPathState(PathState newState2){
+    public static void setPathState(PathState newState2) {
         pathState = newState2;
         pathtimer.resetTimer();
     }
@@ -41,13 +41,13 @@ public class NavaleBroganTest extends OpMode {
         follower.setPose(startPose);
     }
 
-    public void start(){
+    public void start() {
         opmodetimer.resetTimer();
         setPathState(pathState);
     }
 
     @Override
-    public void loop(){
+    public void loop() {
         follower.update();
         statePathUpdate();
 
@@ -84,7 +84,7 @@ public class NavaleBroganTest extends OpMode {
 
     private PathChain driveStartPosShootPos;
 
-    public void buildPaths(){
+    public void buildPaths() {
         driveStartPosShootPos = follower.pathBuilder()
                 .addPath(new BezierLine(startPose, shootPose))
                 .setLinearHeadingInterpolation(startPose.getHeading(), shootPose.getHeading())
@@ -94,7 +94,7 @@ public class NavaleBroganTest extends OpMode {
     }
 
     public void statePathUpdate() {
-        switch(pathState) {
+        switch (pathState) {
             case DRIVE_STARTPOS_SHOOT_POS:
                 follower.followPath(driveStartPosShootPos, true);
                 setPathState(PathState.SHOOT_PRELOAD); //reset timer and make a new state
@@ -107,7 +107,7 @@ public class NavaleBroganTest extends OpMode {
                     outtake.spinToRpm(4000);
                     outtake.setLinkage(0.42);
 
-                    if (outtake.atSpeed(3900,4000)){
+                    if (outtake.atSpeed(3900, 4000)) {
                         intake.setState(Intake.IntakeState.SpeedMid);
                         //This transfers the ball  to shooter once rpm is ready.
                     }
@@ -115,7 +115,8 @@ public class NavaleBroganTest extends OpMode {
                     // ADD FLYWHEEL LOGIC
                     telemetry.addLine("DONE Path 1");
                     telemetry.update();
-                    //transition to next state
+                    follower.followPath(driveStartPosShootPos, true);
+
                 }
 
                 break;
