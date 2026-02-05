@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Outtake;
 import org.firstinspires.ftc.teamcode.subsystem.Robot;
 
 
-@TeleOp(name = "drivetester", group = "Main")
+@TeleOp(name = "drivetester", group = "Testers")
 public class DriveTEster extends LinearOpMode {
     private HardwareMap hw;
     private Drivetrain drive;
@@ -41,7 +41,7 @@ public class DriveTEster extends LinearOpMode {
 
 // ===== Main Loop =====
         while (opModeIsActive()) {
-            robot.drive.manualDrive(gamepad1);
+            drive.manualDrive(gamepad1);
             telemetry.addData("Intake State", intake.getState());
             telemetry.addData("Shooter RPM", shooter.getRPM());
             telemetry.update();
