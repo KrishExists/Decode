@@ -215,6 +215,7 @@ public class Drivetrain implements Subsystem {
                         true
                 );
             }
+
             // or pressed B to cancel
             if (joystickInput || gamepad.bWasPressed()) {
                 automatedDrive = false;
