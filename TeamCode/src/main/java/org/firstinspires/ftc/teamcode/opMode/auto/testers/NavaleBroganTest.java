@@ -36,6 +36,8 @@ public class NavaleBroganTest extends OpMode {
         pathtimer = new Timer();
         opmodetimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
+        outtake = new Outtake(hardwareMap, telemetry);
+        intake = new Intake(hardwareMap, telemetry, outtake);
 
         buildPaths();
         follower.setPose(startPose);
