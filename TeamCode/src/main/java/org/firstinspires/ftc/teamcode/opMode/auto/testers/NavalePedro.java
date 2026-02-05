@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Outtake;
 
-@Autonomous(name = "Pedro Pathing Autonomous", group = "Autonomous")
+@Autonomous(name = "Pedro Pathing Autonomous navale", group = "Autonomous")
 @Configurable
 public class NavalePedro extends OpMode {
     private TelemetryManager panelsTelemetry;
