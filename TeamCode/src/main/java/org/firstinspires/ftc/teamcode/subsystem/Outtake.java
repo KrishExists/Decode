@@ -42,7 +42,7 @@ private PIDFController pidfController;
     public Outtake(HardwareMap hw, Telemetry t) {
         this.hardwareMap = hw;
         this.telemetry = t;
-        pidfController = new PIDFController(0.05,0,0,0.00024);
+        pidfController = new PIDFController(0.05,0,0,0.00028);
 
         // Map motors
         outtake = hardwareMap.get(DcMotorEx.class, "Outtake");

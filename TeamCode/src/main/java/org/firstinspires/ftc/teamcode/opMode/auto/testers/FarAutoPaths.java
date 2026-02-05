@@ -51,84 +51,81 @@ public class FarAutoPaths extends OpMode {
 
     public static class Paths {
         public PathChain score;
-        public PathChain scoreSpecial;
         public PathChain pick1;
-        public PathChain pickSimplyBall;
         public PathChain shoot;
         public PathChain leave;
+        public PathChain scorespike1;
+        public PathChain shootspike1;
+
 
         public Paths(Follower follower) {
             score = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(80.182, 7.618),
+                                    new Pose(80.1, 7.6),
 
-                                    new Pose(90.894, 10.689)
+                                    new Pose(90, 10)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(65))
 
                     .build();
 
             pick1 = follower.pathBuilder().addPath(
-                            new BezierCurve(
-                                    new Pose(90.894, 10.689),
-                                    new Pose(143.060, 21.944),
-                                    new Pose(129.329, 14.744),
-                                    new Pose(134.775, 11.218)
+                            new BezierLine(
+                                  new Pose(90,10),new Pose(111,7)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(65), Math.toRadians(-60))
+                    ).setLinearHeadingInterpolation(Math.toRadians(65), Math.toRadians(0))
                     .addPath(
                             new BezierLine(
-                                    new Pose(134.775, 11.218),
+                                    new Pose(111, 7),
 
-                                    new Pose(134.735, 7.863)
+                                    new Pose(136, 8)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(-60), Math.toRadians(-10))
+                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                     .build();
 
 
 
             shoot = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(134.735, 7.863),
+                                    new Pose(136, 8),
 
-                                    new Pose(90.672, 10.744)
+                                    new Pose(90, 10)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(-10), Math.toRadians(65))
+                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                     .build();
 
-            pickSimplyBall = follower.pathBuilder().addPath(//We will do this twice
+            scorespike1 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(90.672, 10.744),
+                                    new Pose(90, 10),
 
-                                    new Pose(130.435, 11.035)
+                                    new Pose(100, 35)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-55))
+                    ).setLinearHeadingInterpolation(Math.toRadians(65), Math.toRadians(0))
                     .addPath(
                             new BezierLine(
-                                    new Pose(130.435, 11.035),
+                                    new Pose(100, 35),
 
-                                    new Pose(136.696, 7.930)
+                                    new Pose(135, 35)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(-55), Math.toRadians(0))
-                    .build();
-
-
-
-            scoreSpecial = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(136.696, 7.930),
-
-                                    new Pose(90.574, 10.643)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(65))
+                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                     .build();
 
+            shootspike1 =  follower.pathBuilder()
+                    .addPath(
+                            new  BezierLine(
+                                    new Pose(135,35),
+                                    new Pose(90,10))
+                    )
+
+                    .setLinearHeadingInterpolation(Math.toRadians(0),Math.toRadians(65))
+
+            .build();
 
             leave = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(91.130, 10.852),
+                                    new Pose(90, 10),
 
                                     new Pose(106.730, 14.217)
                             )
@@ -144,54 +141,55 @@ public class FarAutoPaths extends OpMode {
                 follower.followPath(paths.score,true);
                 pathState++;
                 break;
-
             case 1:
                 if(!follower.isBusy()){
-                    follower.followPath(paths.pick1,true);
+                    follower.followPath(paths.scorespike1,true);
                     pathState++;
                 }
                 break;
 
             case 2:
                 if(!follower.isBusy()){
-                    follower.followPath(paths.score,true);
-                    pathState++;
-                }
-                break;
-
-            case 3:
-                if(!follower.isBusy()){
-                    follower.followPath(paths.pickSimplyBall,true);
+                    follower.followPath(paths.shootspike1,true);
                     pathState++;
                 }
                 break;
 
             case 4:
                 if(!follower.isBusy()){
-                    follower.followPath(paths.scoreSpecial,true);
+                    follower.followPath(paths.pick1,true);
                     pathState++;
                 }
                 break;
 
             case 5:
                 if(!follower.isBusy()){
-                    follower.followPath(paths.pickSimplyBall,true);
+                    follower.followPath(paths.shoot,true);
                     pathState++;
                 }
                 break;
+
             case 6:
                 if(!follower.isBusy()){
-                    follower.followPath(paths.scoreSpecial,true);
+                    follower.followPath(paths.pick1,true);
                     pathState++;
                 }
                 break;
 
             case 7:
                 if(!follower.isBusy()){
+                    follower.followPath(paths.shoot,true);
+                    pathState++;
+                }
+                break;
+
+            case 8:
+                if(!follower.isBusy()){
                     follower.followPath(paths.leave);
                     pathState++;
                 }
                 break;
+
 
         }
 

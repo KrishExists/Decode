@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.controller.PController;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -14,7 +15,10 @@ import java.util.function.Supplier;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 
@@ -30,13 +34,15 @@ public class Drivetrain implements Subsystem {
     private final Supplier<PathChain> park;
 
     private final Supplier<PathChain> gate;
-    private final Supplier<PathChain> align;
 
     private boolean startFlag = false;
+    private static double kp = 0.05;
+
     private boolean parkFlag = false;
     private boolean gateFlag = false;
     private boolean closeFlag = false; // your "mid/close"
     private boolean farFlag = false;
+    private boolean autoFalg = false;
 
     public DcMotor leftFront;
     public DcMotor rightFront;
@@ -49,6 +55,8 @@ public class Drivetrain implements Subsystem {
     private final HardwareMap hardwareMap;
     private final Telemetry telemetry;
     private static final boolean teleDrive = true;
+    Pose redThing;
+    PController headingController;
 
 
     public Drivetrain(HardwareMap h, Telemetry t) {
@@ -106,13 +114,12 @@ public class Drivetrain implements Subsystem {
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(72, 72))))
                 .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, 0, 0.8))
                 .build();
-        align = () -> follower.pathBuilder() //Lazy Curve Generation
-                .addPath(new Path(new BezierLine(follower::getPose, follower::getPose)))
-                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(50), 0.8))
-                .build();
+
+         redThing = new Pose(130,135);
 
         this.hardwareMap = h;
         this.telemetry = t;
+        headingController = new PController(kp);
         follower.startTeleopDrive(teleDrive);
     }
 
@@ -138,13 +145,14 @@ public class Drivetrain implements Subsystem {
         if(gamepad.dpad_up){
             follower.setPose(new Pose(72,72,0));
         }
+
         // ====== BUTTONS SET FLAGS ======
         if (gamepad.yWasPressed()) startFlag = true;
         if (gamepad.right_trigger > 0.2) parkFlag = true;
         if (gamepad.left_trigger > 0.2) gateFlag = true;
         if (gamepad.leftBumperWasPressed()) closeFlag = true;
         if (gamepad.rightBumperWasPressed()) farFlag = true;
-
+        if(gamepad.aWasPressed()) autoFalg = true;
 
         // ====== PRIORITY EXECUTION (NO ELSE-IFS) ======
         if (!automatedDrive) {
@@ -178,6 +186,10 @@ public class Drivetrain implements Subsystem {
                 follower.followPath(far.get());
                 farFlag = false;
             }
+            if(autoFalg){
+                automatedDrive = true;
+                autoFalg = false;
+            }
         }
 
         if (automatedDrive) {
@@ -185,7 +197,24 @@ public class Drivetrain implements Subsystem {
             boolean joystickInput = Math.abs(gamepad.left_stick_x) > 0.1
                     || Math.abs(gamepad.left_stick_y) > 0.1
                     || Math.abs(gamepad.right_stick_x) > 0.1;
-
+            if(autoFalg){
+                double follwerx = follower.getPose().getX();
+                double followery = follower.getPose().getY();
+                double diffy = Math.abs(redThing.getY()-followery);
+                double diffx = Math.abs(redThing.getX()-follwerx);
+                double angle = Math.atan(diffy/diffx);
+                telemetry.addData("angle",angle);
+                double error = AngleUnit.normalizeRadians(angle - AngleUnit.normalizeRadians(follower.getPose().getHeading()));
+                double target = error + follower.getHeading();
+                double output = Range.clip(headingController.calculate(follower.getHeading(), target), -1, 1);
+                follower.startTeleopDrive(true);
+                follower.setTeleOpDrive(
+                        -gamepad.left_stick_y,
+                        -gamepad.left_stick_x,
+                        output,
+                        true
+                );
+            }
             // or pressed B to cancel
             if (joystickInput || gamepad.bWasPressed()) {
                 automatedDrive = false;
@@ -230,6 +259,7 @@ public class Drivetrain implements Subsystem {
 
     public void update(Gamepad gamepad) {
         follower.update();
+        headingController.setP(kp);
 
         this.combinedDrive(gamepad);
         telemetry.addData("position", follower.getPose());
