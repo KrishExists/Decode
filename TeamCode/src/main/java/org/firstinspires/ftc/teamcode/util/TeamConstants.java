@@ -37,8 +37,8 @@ public class TeamConstants {
     // =============================
     // Shooter RPM Targets
     // =============================
-    public static final double SHOOTER_MID_RPM = 2500;
-    public static final double SHOOTER_FAR_RPM = 3300;
+    public static final double SHOOTER_MID_RPM = 2300;
+    public static final double SHOOTER_FAR_RPM = 2850;
 
     public static final double Shooter_BottomThreshold = 2300;
 
@@ -48,9 +48,7 @@ public class TeamConstants {
     // =============================
     // Shooter PID Constants
     // =============================
-    public static final double SHOOTER_kP = 0.05;
-    public static final double SHOOTER_kI = 0.0;
-    public static final double SHOOTER_kD = 0.0;
+
     public static double lastError = 0;
     public static double integral = 0;
 

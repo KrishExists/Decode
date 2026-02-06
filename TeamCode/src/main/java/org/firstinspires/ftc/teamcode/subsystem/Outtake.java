@@ -29,9 +29,6 @@ public class Outtake implements Subsystem {
 
 
     // Shooter PID variables (from Shooter class)
-    public static double kP = TeamConstants.SHOOTER_kP;
-    public static double kI = TeamConstants.SHOOTER_kI;
-    public static double kD = TeamConstants.SHOOTER_kD;
 
     private double integral = TeamConstants.integral;
     private double lastError = TeamConstants.lastError;
@@ -42,7 +39,7 @@ private PIDFController pidfController;
     public Outtake(HardwareMap hw, Telemetry t) {
         this.hardwareMap = hw;
         this.telemetry = t;
-        pidfController = new PIDFController(0.05,0,0,0.00028);
+        pidfController = new PIDFController(0.005,0,0,0.0002481);
 
         // Map motors
         outtake = hardwareMap.get(DcMotorEx.class, "Outtake");
@@ -75,19 +72,51 @@ private PIDFController pidfController;
         return outtake.getVelocity() * 2.14;
     }
 
-    public void spinToRpm(double targetRPM) {
-        double currRPM = getRPM();
+    public double getRPM2() {
+        return outtake2.getVelocity()*2.14;
+    }
 
-        // PID feedback
-        double pidPower = pidfController.calculate(currRPM, targetRPM);
+//    public void spinToRpm(double targetRPM) {
+//        double currRPM = getRPM();
+//
+//        // PID feedback
+//        double pidPower = pidfController.calculate(currRPM, targetRPM);
+//
+//        // Feedforward
+//
+//        // Combine and clip
+//        double power = Range.clip(pidPower , 0, 1);
+//        outtake.setPower(power);
+//
+//    }
+public void spinToRpm(double targetRPM) {
+    double currRPM = getRPM();
 
-        // Feedforward
+    // PID feedback
+    double pidPower = pidfController.calculate(currRPM, targetRPM);
 
-        // Combine and clip
-        double power = Range.clip(pidPower , 0, 1);
+    // Feedforward
+
+    // Combine and clip
+    double power = Range.clip(pidPower , 0, 1);
+
+    double currRPM2 = getRPM2();
+
+    // PID feedback
+    double pidPower2 = pidfController.calculate(currRPM2, targetRPM);
+
+    // Feedforward
+
+    // Combine and clip
+    double power2 = Range.clip(pidPower2, 0, 1);
         outtake.setPower(power);
 
-    }
+        outtake2.setPower(power2);
+
+    telemetry.addData("Combined Power", power);
+    telemetry.addData("Combined Power2", power2);
+
+}
 
     public boolean atSpeed(double low, double high) {
         double rpm = getRPM();
