@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Outtake;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-//import org.firstinspires.ftc.teamcode.subsystem.Transfer;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
 
@@ -44,8 +43,6 @@ public class NavaleBroganTest extends OpMode {
         outtake = new Outtake(hardwareMap, telemetry);
         intake = new Intake(hardwareMap, telemetry, outtake);
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
-        transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
-
         buildPaths();
         follower.setPose(startPose);
     }
@@ -89,7 +86,7 @@ public class NavaleBroganTest extends OpMode {
     private final Pose startPose = new Pose(62.93975903614457, 6.915662650602412, Math.toRadians(90));
     private final Pose shootPose = new Pose(61.077618164967554, 15.787534754402234, Math.toRadians(115));
 
-    //private final Pose intakePose = new Pose(10.543, 9.376, Math.toRadians(-173));
+
 
     private PathChain driveStartPosShootPos;
 
@@ -98,7 +95,6 @@ public class NavaleBroganTest extends OpMode {
                 .addPath(new BezierLine(startPose, shootPose))
                 .setLinearHeadingInterpolation(startPose.getHeading(), shootPose.getHeading())
                 .build();
-
 
     }
 
