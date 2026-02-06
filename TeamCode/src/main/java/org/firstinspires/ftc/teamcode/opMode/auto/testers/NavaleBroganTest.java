@@ -106,10 +106,10 @@ public class NavaleBroganTest extends OpMode {
                 //check if follower did it's path.
 
                 if (!follower.isBusy()) {
-                    outtake.spinToRpm(4000);
+                    outtake.spinToRpm(1000);
                     outtake.setLinkage(0.42);
 
-                    if (outtake.atSpeed(3900, 4000)) {
+                    if (outtake.atSpeed(300, 1001)) {
                         intake.setState(Intake.IntakeState.SpeedMid);
                         //This transfers the ball  to shooter once rpm is ready.
                     }
