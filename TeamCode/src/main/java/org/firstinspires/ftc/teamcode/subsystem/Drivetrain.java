@@ -188,7 +188,6 @@ public class Drivetrain implements Subsystem {
             }
             if(autoFalg){
                 automatedDrive = true;
-                autoFalg = false;
             }
         }
 
@@ -214,6 +213,7 @@ public class Drivetrain implements Subsystem {
                         output,
                         true
                 );
+                autoFalg = false;
             }
 
             // or pressed B to cancel
