@@ -8,12 +8,15 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Outtake;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystem.Transfer;
+import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
 
 @Autonomous
@@ -24,6 +27,8 @@ public class NavaleBroganTest extends OpMode {
     private Timer opmodetimer;
     private Outtake outtake;
     private Intake intake;
+    private DcMotorEx transfer;
+
 
     public static void setPathState(PathState newState2) {
         pathState = newState2;
@@ -38,6 +43,8 @@ public class NavaleBroganTest extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         outtake = new Outtake(hardwareMap, telemetry);
         intake = new Intake(hardwareMap, telemetry, outtake);
+        transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
+        transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
 
         buildPaths();
         follower.setPose(startPose);
@@ -108,9 +115,11 @@ public class NavaleBroganTest extends OpMode {
                 if (!follower.isBusy()) {
                     outtake.spinToRpm(1000);
                     outtake.setLinkage(0.42);
+                    transfer.setPower(1);
+                    intake.setPower(1);
 
                     if (outtake.atSpeed(300, 1001)) {
-                        intake.setState(Intake.IntakeState.SpeedMid);
+                        intake.setState(Intake.IntakeState.SpeedFar);
                         //This transfers the ball  to shooter once rpm is ready.
                     }
 
