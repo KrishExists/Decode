@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Outtake;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystem.Transfer;
+//import org.firstinspires.ftc.teamcode.subsystem.Transfer;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
 
@@ -113,12 +113,12 @@ public class NavaleBroganTest extends OpMode {
                 //check if follower did it's path.
 
                 if (!follower.isBusy()) {
-                    outtake.spinToRpm(1000);
-                    outtake.setLinkage(0.42);
-                    transfer.setPower(1);
-                    intake.setPower(1);
+                    outtake.setLinkage(TeamConstants.LINKAGE_REST);
+                    outtake.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
+                    transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+                    intake.setPower(TeamConstants.INTAKE_FEED_POWER);
 
-                    if (outtake.atSpeed(300, 1001)) {
+                    if (outtake.atSpeed(2500, 3000)) {
                         intake.setState(Intake.IntakeState.SpeedFar);
                         //This transfers the ball  to shooter once rpm is ready.
                     }
