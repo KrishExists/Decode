@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Outtake;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
-@Autonomous(name = "Pedro Pathing Auto aarav", group = "Autonomous")
+@Autonomous(name = "Pedro Pathing Auto aarav--this one", group = "Autonomous")
 public class aaravred extends OpMode {
 
     private Follower follower;

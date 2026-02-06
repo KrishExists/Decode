@@ -193,8 +193,6 @@ public class Intake implements Subsystem{
             case SpeedFar:
                 //kp is 0.07
                 //kd is 0.00001
-                Outtake.kD = 0.00001;
-                Outtake.kP  = 0.07;
                 intake.setPower(TeamConstants.INTAKE_IN_POWER);
                 linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
                 shooter.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
@@ -208,8 +206,6 @@ public class Intake implements Subsystem{
                 }
                 break;
             case SpeedMid:
-                Outtake.kD = 0.0;
-                Outtake.kP  = 0.05;
                 intake.setPower(TeamConstants.INTAKE_EVEN_POWER);
                 linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
                 shooter.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
