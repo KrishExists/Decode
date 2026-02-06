@@ -218,11 +218,11 @@ public class Drivetrain implements Subsystem {
                 double follwerx = follower.getPose().getX();
                 double followery = follower.getPose().getY();
                 double lockedHeading = Math.atan2(redThing.getPose().getY()-followery,redThing.getPose().getX()-follwerx);
-
-                double error = AngleUnit.normalizeRadians(lockedHeading - AngleUnit.normalizeRadians(follower.getPose().getHeading()));
                 if(redThing.getX()!=130){
-                    error *= -1;
+                    lockedHeading = Math.PI -  lockedHeading;
                 }
+                double error = AngleUnit.normalizeRadians(lockedHeading - AngleUnit.normalizeRadians(follower.getPose().getHeading()));
+
                 double target = error + follower.getHeading();
                 double output = Range.clip(headingController.calculate(follower.getHeading(), target), -1, 1);
 
