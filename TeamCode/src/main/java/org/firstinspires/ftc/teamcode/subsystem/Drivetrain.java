@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.controller.PController;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -20,6 +22,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.util.Arc;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 
 @Config
@@ -36,7 +39,7 @@ public class Drivetrain implements Subsystem {
     private final Supplier<PathChain> gate;
 
     private boolean startFlag = false;
-    private static double kp = 0.05;
+    private static double kp = 3.0;
 
     private boolean parkFlag = false;
     private boolean gateFlag = false;
@@ -50,6 +53,7 @@ public class Drivetrain implements Subsystem {
     public DcMotor rightBack;
 
     private final TelemetryManager telemetryM;
+    private Arc myarc;
 
 
     private final HardwareMap hardwareMap;
@@ -114,13 +118,27 @@ public class Drivetrain implements Subsystem {
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(72, 72))))
                 .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, 0, 0.8))
                 .build();
+        if(red){
+            redThing = new Pose(130,135);
 
-         redThing = new Pose(130,135);
+        }else{
+            redThing = new Pose(130-72,135-72);
+        }
 
         this.hardwareMap = h;
         this.telemetry = t;
         headingController = new PController(kp);
         follower.startTeleopDrive(teleDrive);
+        double cx = 131;
+        double cy = 135;
+        double radius = Math.hypot(103 - cx, 102 - cy);
+        double start = Math.PI; // due west
+        double end = Math.atan2(102 - cy, 103 - cx);
+        if (end < start) end += 2*Math.PI; // normalize for CCW
+
+        myarc = new Arc(cx,cy,radius,start,end,true);
+
+
     }
 
 
@@ -199,13 +217,16 @@ public class Drivetrain implements Subsystem {
             if(autoFalg){
                 double follwerx = follower.getPose().getX();
                 double followery = follower.getPose().getY();
-                double diffy = Math.abs(redThing.getY()-followery);
-                double diffx = Math.abs(redThing.getX()-follwerx);
-                double angle = Math.atan(diffy/diffx);
-                telemetry.addData("angle",angle);
-                double error = AngleUnit.normalizeRadians(angle - AngleUnit.normalizeRadians(follower.getPose().getHeading()));
+                double lockedHeading = Math.atan2(redThing.getPose().getY()-followery,redThing.getPose().getX()-follwerx);
+
+                double error = AngleUnit.normalizeRadians(lockedHeading - AngleUnit.normalizeRadians(follower.getPose().getHeading()));
+                if(redThing.getX()!=130){
+                    error *= -1;
+                }
                 double target = error + follower.getHeading();
                 double output = Range.clip(headingController.calculate(follower.getHeading(), target), -1, 1);
+
+
                 follower.startTeleopDrive(true);
                 follower.setTeleOpDrive(
                         -gamepad.left_stick_y,
@@ -213,12 +234,13 @@ public class Drivetrain implements Subsystem {
                         output,
                         true
                 );
-                autoFalg = false;
             }
 
+
             // or pressed B to cancel
-            if (joystickInput || gamepad.bWasPressed()) {
+            if ((joystickInput&&!autoFalg) || gamepad.bWasPressed()) {
                 automatedDrive = false;
+                autoFalg = false;
                 follower.startTeleopDrive(true); // ensure teleop drive restarts
             }
         }
