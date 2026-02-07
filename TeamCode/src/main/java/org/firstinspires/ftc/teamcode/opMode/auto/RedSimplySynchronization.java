@@ -70,7 +70,7 @@ public class RedSimplySynchronization extends OpMode {
 
     private void prepareToShoot() {
         intake.setPower(0);
-        outtake.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
+        outtake.spinToRpm(TeamConstants.SHOOTER_FARAUTO_RPM);
         blocker.setPosition(TeamConstants.BLOCKER_OPEN);
         transfer.setPower(0);
     }
@@ -82,7 +82,7 @@ public class RedSimplySynchronization extends OpMode {
     }
     private void spinUpShooter() {
         telemetry.addLine("Ready to shoot");
-        outtake.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
+        outtake.spinToRpm(TeamConstants.SHOOTER_FARAUTO_RPM);
     }
 
     private void spinUp(boolean withTransfer) {
@@ -116,8 +116,8 @@ public class RedSimplySynchronization extends OpMode {
             prepareToShoot();
         }
         if (!follower.isBusy()) {
-            outtake.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
-            if ((outtake.atSpeed(2500,3200)||happened) ) {
+            outtake.spinToRpm(TeamConstants.SHOOTER_FARAUTO_RPM);
+            if ((outtake.atSpeed(2900,3200)||happened) ) {
                 blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 happened = true;
                 spinUp(true);
@@ -140,10 +140,18 @@ public class RedSimplySynchronization extends OpMode {
 
     }
 
-    private void spinIntake(PathChain path) {
-        spinUpIntake();
+    private void spinIntake(PathChain path,int y) {
+        if(follower.isBusy()) {
+            if (follower.getPose().getX() > y) {
+                spinUpIntake();
+            } else {
+                outtake.spinToRpm(0);
+                intake.setPower(0);
+                transfer.setPower(0);
+            }
+        }
         if (!follower.isBusy()) {
-            follower.followPath(path, true);
+            follower.followPath(path,true);
             pathState++;
             resetBooleans();
         }
@@ -155,6 +163,7 @@ public class RedSimplySynchronization extends OpMode {
         switch (pathState) {
             case 0: // Move to Score Preload
                 follower.followPath(paths.score);
+                intake.setPower(1);
                 pathState++;
                 break;
 
@@ -164,7 +173,7 @@ public class RedSimplySynchronization extends OpMode {
                 break;
 
             case 2: // Intaking during move to Pick1, then move to Score
-                spinIntake(paths.shootspike1);
+                spinIntake(paths.shootspike1, 110);
                 break;
 
             case 3: // Shoot Pick1, then move to PickSimply
@@ -173,7 +182,7 @@ public class RedSimplySynchronization extends OpMode {
                 break;
 
             case 4: // Intake SimplyBall, then move to scoreSpecial
-                spinIntake(paths.shoot);
+                spinIntake(paths.shoot, 110);
                 break;
 
             case 5: // Shoot scoreSpecial, then move to pickSimply (repeat)
@@ -182,7 +191,7 @@ public class RedSimplySynchronization extends OpMode {
                 break;
 
             case 6: // Intake repeat, then move to scoreSpecial
-                spinIntake(paths.shoot);
+                spinIntake(paths.shoot, 110);
                 break;
 
             case 7: // Final Shoot, then leave

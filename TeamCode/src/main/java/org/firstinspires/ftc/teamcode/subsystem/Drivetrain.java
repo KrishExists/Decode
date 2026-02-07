@@ -7,6 +7,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
@@ -36,6 +37,8 @@ public class Drivetrain implements Subsystem {
     private final Supplier<PathChain> mid;
     private final Supplier<PathChain> park;
 
+    private final Supplier<PathChain> human;
+
     private final Supplier<PathChain> gate;
 
     private boolean startFlag = false;
@@ -46,6 +49,8 @@ public class Drivetrain implements Subsystem {
     private boolean closeFlag = false; // your "mid/close"
     private boolean farFlag = false;
     private boolean autoFalg = false;
+
+    private boolean humanFlag = true;
 
     public DcMotor leftFront;
     public DcMotor rightFront;
@@ -68,7 +73,8 @@ public class Drivetrain implements Subsystem {
     }
     public Drivetrain(HardwareMap h, Telemetry t, boolean red) {
         if(PoseStorage.pose!=null){
-            startingPose = PoseStorage.pose;
+            //startingPose = PoseStorage.pose;
+            startingPose = new Pose(90, 115, Math.toRadians(20));
             t.addData("Got pose",startingPose);
         }
         else{ // I t is
@@ -92,6 +98,13 @@ public class Drivetrain implements Subsystem {
                     .addPath(new Path(new BezierLine(follower::getPose, new Pose(32, 37))))
                     .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(90), 0.8))
                     .build();
+
+            human = () -> follower.pathBuilder()
+                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(144-106, 8))))
+                    .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(180), 0.8))
+                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(144-135, 8))))
+                    .build();
+
             gate = () -> follower.pathBuilder() //Lazy Curve Generation
                     .addPath(new Path(new BezierLine(follower::getPose, new Pose(130, 69))))
                     .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, follower::getHeading, 0.8))
@@ -109,6 +122,13 @@ public class Drivetrain implements Subsystem {
                     .addPath(new Path(new BezierLine(follower::getPose, new Pose(72-38+72, 33))))
                     .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(90), 0.8))
                     .build();
+
+            human = () -> follower.pathBuilder()
+                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(106, 8))))
+                    .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(0), 0.8))
+                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(135, 8))))
+                    .build();
+
             gate = () -> follower.pathBuilder() //Lazy Curve Generation
                     .addPath(new Path(new BezierLine(follower::getPose, new Pose(72-130+72, 69))))
                     .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, follower::getHeading, 0.8))
@@ -166,6 +186,7 @@ public class Drivetrain implements Subsystem {
 
         // ====== BUTTONS SET FLAGS ======
         if (gamepad.yWasPressed()) startFlag = true;
+        if(gamepad.xWasPressed()) humanFlag = true;
         if (gamepad.right_trigger > 0.2) parkFlag = true;
         if (gamepad.left_trigger > 0.2) gateFlag = true;
         if (gamepad.leftBumperWasPressed()) closeFlag = true;
@@ -185,6 +206,12 @@ public class Drivetrain implements Subsystem {
                 automatedDrive = true;
                 follower.followPath(park.get());
                 parkFlag = false;
+            }
+
+            if(humanFlag) {
+                automatedDrive = true;
+                follower.followPath(human.get());
+                humanFlag = false;
             }
 
             if (gateFlag) {

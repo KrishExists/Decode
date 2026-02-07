@@ -181,7 +181,7 @@ public class Intake implements Subsystem{
                 //kd is 0.00001
                 intake.setPower(TeamConstants.INTAKE_IN_POWER-0.4);
                 linkage.setPosition(0.6);
-                shooter.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
+                shooter.spinToRpm(TeamConstants.SHOOTER_FARAUTO_RPM);
                 blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 transfer.setPower(0.4);
                 if(gamepad2.right_bumper||next){
@@ -216,8 +216,8 @@ public class Intake implements Subsystem{
                 }
                 break;
             case RAPOD_FAR:
-                shooter.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
-                if(shooter.getRPM()>TeamConstants.SHOOTER_FAR_RPM-100){
+                shooter.spinToRpm(TeamConstants.SHOOTER_FARAUTO_RPM);
+                if(shooter.getRPM()>TeamConstants.SHOOTER_FARAUTO_RPM-100){
                     happend = true;
                 }
                 if(happend){

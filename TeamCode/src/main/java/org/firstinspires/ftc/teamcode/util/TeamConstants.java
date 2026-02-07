@@ -5,7 +5,7 @@ public class TeamConstants {
     // =============================
     // Intake Constants
     // =============================
-    public static final double INTAKE_IN_POWER = 0.8;
+    public static final double INTAKE_IN_POWER = 1.0;
     public static final double INTAKE_FEED_POWER = 1.0;
     public static final double INTAKE_EVEN_POWER = 0.6;
     public static final double INTAKE_DEFAULT_POWER = 0.0;
@@ -39,6 +39,8 @@ public class TeamConstants {
     // =============================
     public static final double SHOOTER_MID_RPM = 2300;
     public static final double SHOOTER_FAR_RPM = 2850;
+
+    public static final double SHOOTER_FARAUTO_RPM = 2950;
 
     public static final double Shooter_BottomThreshold = 2300;
 

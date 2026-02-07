@@ -65,7 +65,7 @@ public class FarAutoPaths extends OpMode {
 
                                     new Pose(90, 10)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(75))
+                    ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(72))
 
                     .build();
 
@@ -73,12 +73,12 @@ public class FarAutoPaths extends OpMode {
                             new BezierLine(
                                   new Pose(90,10),new Pose(137,27)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(75), Math.toRadians(270))
+                    ).setLinearHeadingInterpolation(Math.toRadians(72), Math.toRadians(270))
                     .addPath(
                             new BezierLine(
                                     new Pose(137, 27),
 
-                                    new Pose(137, 6)
+                                    new Pose(140, 6)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(270))
                     .build();
@@ -91,7 +91,7 @@ public class FarAutoPaths extends OpMode {
 
                                     new Pose(90, 10)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(75))
+                    ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(71))
 
                     .build();
 
@@ -101,7 +101,7 @@ public class FarAutoPaths extends OpMode {
 
                                     new Pose(100, 30)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(75), Math.toRadians(0))
+                    ).setLinearHeadingInterpolation(Math.toRadians(71), Math.toRadians(0))
                     .addPath(
                             new BezierLine(
                                     new Pose(100, 30),
@@ -114,12 +114,12 @@ public class FarAutoPaths extends OpMode {
 
             shootspike1 =  follower.pathBuilder()
                     .addPath(
-                            new  BezierLine(
+                            new BezierLine(
                                     new Pose(135,30),
                                     new Pose(90,10))
                     )
 
-                    .setLinearHeadingInterpolation(Math.toRadians(0),Math.toRadians(75))
+                    .setLinearHeadingInterpolation(Math.toRadians(0),Math.toRadians(70))
 
             .build();
 
@@ -129,7 +129,7 @@ public class FarAutoPaths extends OpMode {
 
                                     new Pose(106.730, 14.217)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(0),Math.toRadians(0))
+                    ).setLinearHeadingInterpolation(Math.toRadians(70),Math.toRadians(0))
                     .build();
         }
     }
