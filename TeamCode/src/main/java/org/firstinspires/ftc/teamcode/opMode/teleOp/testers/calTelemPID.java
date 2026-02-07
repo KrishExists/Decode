@@ -39,22 +39,12 @@ public class calTelemPID extends LinearOpMode {
     private AprilTagProcessor aprilTagProcessor;
 
     // === PID Coefficients (Tunable in Dashboard) ===
-    public static double kP = 0.0005;
+    public static double kP = 0.005;
     public static double kI = 0.0;
     public static double kD = 0.0;
-    public static double kF = 0.0;
-    public static double kP2 = 0.0005;
-    public static double kI2 = 0.0;
-    public static double kD2 = 0.0;
-    public static double kF2 = 0.0;
-
-    public static double kS = 0.05;
-    public static double kV = 0.0002;
-    public static double kA = 0.0;
+    public static double kF = 0.000248;
 
     private PIDFController shooterPIDF;
-    private PIDFController shooter2PIDF;
-    private SimpleMotorFeedforward shooterFF;
 
     // === Dashboard Adjustable Settings ===
     public static double linkagePos = 0.0;
@@ -107,10 +97,8 @@ public class calTelemPID extends LinearOpMode {
 
         // === Shooter PIDF Init ===
         shooterPIDF = new PIDFController(kP, kI, kD, kF);
-        shooter2PIDF = new PIDFController(kP2, kI2, kD2, kF2);
 
         shooterPIDF.setTolerance(50); // RPM tolerance
-        shooterFF = new SimpleMotorFeedforward(kS, kV, kA);
 
         waitForStart();
 

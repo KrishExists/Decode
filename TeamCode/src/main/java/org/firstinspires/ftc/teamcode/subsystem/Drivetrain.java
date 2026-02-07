@@ -122,7 +122,7 @@ public class Drivetrain implements Subsystem {
             redThing = new Pose(130,135);
 
         }else{
-            redThing = new Pose(130-72,135-72);
+            redThing = new Pose(13,135);
         }
 
         this.hardwareMap = h;
@@ -218,15 +218,17 @@ public class Drivetrain implements Subsystem {
                 double follwerx = follower.getPose().getX();
                 double followery = follower.getPose().getY();
                 double lockedHeading = Math.atan2(redThing.getPose().getY()-followery,redThing.getPose().getX()-follwerx);
+                telemetry.addData("locked heading",lockedHeading);
                 if(redThing.getX()!=130){
                     lockedHeading = Math.PI -  lockedHeading;
                 }
                 double error = AngleUnit.normalizeRadians(lockedHeading - AngleUnit.normalizeRadians(follower.getPose().getHeading()));
+                telemetry.addData("error",error);
 
                 double target = error + follower.getHeading();
+                telemetry.addData("target",target);
                 double output = Range.clip(headingController.calculate(follower.getHeading(), target), -1, 1);
-
-
+                telemetry.addData("output",output);
                 follower.startTeleopDrive(true);
                 follower.setTeleOpDrive(
                         -gamepad.left_stick_y,
@@ -234,6 +236,7 @@ public class Drivetrain implements Subsystem {
                         output,
                         true
                 );
+
             }
 
 
@@ -256,13 +259,7 @@ public class Drivetrain implements Subsystem {
         }
 
         telemetry.addData("Mode", automatedDrive ? "Auto" : "Manual");
-        telemetry.addData("Gamepad leftX", gamepad.left_stick_x);
-        telemetry.addData("Gamepad lefty", gamepad.left_stick_y);
-        telemetry.addData("Gamepad rX", gamepad.right_stick_x);
-
         telemetry.addData("Position", follower.getPose());
-        telemetry.addData("Velocity", follower.getVelocity());
-        telemetry.addData("AutomatedDrive", automatedDrive);
     }
 
 

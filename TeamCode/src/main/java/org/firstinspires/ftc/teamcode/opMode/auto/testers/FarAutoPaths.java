@@ -20,7 +20,7 @@ public class FarAutoPaths extends OpMode {
     public Follower follower; // Pedro Pathing follower instance
     private int pathState; // Current autonomous path state (state machine)
     private Paths paths; // Paths defined in the Paths class
-    private Pose startPose = new Pose(80.1,7.6,Math.toRadians(90));
+    private Pose startPose = new Pose(79.32891566265059,7.6,Math.toRadians(90));
 
     @Override
     public void init() {
@@ -61,37 +61,37 @@ public class FarAutoPaths extends OpMode {
         public Paths(Follower follower) {
             score = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(80.1, 7.6),
+                                    new Pose(79.32891566265059, 7.6),
 
                                     new Pose(90, 10)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(65))
+                    ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(75))
 
                     .build();
 
             pick1 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                  new Pose(90,10),new Pose(111,7)
+                                  new Pose(90,10),new Pose(137,27)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(65), Math.toRadians(0))
+                    ).setLinearHeadingInterpolation(Math.toRadians(75), Math.toRadians(270))
                     .addPath(
                             new BezierLine(
-                                    new Pose(111, 7),
+                                    new Pose(137, 27),
 
-                                    new Pose(136, 8)
+                                    new Pose(137, 6)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                    ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(270))
                     .build();
 
 
 
             shoot = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(136, 8),
+                                    new Pose(136, 6),
 
                                     new Pose(90, 10)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                    ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(75))
 
                     .build();
 
@@ -99,14 +99,14 @@ public class FarAutoPaths extends OpMode {
                             new BezierLine(
                                     new Pose(90, 10),
 
-                                    new Pose(100, 35)
+                                    new Pose(100, 30)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(65), Math.toRadians(0))
+                    ).setLinearHeadingInterpolation(Math.toRadians(75), Math.toRadians(0))
                     .addPath(
                             new BezierLine(
-                                    new Pose(100, 35),
+                                    new Pose(100, 30),
 
-                                    new Pose(135, 35)
+                                    new Pose(135, 30)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
@@ -115,11 +115,11 @@ public class FarAutoPaths extends OpMode {
             shootspike1 =  follower.pathBuilder()
                     .addPath(
                             new  BezierLine(
-                                    new Pose(135,35),
+                                    new Pose(135,30),
                                     new Pose(90,10))
                     )
 
-                    .setLinearHeadingInterpolation(Math.toRadians(0),Math.toRadians(65))
+                    .setLinearHeadingInterpolation(Math.toRadians(0),Math.toRadians(75))
 
             .build();
 
@@ -155,35 +155,35 @@ public class FarAutoPaths extends OpMode {
                 }
                 break;
 
-            case 4:
+            case 3:
                 if(!follower.isBusy()){
                     follower.followPath(paths.pick1,true);
+                    pathState++;
+                }
+                break;
+
+            case 4:
+                if(!follower.isBusy()){
+                    follower.followPath(paths.shoot,true);
                     pathState++;
                 }
                 break;
 
             case 5:
                 if(!follower.isBusy()){
-                    follower.followPath(paths.shoot,true);
+                    follower.followPath(paths.pick1,true);
                     pathState++;
                 }
                 break;
 
             case 6:
                 if(!follower.isBusy()){
-                    follower.followPath(paths.pick1,true);
-                    pathState++;
-                }
-                break;
-
-            case 7:
-                if(!follower.isBusy()){
                     follower.followPath(paths.shoot,true);
                     pathState++;
                 }
                 break;
 
-            case 8:
+            case 7:
                 if(!follower.isBusy()){
                     follower.followPath(paths.leave);
                     pathState++;

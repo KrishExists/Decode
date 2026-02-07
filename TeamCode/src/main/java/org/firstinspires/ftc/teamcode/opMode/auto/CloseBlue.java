@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Outtake;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
-@Autonomous(name = "Close Auto (Blue Side)", group = "Autonomous")
+@Autonomous(name = "Pedro Pathing Auto aaravBLUE--this one", group = "Autonomous")
 public class CloseBlue extends OpMode {
 
     private Follower follower;
@@ -40,24 +40,26 @@ public class CloseBlue extends OpMode {
 
     private DcMotorEx transfer;
 
-    private final Pose startPose = new Pose(144-121.2, 130, Math.toRadians(180-36));
-    private final Pose scorePose = new Pose(144-84, 84, Math.toRadians(180-45));
-    private final Pose scorePoseEnd = new Pose(144-90, 115, Math.toRadians(180-20));
+    private final Pose startPose      = new Pose(22.8, 130, Math.toRadians(144));
 
-    private final Pose Bez1End = new Pose(144-98, 84, 180);
-    private final Pose Bez1Control = new Pose(144-85, 84, 180);
-    private final Pose Spike1End = new Pose(144-125, 84, 180);
+    private final Pose scorePose      = new Pose(60, 84, Math.toRadians(135));
+    private final Pose scorePoseEnd   = new Pose(54, 115, Math.toRadians(160));
 
-    private final Pose Bez2End = new Pose(144-98, 60, 180);
-    private final Pose Bez2Control = new Pose(144-85, 60, 180);
-    private final Pose Spike2End = new Pose(144-130, 60, 180);
+    private final Pose Bez1End        = new Pose(46, 84, Math.toRadians(180));
+    private final Pose Bez1Control    = new Pose(59, 84, Math.toRadians(180));
+    private final Pose Spike1End      = new Pose(19, 84, Math.toRadians(180));
 
-    private final Pose Bez3End = new Pose(144-98, 36, 180);
-    private final Pose Bez3Control = new Pose(144-78, 36, 180);
-    private final Pose Spike3End = new Pose(144-130, 36, 180);
-    private final Pose Gate = new Pose(144-127,62,Math.toRadians(160));
-    private final Pose GateControl = new Pose(144-98,69,180);
-    private final Pose backGate = new Pose(144-96,67,180);
+    private final Pose Bez2End        = new Pose(46, 60, Math.toRadians(180));
+    private final Pose Bez2Control    = new Pose(59, 60, Math.toRadians(180));
+    private final Pose Spike2End      = new Pose(14, 60, Math.toRadians(180));
+
+    private final Pose Bez3End        = new Pose(46, 36, Math.toRadians(180));
+    private final Pose Bez3Control    = new Pose(66, 36, Math.toRadians(180));
+    private final Pose Spike3End      = new Pose(14, 36, Math.toRadians(180));
+
+    private final Pose Gate           = new Pose(17, 62, Math.toRadians(180));
+    private final Pose GateControl    = new Pose(46, 69, Math.toRadians(180));
+    private final Pose backGate       = new Pose(48, 67, Math.toRadians(180));
 
     private Path scorePreload;
 
@@ -91,7 +93,7 @@ public class CloseBlue extends OpMode {
                 .build();
         BackGate = follower.pathBuilder()
                 .addPath(new BezierCurve(Gate,backGate,scorePose))
-                .setLinearHeadingInterpolation(Gate.getHeading(),scorePose.getHeading())
+                .setLinearHeadingInterpolation(Math.toRadians(75),scorePose.getHeading())
                 .build();
 
         PrepSpike2 = follower.pathBuilder()
@@ -102,7 +104,7 @@ public class CloseBlue extends OpMode {
                 .build();
 
         ScoreSpike2 = follower.pathBuilder()
-                .addPath(new BezierLine(Spike2End, scorePose))
+                .addPath(new BezierCurve(Spike2End, Bez2Control,scorePose))
                 .setLinearHeadingInterpolation(Spike2End.getHeading(), scorePose.getHeading())
                 .build();
 
@@ -123,8 +125,8 @@ public class CloseBlue extends OpMode {
     private void prepareToShoot() {
         intake.setPower(TeamConstants.INTAKE_FEED_POWER);
         outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
-        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
-        transfer.setPower(-1);
+        blocker.setPosition(TeamConstants.BLOCKER_OPEN);
+        transfer.setPower(TeamConstants.TRANSFER_REV);
         telemetry.addLine("transfer poewr 0");
     }
 
@@ -198,8 +200,18 @@ public class CloseBlue extends OpMode {
         shoot(nextPath, false);
     }
 
-    private void spinIntake(PathChain path) {
-        spinUpIntake();
+    private void spinIntake(PathChain path,int y) {
+        if(follower.isBusy()) {
+
+
+            if (follower.getPose().getY() < y) {
+                spinUpIntake();
+            } else {
+                outtake.spinToRpm(0);
+                intake.setPower(0);
+                transfer.setPower(0);
+            }
+        }
         if (!follower.isBusy()) {
             follower.followPath(path,true);
             pathState++;
@@ -227,7 +239,7 @@ public class CloseBlue extends OpMode {
                 shoot(PrepSpike2);
                 break;
             case 2:
-                spinIntake(ScoreSpike2);
+                spinIntake(ScoreSpike2,65);
                 break;
             case 3:
                 resetTimers();
@@ -237,28 +249,20 @@ public class CloseBlue extends OpMode {
                 resetTimers();
                 spinIntakeGate(BackGate);
                 break;
-            case 5:
-                resetTimers();
-                shoot(GoGate);
-                break;
             case 6:
-                resetTimers();
-                spinIntakeGate(BackGate);
-                break;
-            case 7:
                 resetTimers();
                 shoot(PrepSpike1);
                 break;
-            case 8:
-                spinIntake(ScoreSpike1);
+            case 7:
+                spinIntake(ScoreSpike1,89);
                 break;
-            case 9:
+            case 8:
                 resetTimers();
                 shoot(PrepSpike3);
                 break;
-            case 10:
+            case 9:
                 resetTimers();
-                spinIntake(ScoreSpike3);
+                spinIntake(ScoreSpike3,37);
                 break;
 
             default:

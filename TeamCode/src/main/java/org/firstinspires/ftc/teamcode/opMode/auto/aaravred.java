@@ -40,13 +40,13 @@ public class aaravred extends OpMode {
 
     private DcMotorEx transfer;
 
-    private final Pose startPose = new Pose(121.2, 130, Math.toRadians(36));
+    private final Pose startPose = new Pose(102.74698795180723, 136.4819277108434, Math.toRadians(90));
     private final Pose scorePose = new Pose(84, 84, Math.toRadians(45));
     private final Pose scorePoseEnd = new Pose(90, 115, Math.toRadians(20));
 
     private final Pose Bez1End = new Pose(98, 84, 0);
     private final Pose Bez1Control = new Pose(85, 84, 0);
-    private final Pose Spike1End = new Pose(125, 84, 0);
+    private final Pose Spike1End = new Pose(120, 84, 0);
 
     private final Pose Bez2End = new Pose(98, 60, 0);
     private final Pose Bez2Control = new Pose(85, 60, 0);
@@ -55,8 +55,8 @@ public class aaravred extends OpMode {
     private final Pose Bez3End = new Pose(98, 36, 0);
     private final Pose Bez3Control = new Pose(78, 36, 0);
     private final Pose Spike3End = new Pose(130, 36, 0);
-    private final Pose Gate = new Pose(127,62,Math.toRadians(0));
-    private final Pose GateControl = new Pose(98,69,0);
+    private final Pose Gate = new Pose(132.78313253012047,60.4578313253012,Math.toRadians(35));
+    private final Pose GateControl = new Pose(118.04819277108433,60.4578313253012,0);
     private final Pose backGate = new Pose(96,67,0);
 
     private Path scorePreload;
@@ -121,10 +121,10 @@ public class aaravred extends OpMode {
 
     // ---------------- Robot Actions ----------------
     private void prepareToShoot() {
-        intake.setPower(TeamConstants.INTAKE_FEED_POWER);
+        intake.setPower(0);
         outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
         blocker.setPosition(TeamConstants.BLOCKER_OPEN);
-        transfer.setPower(TeamConstants.TRANSFER_REV);
+        transfer.setPower(0);
         telemetry.addLine("transfer poewr 0");
     }
 
@@ -247,20 +247,24 @@ public class aaravred extends OpMode {
                 resetTimers();
                 spinIntakeGate(BackGate);
                 break;
-            case 6:
+            case 5:
                 resetTimers();
                 shoot(PrepSpike1);
                 break;
-            case 7:
+            case 6:
                 spinIntake(ScoreSpike1,89);
                 break;
-            case 8:
+            case 7:
                 resetTimers();
                 shoot(PrepSpike3);
                 break;
-            case 9:
+            case 8:
                 resetTimers();
                 spinIntake(ScoreSpike3,37);
+                break;
+            case 9:
+                resetTimers();
+                shoot(ScoreSpike3, true);
                 break;
 
             default:

@@ -29,7 +29,7 @@ public class RedSimplySynchronization extends OpMode {
     public Follower follower;
     private int pathState;
     private FarAutoPaths.Paths paths;
-    private Pose startPose = new Pose(80.1, 7.6, Math.toRadians(90));
+    private Pose startPose = new Pose(79.32891566265059, 7.6, Math.toRadians(90));
 
     private Intake intake;
     private Outtake outtake;
@@ -59,8 +59,8 @@ public class RedSimplySynchronization extends OpMode {
         paths = new FarAutoPaths.Paths(follower);
 
         // Initial Servo/Linkage Positions
-        outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
-        blocker.setPosition(0.5);
+        outtake.linkage.setPosition(TeamConstants.LINKAGE_REST);
+        blocker.setPosition(TeamConstants.BLOCKER_OPEN);
 
         panelsTelemetry.debug("Status", "Initialized & Merged");
         panelsTelemetry.update(telemetry);
@@ -69,23 +69,33 @@ public class RedSimplySynchronization extends OpMode {
     // ---------------- Robot Action Helpers (Logic from File A) ----------------
 
     private void prepareToShoot() {
-        intake.setPower(TeamConstants.INTAKE_FEED_POWER);
-        outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
+        intake.setPower(0);
+        outtake.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
         blocker.setPosition(TeamConstants.BLOCKER_OPEN);
+        transfer.setPower(0);
     }
-
     private void spinUpIntake() {
         outtake.spinToRpm(TeamConstants.outtake_Stop);
         intake.setPower(TeamConstants.INTAKE_IN_POWER);
         transfer.setPower(TeamConstants.TRANSFER_IN_POWER_AUTO);
         blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
     }
+    private void spinUpShooter() {
+        telemetry.addLine("Ready to shoot");
+        outtake.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
+    }
 
     private void spinUp(boolean withTransfer) {
-        outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
+        spinUpShooter();
         if (withTransfer) {
             transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
             intake.setPower(TeamConstants.INTAKE_IN_POWER);
+            telemetry.addLine("transfer at -1");
+
+        }else{
+            intake.setPower(0);
+            transfer.setPower(0);
+            telemetry.addLine("transfer at 0");
         }
     }
 
@@ -101,27 +111,33 @@ public class RedSimplySynchronization extends OpMode {
         happened = false;
     }
 
-    private void shoot(PathChain nextPath) {
+    private void shoot(PathChain nextPath, boolean skip) {
         if (follower.isBusy()) {
             prepareToShoot();
         }
-
         if (!follower.isBusy()) {
-            // Logic: Wait for RPM or bypass if 'happened' is true
-            if (outtake.atSpeed(2000, 3000) || happened) {
+            outtake.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
+            if ((outtake.atSpeed(2500,3200)||happened) ) {
+                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 happened = true;
                 spinUp(true);
-                transfer.setPower(-1); // Feed into shooter
-
-                if (actionTimer.milliseconds() > 1000) {
-                    follower.followPath(nextPath, true);
+                transfer.setPower(-1);
+                if (actionTimer.milliseconds()>3000 ) {
+                    if (skip) {
+                        pathState = 67;
+                        return;
+                    }
+                    follower.followPath(nextPath,true);
                     pathState++;
                     resetBooleans();
                 }
             } else {
+                telemetry.addLine("OUttake not above"); // Code never reaches here
                 spinUp(false);
+                transfer.setPower(0);
             }
         }
+
     }
 
     private void spinIntake(PathChain path) {
@@ -144,7 +160,7 @@ public class RedSimplySynchronization extends OpMode {
 
             case 1: // Shoot Preload, then move to Pick1
                 resetTimers();
-                shoot(paths.scorespike1);//pick it up
+                shoot(paths.scorespike1,false);//pick it up
                 break;
 
             case 2: // Intaking during move to Pick1, then move to Score
@@ -153,25 +169,25 @@ public class RedSimplySynchronization extends OpMode {
 
             case 3: // Shoot Pick1, then move to PickSimply
                 resetTimers();
-                shoot(paths.pick1);
+                shoot(paths.pick1,false);
                 break;
 
             case 4: // Intake SimplyBall, then move to scoreSpecial
-                spinIntake(paths.score);
+                spinIntake(paths.shoot);
                 break;
 
             case 5: // Shoot scoreSpecial, then move to pickSimply (repeat)
                 resetTimers();
-                shoot(paths.pick1);
+                shoot(paths.pick1,false);
                 break;
 
             case 6: // Intake repeat, then move to scoreSpecial
-                spinIntake(paths.score);
+                spinIntake(paths.shoot);
                 break;
 
             case 7: // Final Shoot, then leave
                 resetTimers();
-                shoot(paths.leave);
+                shoot(paths.leave,true);
                 break;
 
             case 8: // Done

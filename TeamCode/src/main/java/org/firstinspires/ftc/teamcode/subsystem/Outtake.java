@@ -30,9 +30,6 @@ public class Outtake implements Subsystem {
 
     // Shooter PID variables (from Shooter class)
 
-    private double integral = TeamConstants.integral;
-    private double lastError = TeamConstants.lastError;
-    private double lastTime;
 private PIDFController pidfController;
     private final ElapsedTime timer = new ElapsedTime();
 
@@ -60,7 +57,6 @@ private PIDFController pidfController;
         // Linkage servo
         linkage = hardwareMap.get(Servo.class, "Linkage");
 
-        lastTime = timer.seconds();
     }
 
     // =======================
