@@ -77,12 +77,12 @@ public class NewFar extends OpMode {
                     .build();
 
             shoot = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(136, 6),
-
+                            new BezierCurve(
+                                    new Pose(134.8433734939759, 7.855421686746997),
+                                    new Pose(108.7,18.939759036144576),
                                     new Pose(90, 10)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(75))
+                    ).setLinearHeadingInterpolation(Math.toRadians(-100), Math.toRadians(75),0.8)
 
                     .build();
 
