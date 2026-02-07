@@ -129,8 +129,8 @@ public class NavalePedroChat extends OpMode {
 
                 case OUTTAKE:
                     //OUTTAKE LOGIC GOES HERE
-                    outtake.setPower(0.9);
-                    outtake.setLinkage(0.42);
+                    outtake.spinToRpm(2850);
+                    outtake.setLinkage(0.5);
                     if (!follower.isBusy()) {
                         prepareToShoot();
                         follower.followPath(paths.Path2);

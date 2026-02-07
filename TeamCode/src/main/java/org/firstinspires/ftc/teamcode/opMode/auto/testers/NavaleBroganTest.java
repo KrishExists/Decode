@@ -4,6 +4,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -80,7 +81,7 @@ public class NavaleBroganTest extends OpMode {
         DRIVE_STARTPOS_SHOOT_POS,
         SHOOT_PRELOAD,
         //States are used as different steps.
-        //INTAKE_ARTIFACTS
+        SHOOT_POS_DRIVE_INTAKEPOS
 
     }
 
@@ -89,10 +90,14 @@ public class NavaleBroganTest extends OpMode {
 
     private final Pose startPose = new Pose(62.93975903614457, 6.915662650602412, Math.toRadians(90));
     private final Pose shootPose = new Pose(61.077618164967554, 15.787534754402234, Math.toRadians(115));
+    private final Pose intakePose1 = new Pose(11.807228915662648, 14.67469879518073, Math.toRadians(190));
+    private final Pose intakePose2 = new Pose(10.542168674698802, 9.518072289156645, Math.toRadians(190));
 
 
 
-    private PathChain driveStartPosShootPos;
+    private PathChain
+            driveStartPosShootPos,
+            driveShootPosIntakePos;
 
     public void buildPaths() {
         driveStartPosShootPos = follower.pathBuilder()
@@ -100,7 +105,16 @@ public class NavaleBroganTest extends OpMode {
                 .setLinearHeadingInterpolation(startPose.getHeading(), shootPose.getHeading())
                 .build();
 
+        driveShootPosIntakePos = follower.pathBuilder()
+                .addPath(new BezierLine(shootPose, intakePose1))
+                .setLinearHeadingInterpolation(shootPose.getHeading(), intakePose1.getHeading())
+                .addPath(new BezierLine(intakePose1, intakePose2))
+                .setLinearHeadingInterpolation(intakePose1.getHeading(), intakePose2.getHeading())
+                .build();
+
     }
+
+
 
     public void statePathUpdate() {
         switch (pathState) {
@@ -124,26 +138,22 @@ public class NavaleBroganTest extends OpMode {
                         //This transfers the ball  to shooter once rpm is ready.
                     }
 
-                    // ADD FLYWHEEL LOGIC
+
                     telemetry.addLine("DONE Path 1");
                     telemetry.update();
                     follower.followPath(driveStartPosShootPos, true);
 
                 }
-
                 break;
-            //case INTAKE_ARTIFACTS:
+            case SHOOT_POS_DRIVE_INTAKEPOS:
+                follower.followPath(driveShootPosIntakePos, true);
+                setPathState(PathState.SHOOT_PRELOAD);
+                break;
 
-            //if(!follower.isBusy()){
-            //INTAKE LOGIC
-            //telemetry.addLine("DONE PATH 2");
-            //telemetry.update();
-            //transition
             default:
                 telemetry.addLine("NO STATE COMMANDED");
                 break;
         }
-
 
     }
 }
