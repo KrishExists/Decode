@@ -42,7 +42,7 @@ public class aaravred extends OpMode {
 
     private final Pose startPose = new Pose(123.2612669937254, 116.44743671567421, Math.toRadians(90));
     private final Pose scorePose = new Pose(84, 84, Math.toRadians(45));
-    private final Pose scorePoseEnd = new Pose(90, 115, Math.toRadians(20)); //yay
+    private final Pose scorePoseEnd = new Pose(90, 115, Math.toRadians(20)); //yay yaya
 
     private final Pose Bez1End = new Pose(98, 84, 0);
     private final Pose Bez1Control = new Pose(85, 84, 0);
