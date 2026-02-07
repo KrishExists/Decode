@@ -9,6 +9,7 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
@@ -24,6 +25,8 @@ public class NavaleBroganTest extends OpMode {
     private Follower follower;
     private static Timer pathtimer;
     private Timer opmodetimer;
+    private Servo blocker;
+
     private Outtake outtake;
     private Intake intake;
     private DcMotorEx transfer;
@@ -41,6 +44,7 @@ public class NavaleBroganTest extends OpMode {
         opmodetimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
         outtake = new Outtake(hardwareMap, telemetry);
+        blocker = hardwareMap.get(Servo.class, "blocker");
         intake = new Intake(hardwareMap, telemetry, outtake);
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
         buildPaths();
@@ -109,6 +113,7 @@ public class NavaleBroganTest extends OpMode {
                 //check if follower did it's path.
 
                 if (!follower.isBusy()) {
+                    blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                     outtake.setLinkage(TeamConstants.LINKAGE_REST);
                     outtake.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
                     transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
