@@ -44,20 +44,20 @@ public class aaravKrishBlue extends OpMode {
     private final Pose scorePose = new Pose(144-84, 84, Math.toRadians(135));
     private final Pose scorePoseEnd = new Pose(144-90, 115, Math.toRadians(180-20));
 
-    private final Pose Bez1End = new Pose(144-98, 84, 180-0);
-    private final Pose Bez1Control = new Pose(144-85, 84, 180-0);
-    private final Pose Spike1End = new Pose(144-120, 84, 180-0);
+    private final Pose Bez1End = new Pose(144-98, 84, Math.toRadians(180));
+    private final Pose Bez1Control = new Pose(144-85, 84, Math.toRadians(180));
+    private final Pose Spike1End = new Pose(144-120, 84, Math.toRadians(180));
 
-    private final Pose Bez2End = new Pose(144-98, 60, 180-0);
-    private final Pose Bez2Control = new Pose(144-85, 60, 180-0);
-    private final Pose Spike2End = new Pose(144-130, 60, 180-0);
+    private final Pose Bez2End = new Pose(144-98, 60, Math.toRadians(180));
+    private final Pose Bez2Control = new Pose(144-85, 60, Math.toRadians(180));
+    private final Pose Spike2End = new Pose(144-130, 60, Math.toRadians(180));
 
-    private final Pose Bez3End = new Pose(144-98, 36, 180-0);
-    private final Pose Bez3Control = new Pose(144-78, 36, 180-0);
-    private final Pose Spike3End = new Pose(144-130, 36, 180-0);
+    private final Pose Bez3End = new Pose(144-98, 36, Math.toRadians(180));
+    private final Pose Bez3Control = new Pose(144-78, 36, Math.toRadians(180));
+    private final Pose Spike3End = new Pose(144-130, 36, Math.toRadians(180));
     private final Pose Gate = new Pose(144-132.78313253012047,60.4578313253012,Math.toRadians(180-35));
-    private final Pose GateControl = new Pose(144-118.04819277108433,60.4578313253012,180-0);
-    private final Pose backGate = new Pose(144-96,67,180-0);
+    private final Pose GateControl = new Pose(144-118.04819277108433,60.4578313253012,Math.toRadians(180));
+    private final Pose backGate = new Pose(144-96,67,Math.toRadians(180));
 
     private Path scorePreload;
 
