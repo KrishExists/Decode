@@ -160,6 +160,9 @@ public class NavaleBroganTest extends OpMode {
 
 
             default:
+                outtake.stop();
+                intake.setPower(0);
+                transfer.setPower(0);
                 telemetry.addLine("NO STATE COMMANDED");
                 break;
         }
