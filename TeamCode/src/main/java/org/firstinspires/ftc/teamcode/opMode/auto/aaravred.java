@@ -168,7 +168,11 @@ public class aaravred extends OpMode {
 
     private void shoot(PathChain nextPath, boolean skip) {
         if (follower.isBusy()) {
-                prepareToShoot();
+                if(follower.getPose().getX()>120){
+                    spinUp(true);
+                }else{
+                    prepareToShoot();
+                }
         }
         if (!follower.isBusy()) {
             if ((outtake.atSpeed(2000,3000)||happened) ) {
@@ -200,8 +204,6 @@ public class aaravred extends OpMode {
 
     private void spinIntake(PathChain path,int y) {
         if(follower.isBusy()) {
-
-
             if (follower.getPose().getY() < y) {
                 spinUpIntake();
             } else {

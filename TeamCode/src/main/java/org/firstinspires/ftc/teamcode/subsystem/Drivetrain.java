@@ -78,11 +78,12 @@ public class Drivetrain implements Subsystem {
             t.addData("Got pose",startingPose);
         }
         else{ // I t is
+            startingPose = new Pose(72,72,0);//to fix subtract 10 from x and add 10 to y. however this should not be thte case. for some reason its misinterpeting the pose by 10
+
         }
-        startingPose = new Pose(72,72,0);//to fix subtract 10 from x and add 10 to y. however this should not be thte case. for some reason its misinterpeting the pose by 10
 
         follower = Constants.createFollower(h);
-        follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
+        follower.setStartingPose(startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         if(red){
