@@ -97,8 +97,8 @@ public class NavaleBroganTest extends OpMode {
 
 
     private PathChain
-            driveStartPosShootPos,
-            driveShootPosIntakePos;
+            driveStartPosShootPos;
+    private PathChain driveShootPosIntakePos;
 
     public void buildPaths() {
         driveStartPosShootPos = follower.pathBuilder()
@@ -115,8 +115,6 @@ public class NavaleBroganTest extends OpMode {
 
     }
 
-
-
     public void statePathUpdate() {
         switch (pathState) {
             case DRIVE_STARTPOS_SHOOT_POS:
@@ -131,16 +129,6 @@ public class NavaleBroganTest extends OpMode {
                     blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                     outtake.setLinkage(TeamConstants.LINKAGE_REST);
                     outtake.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
-
-                    if (outtake.atSpeed(2500, 3000)) {
-                        intake.setState(Intake.IntakeState.SpeedFar);
-                        transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
-                        intake.setPower(TeamConstants.INTAKE_FEED_POWER);
-
-                        //This transfers the ball  to shooter once rpm is ready.
-                    }
-
-
                     telemetry.addLine("DONE Path 1");
                     telemetry.update();
                     follower.followPath(driveStartPosShootPos, true);
