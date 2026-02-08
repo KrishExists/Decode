@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name = "18 Ball Auto (Basic)", group = "Auto")
-public class GAYAUTO extends LinearOpMode {
+public class GPTSHT extends LinearOpMode {
 
     // Drive motors
     DcMotor leftFront, rightFront, leftRear, rightRear;

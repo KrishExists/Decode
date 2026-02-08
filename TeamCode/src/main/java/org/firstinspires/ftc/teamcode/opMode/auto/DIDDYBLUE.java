@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
 @Autonomous(name = "Pedro Pathing Auto aarav Kris Blue--this one", group = "Autonomous")
-public class aaravKrishBlue extends OpMode {
+public class DIDDYBLUE extends OpMode {
 
     private Follower follower;
     private TelemetryManager panelsTelemetry;
