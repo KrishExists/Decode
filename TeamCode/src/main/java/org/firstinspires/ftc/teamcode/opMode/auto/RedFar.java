@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
 @Autonomous(name = "RedAutoFarSIMPLY", group = "Autonomous")
 @Configurable
-public class ICECOMMINGFORU extends OpMode {
+public class RedFar extends OpMode {
     private TelemetryManager panelsTelemetry;
     public Follower follower;
     private int pathState;

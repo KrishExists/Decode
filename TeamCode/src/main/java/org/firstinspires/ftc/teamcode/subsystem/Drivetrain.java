@@ -193,7 +193,7 @@ public class Drivetrain implements Subsystem {
         if (gamepad.left_trigger > 0.2) gateFlag = true;
         if (gamepad.leftBumperWasPressed()) closeFlag = true;
         if (gamepad.rightBumperWasPressed()) farFlag = true;
-        if(gamepad.aWasPressed()) autoFalg = true;
+//        if(gamepad.aWasPressed()) autoFalg = true;
 
         // ====== PRIORITY EXECUTION (NO ELSE-IFS) ======
         if (!automatedDrive) {

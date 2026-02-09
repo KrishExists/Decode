@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "ChowChinAutoFar", group = "Autonomous")
 @Configurable // Panels
-public class EPSTIEN extends OpMode {
+public class ChowChin extends OpMode {
     private TelemetryManager panelsTelemetry;
     public Follower follower;
     private int pathState;

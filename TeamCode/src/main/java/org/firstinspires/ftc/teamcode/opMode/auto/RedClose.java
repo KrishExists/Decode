@@ -22,8 +22,8 @@ import org.firstinspires.ftc.teamcode.subsystem.Outtake;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
-@Autonomous(name = "Pedro Pathing Auto aarav Kris Blue--this one", group = "Autonomous")
-public class DIDDYBLUE extends OpMode {
+@Autonomous(name = "Pedro Pathing Auto aarav--this one", group = "Autonomous")
+public class RedClose extends OpMode {
 
     private Follower follower;
     private TelemetryManager panelsTelemetry;
@@ -40,24 +40,24 @@ public class DIDDYBLUE extends OpMode {
 
     private DcMotorEx transfer;
 
-    private final Pose startPose = new Pose(144-123.2612669937254, 116.44743671567421, Math.toRadians(180-90));
-    private final Pose scorePose = new Pose(144-84, 84, Math.toRadians(135));
-    private final Pose scorePoseEnd = new Pose(144-90, 115, Math.toRadians(180-20));
+    private final Pose startPose = new Pose(123.2612669937254, 116.44743671567421, Math.toRadians(90));
+    private final Pose scorePose = new Pose(84, 84, Math.toRadians(45));
+    private final Pose scorePoseEnd = new Pose(90, 115, Math.toRadians(20)); //yay yaya
 
-    private final Pose Bez1End = new Pose(144-98, 84, Math.toRadians(180));
-    private final Pose Bez1Control = new Pose(144-85, 84, Math.toRadians(180));
-    private final Pose Spike1End = new Pose(144-120, 84, Math.toRadians(180));
+    private final Pose Bez1End = new Pose(98, 84, 0);
+    private final Pose Bez1Control = new Pose(85, 84, 0);
+    private final Pose Spike1End = new Pose(120, 84, 0);
 
-    private final Pose Bez2End = new Pose(144-98, 60, Math.toRadians(180));
-    private final Pose Bez2Control = new Pose(144-85, 60, Math.toRadians(180));
-    private final Pose Spike2End = new Pose(144-130, 60, Math.toRadians(180));
+    private final Pose Bez2End = new Pose(98, 60, 0);
+    private final Pose Bez2Control = new Pose(85, 60, 0);
+    private final Pose Spike2End = new Pose(130, 60, 0);
 
-    private final Pose Bez3End = new Pose(144-98, 36, Math.toRadians(180));
-    private final Pose Bez3Control = new Pose(144-78, 36, Math.toRadians(180));
-    private final Pose Spike3End = new Pose(144-130, 36, Math.toRadians(180));
-    private final Pose Gate = new Pose(144-132.78313253012047,60.4578313253012,Math.toRadians(180-35));
-    private final Pose GateControl = new Pose(144-118.04819277108433,60.4578313253012,Math.toRadians(180));
-    private final Pose backGate = new Pose(144-96,67,Math.toRadians(180));
+    private final Pose Bez3End = new Pose(98, 36, 0);
+    private final Pose Bez3Control = new Pose(78, 36, 0);
+    private final Pose Spike3End = new Pose(130, 36, 0);
+    private final Pose Gate = new Pose(132.78313253012047,60.4578313253012,Math.toRadians(35));
+    private final Pose GateControl = new Pose(118.04819277108433,60.4578313253012,0);
+    private final Pose backGate = new Pose(96,67,0);
 
     private Path scorePreload;
 
@@ -91,7 +91,7 @@ public class DIDDYBLUE extends OpMode {
                 .build();
         BackGate = follower.pathBuilder()
                 .addPath(new BezierCurve(Gate,backGate,scorePose))
-                .setLinearHeadingInterpolation(Gate.getHeading(),scorePose.getHeading())
+                .setLinearHeadingInterpolation(Math.toRadians(75),scorePose.getHeading())
                 .build();
 
         PrepSpike2 = follower.pathBuilder()
@@ -168,7 +168,11 @@ public class DIDDYBLUE extends OpMode {
 
     private void shoot(PathChain nextPath, boolean skip) {
         if (follower.isBusy()) {
-            prepareToShoot();
+                if(follower.getPose().getX()>120){
+                    spinUp(true);
+                }else{
+                    prepareToShoot();
+                }
         }
         if (!follower.isBusy()) {
             if ((outtake.atSpeed(2000,3000)||happened) ) {
@@ -200,8 +204,6 @@ public class DIDDYBLUE extends OpMode {
 
     private void spinIntake(PathChain path,int y) {
         if(follower.isBusy()) {
-
-
             if (follower.getPose().getY() < y) {
                 spinUpIntake();
             } else {
@@ -237,7 +239,7 @@ public class DIDDYBLUE extends OpMode {
                 shoot(PrepSpike2);
                 break;
             case 2:
-                spinIntake(ScoreSpike2,65);
+                spinIntake(ScoreSpike2,250); // y= 65
                 break;
             case 3:
                 resetTimers();
@@ -252,7 +254,7 @@ public class DIDDYBLUE extends OpMode {
                 shoot(PrepSpike1);
                 break;
             case 6:
-                spinIntake(ScoreSpike1,89);
+                spinIntake(ScoreSpike1,250);// y= 89
                 break;
             case 7:
                 resetTimers();
@@ -260,7 +262,7 @@ public class DIDDYBLUE extends OpMode {
                 break;
             case 8:
                 resetTimers();
-                spinIntake(ScoreSpike3,37);
+                spinIntake(ScoreSpike3,250); // y=37
                 break;
             case 9:
                 resetTimers();
