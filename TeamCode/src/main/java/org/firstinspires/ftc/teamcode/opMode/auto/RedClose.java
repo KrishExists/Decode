@@ -46,15 +46,15 @@ public class RedClose extends OpMode {
 
     private final Pose Bez1End = new Pose(98, 84, 0);
     private final Pose Bez1Control = new Pose(85, 84, 0);
-    private final Pose Spike1End = new Pose(120, 84, 0);
+    private final Pose Spike1End = new Pose(125, 84, 0);
 
     private final Pose Bez2End = new Pose(98, 60, 0);
     private final Pose Bez2Control = new Pose(85, 60, 0);
-    private final Pose Spike2End = new Pose(130, 60, 0);
+    private final Pose Spike2End = new Pose(135, 60, 0);
 
     private final Pose Bez3End = new Pose(98, 36, 0);
     private final Pose Bez3Control = new Pose(78, 36, 0);
-    private final Pose Spike3End = new Pose(130, 36, 0);
+    private final Pose Spike3End = new Pose(135, 36, 0);
     private final Pose Gate = new Pose(132.78313253012047,60.4578313253012,Math.toRadians(35));
     private final Pose GateControl = new Pose(118.04819277108433,60.4578313253012,0);
     private final Pose backGate = new Pose(96,67,0);
@@ -168,11 +168,7 @@ public class RedClose extends OpMode {
 
     private void shoot(PathChain nextPath, boolean skip) {
         if (follower.isBusy()) {
-                if(follower.getPose().getX()>120){
-                    spinUp(true);
-                }else{
-                    prepareToShoot();
-                }
+               prepareToShoot();
         }
         if (!follower.isBusy()) {
             if ((outtake.atSpeed(2000,3000)||happened) ) {
