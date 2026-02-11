@@ -88,10 +88,12 @@ public class RedClose extends OpMode {
         GoGate = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose,GateControl,Gate))
                 .setLinearHeadingInterpolation(scorePose.getHeading(),Gate.getHeading())
+                .addPath(new BezierLine(Gate, new Pose(134, 58)))
+                .setLinearHeadingInterpolation(Gate.getHeading(), Math.toRadians(85))
                 .build();
         BackGate = follower.pathBuilder()
-                .addPath(new BezierCurve(Gate,backGate,scorePose))
-                .setLinearHeadingInterpolation(Math.toRadians(75),scorePose.getHeading())
+                .addPath(new BezierCurve(new Pose(134, 58),backGate,scorePose))
+                .setLinearHeadingInterpolation(Math.toRadians(85),scorePose.getHeading())
                 .build();
 
         PrepSpike2 = follower.pathBuilder()
@@ -171,7 +173,7 @@ public class RedClose extends OpMode {
                prepareToShoot();
         }
         if (!follower.isBusy()) {
-            if ((outtake.atSpeed(2000,3000)||happened) ) {
+            if ((outtake.atSpeed(2100,3000)||happened) ) {
                 blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 happened = true;
                 spinUp(true);
