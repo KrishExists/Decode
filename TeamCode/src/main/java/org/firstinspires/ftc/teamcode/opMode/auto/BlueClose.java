@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Outtake;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
-@Autonomous(name = "Pedro Pathing Auto aarav Kris Blue--this one", group = "Autonomous")
+@Autonomous(name = "Pedro Pathing Auto aarav 9BLUE)--this one", group = "Autonomous")
 public class BlueClose extends OpMode {
 
     private Follower follower;
@@ -40,21 +40,21 @@ public class BlueClose extends OpMode {
 
     private DcMotorEx transfer;
 
-    private final Pose startPose = new Pose(144-123.2612669937254, 116.44743671567421, Math.toRadians(180-90));
-    private final Pose scorePose = new Pose(144-84, 84, Math.toRadians(135));
-    private final Pose scorePoseEnd = new Pose(144-90, 115, Math.toRadians(180-20));
+    private final Pose startPose = new Pose(144-123.2612669937254, 116.44743671567421, Math.toRadians(90));
+    private final Pose scorePose = new Pose(144-84, 84, Math.toRadians(180-45));
+    private final Pose scorePoseEnd = new Pose(144-90, 105, Math.toRadians(180-25)); //yay yaya
 
     private final Pose Bez1End = new Pose(144-98, 84, Math.toRadians(180));
     private final Pose Bez1Control = new Pose(144-85, 84, Math.toRadians(180));
-    private final Pose Spike1End = new Pose(144-120, 84, Math.toRadians(180));
+    private final Pose Spike1End = new Pose(144-125, 84, Math.toRadians(180));
 
     private final Pose Bez2End = new Pose(144-98, 60, Math.toRadians(180));
     private final Pose Bez2Control = new Pose(144-85, 60, Math.toRadians(180));
-    private final Pose Spike2End = new Pose(144-130, 60, Math.toRadians(180));
+    private final Pose Spike2End = new Pose(144-135, 60, Math.toRadians(180));
 
     private final Pose Bez3End = new Pose(144-98, 36, Math.toRadians(180));
     private final Pose Bez3Control = new Pose(144-78, 36, Math.toRadians(180));
-    private final Pose Spike3End = new Pose(144-130, 36, Math.toRadians(180));
+    private final Pose Spike3End = new Pose(144-135, 36, Math.toRadians(180));
     private final Pose Gate = new Pose(144-132.78313253012047,60.4578313253012,Math.toRadians(180-35));
     private final Pose GateControl = new Pose(144-118.04819277108433,60.4578313253012,Math.toRadians(180));
     private final Pose backGate = new Pose(144-96,67,Math.toRadians(180));
@@ -88,10 +88,12 @@ public class BlueClose extends OpMode {
         GoGate = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose,GateControl,Gate))
                 .setLinearHeadingInterpolation(scorePose.getHeading(),Gate.getHeading())
+                .addPath(new BezierLine(Gate, new Pose(144-134, 58)))
+                .setLinearHeadingInterpolation(Gate.getHeading(), Math.toRadians(180-85))
                 .build();
         BackGate = follower.pathBuilder()
-                .addPath(new BezierCurve(Gate,backGate,scorePose))
-                .setLinearHeadingInterpolation(Gate.getHeading(),scorePose.getHeading())
+                .addPath(new BezierCurve(new Pose(144-134, 58),backGate,scorePose))
+                .setLinearHeadingInterpolation(Math.toRadians(180-85),scorePose.getHeading())
                 .build();
 
         PrepSpike2 = follower.pathBuilder()
@@ -171,12 +173,12 @@ public class BlueClose extends OpMode {
             prepareToShoot();
         }
         if (!follower.isBusy()) {
-            if ((outtake.atSpeed(2000,3000)||happened) ) {
+            if ((outtake.atSpeed(2250,3000)||happened) ) {
                 blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 happened = true;
                 spinUp(true);
                 transfer.setPower(-1);
-                if (actionTimer.milliseconds()>1000 ) {
+                if (actionTimer.milliseconds()>1250 ) {
                     if (skip) {
                         pathState = 67;
                         return;
@@ -200,8 +202,6 @@ public class BlueClose extends OpMode {
 
     private void spinIntake(PathChain path,int y) {
         if(follower.isBusy()) {
-
-
             if (follower.getPose().getY() < y) {
                 spinUpIntake();
             } else {
@@ -218,7 +218,7 @@ public class BlueClose extends OpMode {
     }
     private void spinIntakeGate(PathChain path) {
         spinUpIntake();
-        if (!follower.isBusy()&&actionTimer.milliseconds()>1500) {
+        if (!follower.isBusy()&&actionTimer.milliseconds()>900) {
             follower.followPath(path,true);
             pathState++;
             resetBooleans();
@@ -237,7 +237,7 @@ public class BlueClose extends OpMode {
                 shoot(PrepSpike2);
                 break;
             case 2:
-                spinIntake(ScoreSpike2,65);
+                spinIntake(ScoreSpike2,250); // y= 65
                 break;
             case 3:
                 resetTimers();
@@ -252,7 +252,7 @@ public class BlueClose extends OpMode {
                 shoot(PrepSpike1);
                 break;
             case 6:
-                spinIntake(ScoreSpike1,89);
+                spinIntake(ScoreSpike1,250);// y= 89
                 break;
             case 7:
                 resetTimers();
@@ -260,7 +260,7 @@ public class BlueClose extends OpMode {
                 break;
             case 8:
                 resetTimers();
-                spinIntake(ScoreSpike3,37);
+                spinIntake(ScoreSpike3,250); // y=37
                 break;
             case 9:
                 resetTimers();

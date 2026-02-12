@@ -57,6 +57,10 @@ public class FarAutoPaths extends OpMode {
         public PathChain scorespike1;
         public PathChain shootspike1;
 
+        public PathChain pickHuman;
+
+        public PathChain scoreHuman;
+
 
         public Paths(Follower follower) {
             score = follower.pathBuilder().addPath(
@@ -123,6 +127,24 @@ public class FarAutoPaths extends OpMode {
 
             .build();
 
+            pickHuman = follower.pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(90,10), new Pose(90, 10)) // 135,7
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(70), Math.toRadians(0))
+                    .addPath(
+                            new BezierLine(new Pose(90,10), new Pose(135, 7))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                    .build();
+
+            scoreHuman = follower.pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(135, 7), new Pose(90,10))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(70))
+                    .build();
+
             leave = follower.pathBuilder().addPath(
                             new BezierLine(
                                     new Pose(90, 10),
@@ -171,14 +193,14 @@ public class FarAutoPaths extends OpMode {
 
             case 5:
                 if(!follower.isBusy()){
-                    follower.followPath(paths.pick1,true);
+                    follower.followPath(paths.pickHuman,true);
                     pathState++;
                 }
                 break;
 
             case 6:
                 if(!follower.isBusy()){
-                    follower.followPath(paths.shoot,true);
+                    follower.followPath(paths.scoreHuman,true);
                     pathState++;
                 }
                 break;

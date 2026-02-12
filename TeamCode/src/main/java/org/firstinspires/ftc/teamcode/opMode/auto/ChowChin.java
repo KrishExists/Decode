@@ -79,7 +79,7 @@ public class ChowChin extends OpMode {
                             new BezierCurve(
                                     new Pose(85.500, 18.800),
                                     new Pose(91.486, 37.106),
-                                    new Pose(132.000, 36.200)
+                                    new Pose(132.000, 39)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(72), Math.toRadians(0))
 
@@ -87,7 +87,7 @@ public class ChowChin extends OpMode {
 
             Path3 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(132.000, 36.200),
+                                    new Pose(132.000, 39),
 
                                     new Pose(85.500, 18.800)
                             )
@@ -232,13 +232,7 @@ public class ChowChin extends OpMode {
 
     private void spinIntake(PathChain path,int y) {
         if(follower.isBusy()) {
-            if (follower.getPose().getX() > y) {
-                spinUpIntake();
-            } else {
-                outtake.spinToRpm(0);
-                intake.setPower(0);
-                transfer.setPower(0);
-            }
+            spinUpIntake();
         }
         if (!follower.isBusy()) {
             follower.followPath(path,true);

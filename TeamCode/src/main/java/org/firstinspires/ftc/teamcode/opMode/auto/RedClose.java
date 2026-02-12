@@ -42,7 +42,7 @@ public class RedClose extends OpMode {
 
     private final Pose startPose = new Pose(123.2612669937254, 116.44743671567421, Math.toRadians(90));
     private final Pose scorePose = new Pose(84, 84, Math.toRadians(45));
-    private final Pose scorePoseEnd = new Pose(90, 115, Math.toRadians(20)); //yay yaya
+    private final Pose scorePoseEnd = new Pose(90, 105, Math.toRadians(25)); //yay yaya
 
     private final Pose Bez1End = new Pose(98, 84, 0);
     private final Pose Bez1Control = new Pose(85, 84, 0);
@@ -173,12 +173,12 @@ public class RedClose extends OpMode {
                prepareToShoot();
         }
         if (!follower.isBusy()) {
-            if ((outtake.atSpeed(2100,3000)||happened) ) {
+            if ((outtake.atSpeed(2250,3000)||happened) ) {
                 blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 happened = true;
                 spinUp(true);
                 transfer.setPower(-1);
-                if (actionTimer.milliseconds()>1000 ) {
+                if (actionTimer.milliseconds()>1250 ) {
                     if (skip) {
                         pathState = 67;
                         return;
@@ -218,7 +218,7 @@ public class RedClose extends OpMode {
     }
     private void spinIntakeGate(PathChain path) {
         spinUpIntake();
-        if (!follower.isBusy()&&actionTimer.milliseconds()>1500) {
+        if (!follower.isBusy()&&actionTimer.milliseconds()>900) {
             follower.followPath(path,true);
             pathState++;
             resetBooleans();

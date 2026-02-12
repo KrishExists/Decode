@@ -180,7 +180,7 @@ public class Intake implements Subsystem{
                 //kp is 0.07
                 //kd is 0.00001
                 intake.setPower(TeamConstants.INTAKE_IN_POWER-0.4);
-                linkage.setPosition(0.6);
+                linkage.setPosition(TeamConstants.LINKAGE_REST);
                 shooter.spinToRpm(TeamConstants.SHOOTER_FARAUTO_RPM);
                 blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 transfer.setPower(0.4);
@@ -217,7 +217,8 @@ public class Intake implements Subsystem{
                 break;
             case RAPOD_FAR:
                 shooter.spinToRpm(TeamConstants.SHOOTER_FARAUTO_RPM);
-                if(shooter.getRPM()>TeamConstants.SHOOTER_FARAUTO_RPM-100){
+                linkage.setPosition(TeamConstants.LINKAGE_REST);
+                if(shooter.getRPM()>TeamConstants.SHOOTER_FARAUTO_RPM-50){
                     happend = true;
                 }
                 if(happend){
