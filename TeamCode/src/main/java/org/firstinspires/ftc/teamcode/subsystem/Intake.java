@@ -222,8 +222,8 @@ public class Intake implements Subsystem{
                     happend = true;
                 }
                 if(happend){
-                    intake.setPower(TeamConstants.INTAKE_IN_POWER);
-                    transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+                    intake.setPower(TeamConstants.INTAKE_IN_POWER-0.3);
+                    transfer.setPower(TeamConstants.TRANSFER_IN_POWER-0.3 );
                 }
                 break;
 

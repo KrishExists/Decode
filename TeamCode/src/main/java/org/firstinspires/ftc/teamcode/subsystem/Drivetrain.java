@@ -80,7 +80,6 @@ public class Drivetrain implements Subsystem {
         }
         else{ // I t is
             startingPose = new Pose(72,72,0);//to fix subtract 10 from x and add 10 to y. however this should not be thte case. for some reason its misinterpeting the pose by 10
-
         }
 
         follower = Constants.createFollower(h);
@@ -89,15 +88,15 @@ public class Drivetrain implements Subsystem {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         if(red){
             far = () -> follower.pathBuilder() //Lazy Curve Generation
-                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(85, 18))))
-                    .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(70), 0.8))
+                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(75, 25))))
+                    .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(66.16), 0.8))
                     .build();
             mid = () -> follower.pathBuilder() //Lazy Curve Generation
                     .addPath(new Path(new BezierLine(follower::getPose, new Pose(85, 85))))
                     .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(45), 0.8))
                     .build();
             park = () -> follower.pathBuilder() //Lazy Curve Generation
-                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(32, 37))))
+                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(33, 38))))
                     .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(90), 0.8))
                     .build();
 
@@ -113,27 +112,27 @@ public class Drivetrain implements Subsystem {
                     .build();
         }else{
             far = () -> follower.pathBuilder() //Lazy Curve Generation
-                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(72, 22))))
-                    .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(110), 0.8))
+                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(144-85, 18))))
+                    .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(180-70), 0.8))
                     .build();
             mid = () -> follower.pathBuilder() //Lazy Curve Generation
-                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(69, 75))))
+                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(144-85, 75))))
                     .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(135), 0.8))
                     .build();
             park = () -> follower.pathBuilder() //Lazy Curve Generation
-                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(72-38+72, 33))))
+                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(144-32, 37))))
                     .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(90), 0.8))
                     .build();
 
             human = () -> follower.pathBuilder()
                     .addPath(new Path(new BezierLine(follower::getPose, new Pose(106, 8))))
-                    .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(0), 0.8))
+                    .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(180), 0.8))
                     .addPath(new Path(new BezierLine(follower::getPose, new Pose(135, 8))))
                     .build();
 
             gate = () -> follower.pathBuilder() //Lazy Curve Generation
-                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(72-130+72, 69))))
-                    .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, follower::getHeading, 0.8))
+                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(144-130, 69))))
+                    .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(90), 0.6))
                     .build();
         }
         start = () -> follower.pathBuilder() //Lazy Curve Generation
@@ -195,7 +194,7 @@ public class Drivetrain implements Subsystem {
         if (gamepad.rightBumperWasPressed()) farFlag = true;
 //        if(gamepad.aWasPressed()) autoFalg = true;
 
-        // ====== PRIORITY EXECUTION (NO ELSE-IFS) ======
+            // ====== PRIORITY EXECUTION (NO ELSE-IFS) ======
         if (!automatedDrive) {
 
             if (startFlag) {
