@@ -89,7 +89,7 @@ public class Drivetrain implements Subsystem {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         if(red){
             far = () -> follower.pathBuilder() //Lazy Curve Generation
-                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(90, 10))))
+                    .addPath(new Path(new BezierLine(follower::getPose, new Pose(85, 18))))
                     .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(70), 0.8))
                     .build();
             mid = () -> follower.pathBuilder() //Lazy Curve Generation
