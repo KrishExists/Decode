@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -50,6 +52,8 @@ public class Intake implements Subsystem{
     private Gamepad gamepad;
 
     public static boolean next;
+    private Follower follower;
+    private Pose goal;
 
     public Intake(HardwareMap hw, Telemetry t, Outtake shooter) {
         this.telemetry = t;
@@ -71,6 +75,30 @@ public class Intake implements Subsystem{
         sm = new StateMachine<>(IntakeState.REST);
         timerReset();
         timerStart();
+    }
+    public Intake(HardwareMap hw, Telemetry t, Outtake shooter, Follower follower) {
+        this.telemetry = t;
+        this.shooter = shooter;
+        this.follower = follower;
+        next = false;
+        far = false;
+        close= false;
+
+        // Map hardware
+        intake = hw.get(DcMotor.class, "Intake");
+        linkage = hw.get(Servo.class, "Linkage");
+        transfer = hw.get(DcMotorEx.class, "Transfer");
+        blocker = hw.get(Servo.class, "blocker");
+
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        blocker.setPosition(0.5);
+        goal = new Pose(133,133,0);
+
+        // Initialize state machine
+        sm = new StateMachine<>(IntakeState.REST);
+        timerReset();
+        timerStart();
+
     }
 
     public void setGamepad(Gamepad g) {
@@ -168,7 +196,18 @@ public class Intake implements Subsystem{
                 transfer.setPower(-1);
                 break;
 
-
+            case AUTORPMRED:
+                double distance = follower.getPose().distanceFrom(goal);
+                int rpm = 5;//linear regression model
+                shooter.spinToRpm(rpm);
+                if(shooter.getRPM()>rpm-100&&shooter.getRPM()<rpm + 100){
+                    happend = true;
+                }
+                if (happend){
+                    intake.setPower(TeamConstants.INTAKE_IN_POWER);
+                    transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+                }
+                break;
             case RUNSLOW:
                 intake.setPower(TeamConstants.intakeReversed);
                 transfer.setPower(TeamConstants.TRANSFER_REV);

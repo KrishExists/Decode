@@ -179,6 +179,9 @@ public class Drivetrain implements Subsystem {
         rightFront.setPower((y - x - rx) / denominator);
         rightBack.setPower((y + x - rx) / denominator);
     }
+    public Follower returnFollwer(){
+        return follower;
+    }
 
     public void combinedDrive(Gamepad gamepad) {
         if(gamepad.dpad_up){

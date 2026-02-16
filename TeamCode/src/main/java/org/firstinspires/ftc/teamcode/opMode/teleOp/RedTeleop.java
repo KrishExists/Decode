@@ -3,6 +3,7 @@
 package org.firstinspires.ftc.teamcode.opMode.teleOp;
 
 
+import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -30,7 +31,8 @@ public class RedTeleop extends LinearOpMode {
         hw = hardwareMap;
         shooter = new Outtake(hw, telemetry);
         drive = new Drivetrain(hardwareMap, telemetry,true);
-        intake = new Intake(hw, telemetry, shooter);
+        Follower follower  = drive.returnFollwer();
+        intake = new Intake(hw, telemetry, shooter,follower);
         robot = new Robot(hw,telemetry,drive,intake);
         telemetry.addLine("Initialized — Waiting for Start");
         telemetry.update();
