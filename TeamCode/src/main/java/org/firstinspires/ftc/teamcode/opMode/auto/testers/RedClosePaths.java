@@ -168,7 +168,6 @@ public class RedClosePaths extends OpMode {
     public void init() {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
-        follower.setPose(startPose);
         buildPaths();
     }
 
