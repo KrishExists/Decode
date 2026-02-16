@@ -21,7 +21,6 @@ public class RedClosePaths extends OpMode {
     private final Pose scorePose = new Pose(84, 84, Math.toRadians(0));
     private final Pose scorePoseEnd = new Pose(90, 105, Math.toRadians(0));
 
-    private final Pose Bez1Control = new Pose(85, 55, 0);
     private final Pose Spike1End = new Pose(125, 84, 0);
 
     private final Pose Bez2Control = new Pose(85, 60, 0);
