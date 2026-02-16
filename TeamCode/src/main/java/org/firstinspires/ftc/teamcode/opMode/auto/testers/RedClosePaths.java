@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opMode.auto.testers;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -11,10 +12,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Autonomous(name = "Paths Red (Full Auto Paths)", group = "Examples")
+@Config
 public class RedClosePaths extends OpMode {
 
     private Follower follower;
     private int pathState;
+    private static boolean holdend =true;
 
     // ---- POSES FROM FULL AUTO ----
     private final Pose startPose = new Pose(123.2612669937254, 116.44743671567421, Math.toRadians(90));
@@ -47,7 +50,7 @@ public class RedClosePaths extends OpMode {
 
         PrepSpike1 = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose, Spike1End))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), Spike1End.getHeading())
+                .setLinearHeadingInterpolation(scorePose.getHeading(), Spike1End.getHeading(),0.6)
                 .build();
 
         ScoreSpike1 = follower.pathBuilder()
@@ -69,7 +72,7 @@ public class RedClosePaths extends OpMode {
 
         PrepSpike2 = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, Bez2Control, Spike2End))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), Spike2End.getHeading())
+                .setLinearHeadingInterpolation(scorePose.getHeading(), Spike2End.getHeading(),0.6)
                 .build();
 
         ScoreSpike2 = follower.pathBuilder()
@@ -84,7 +87,7 @@ public class RedClosePaths extends OpMode {
 
         ScoreSpike3 = follower.pathBuilder()
                 .addPath(new BezierLine(Spike3End, scorePoseEnd))
-                .setLinearHeadingInterpolation(Spike3End.getHeading(), scorePoseEnd.getHeading())
+                .setLinearHeadingInterpolation(Spike3End.getHeading(), scorePoseEnd.getHeading(),0.6)
                 .build();
     }
 
@@ -97,56 +100,56 @@ public class RedClosePaths extends OpMode {
 
             case 1:
                 if (!follower.isBusy()) {
-                    follower.followPath(PrepSpike2, true);
+                    follower.followPath(PrepSpike2, holdend);
                     pathState++;
                 }
                 break;
 
             case 2:
                 if (!follower.isBusy()) {
-                    follower.followPath(ScoreSpike2, true);
+                    follower.followPath(ScoreSpike2, holdend);
                     pathState++;
                 }
                 break;
 
             case 3:
                 if (!follower.isBusy()) {
-                    follower.followPath(GoGate, true);
+                    follower.followPath(GoGate, holdend);
                     pathState++;
                 }
                 break;
 
             case 4:
                 if (!follower.isBusy()) {
-                    follower.followPath(BackGate, true);
+                    follower.followPath(BackGate, holdend);
                     pathState++;
                 }
                 break;
 
             case 5:
                 if (!follower.isBusy()) {
-                    follower.followPath(PrepSpike1, true);
+                    follower.followPath(PrepSpike1, holdend);
                     pathState++;
                 }
                 break;
 
             case 6:
                 if (!follower.isBusy()) {
-                    follower.followPath(ScoreSpike1, true);
+                    follower.followPath(ScoreSpike1, holdend);
                     pathState++;
                 }
                 break;
 
             case 7:
                 if (!follower.isBusy()) {
-                    follower.followPath(PrepSpike3, true);
+                    follower.followPath(PrepSpike3, holdend);
                     pathState++;
                 }
                 break;
 
             case 8:
                 if (!follower.isBusy()) {
-                    follower.followPath(ScoreSpike3, true);
+                    follower.followPath(ScoreSpike3, holdend);
                     pathState = -1;
                 }
                 break;
