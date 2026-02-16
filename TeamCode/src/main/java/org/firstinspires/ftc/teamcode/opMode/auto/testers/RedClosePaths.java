@@ -49,9 +49,10 @@ public class RedClosePaths extends OpMode {
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
         PrepSpike1 = follower.pathBuilder()
-                .setNoDeceleration()
                 .addPath(new BezierLine(scorePose, Spike1End))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Spike1End.getHeading(),0.6)
+                .setNoDeceleration()
+                .setTValueConstraint(0.95)
                 .build();
 
         ScoreSpike1 = follower.pathBuilder()
@@ -72,9 +73,12 @@ public class RedClosePaths extends OpMode {
                 .build();
 
         PrepSpike2 = follower.pathBuilder()
-                .setNoDeceleration()
+
+
                 .addPath(new BezierCurve(scorePose, Bez2Control, Spike2End))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Spike2End.getHeading(),0.6)
+                .setNoDeceleration()
+                .setTValueConstraint(0.95)
                 .build();
 
         ScoreSpike2 = follower.pathBuilder()
@@ -83,9 +87,10 @@ public class RedClosePaths extends OpMode {
                 .build();
 
         PrepSpike3 = follower.pathBuilder()
-                .setNoDeceleration()
                 .addPath(new BezierCurve(scorePose, Bez3Control, Spike3End))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Spike3End.getHeading())
+                .setNoDeceleration()
+                .setTValueConstraint(0.95)
                 .build();
 
         ScoreSpike3 = follower.pathBuilder()
