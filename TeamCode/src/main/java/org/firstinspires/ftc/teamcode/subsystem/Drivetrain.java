@@ -65,6 +65,7 @@ public class Drivetrain implements Subsystem {
     private final Telemetry telemetry;
     private static final boolean teleDrive = true;
     Pose redThing;
+    private double servoStart = 0.5;
     PController headingController;
 
 
@@ -183,115 +184,34 @@ public class Drivetrain implements Subsystem {
         return follower;
     }
 
-    public void combinedDrive(Gamepad gamepad) {
+    public void combinedDrive(Gamepad gamepad,Gamepad gamepad2) {
         if(gamepad.dpad_up){
             follower.setPose(new Pose(72,72,0));
         }
 
-        // ====== BUTTONS SET FLAGS ======
-        if (gamepad.yWasPressed()) startFlag = true;
-        if(gamepad.xWasPressed()) humanFlag = true;
-        if (gamepad.right_trigger > 0.2) parkFlag = true;
-        if (gamepad.left_trigger > 0.2) gateFlag = true;
-        if (gamepad.leftBumperWasPressed()) closeFlag = true;
-        if (gamepad.rightBumperWasPressed()) farFlag = true;
-//        if(gamepad.aWasPressed()) autoFalg = true;
 
-            // ====== PRIORITY EXECUTION (NO ELSE-IFS) ======
-        if (!automatedDrive) {
-
-            if (startFlag) {
-                automatedDrive = true;
-                follower.followPath(start.get());
-                startFlag = false;
-            }
-
-            if (parkFlag) {
-                automatedDrive = true;
-                follower.followPath(park.get());
-                parkFlag = false;
-            }
-
-            if(humanFlag) {
-                automatedDrive = true;
-                follower.followPath(human.get());
-                humanFlag = false;
-            }
-
-            if (gateFlag) {
-                automatedDrive = true;
-                follower.followPath(gate.get());
-                gateFlag = false;
-            }
-
-            if (closeFlag) {
-                automatedDrive = true;
-                follower.followPath(mid.get());
-                closeFlag = false;
-            }
-
-            if (farFlag) {
-                automatedDrive = true;
-                follower.followPath(far.get());
-                farFlag = false;
-            }
-            if(autoFalg){
-                automatedDrive = true;
-            }
-        }
-
-        if (automatedDrive) {
-            // check if driver moved sticks beyond deadzone
-            boolean joystickInput = Math.abs(gamepad.left_stick_x) > 0.1
-                    || Math.abs(gamepad.left_stick_y) > 0.1
-                    || Math.abs(gamepad.right_stick_x) > 0.1;
-            if(autoFalg){
-                double follwerx = follower.getPose().getX();
-                double followery = follower.getPose().getY();
-                double lockedHeading = Math.atan2(redThing.getPose().getY()-followery,redThing.getPose().getX()-follwerx);
-                telemetry.addData("locked heading",lockedHeading);
-                if(redThing.getX()!=130){
-                    lockedHeading = Math.PI -  lockedHeading;
-                }
-                double error = AngleUnit.normalizeRadians(lockedHeading - AngleUnit.normalizeRadians(follower.getPose().getHeading()));
-                telemetry.addData("error",error);
-
-                double target = error + follower.getHeading();
-                telemetry.addData("target",target);
-                double output = Range.clip(headingController.calculate(follower.getHeading(), target), -1, 1);
-                telemetry.addData("output",output);
-                follower.startTeleopDrive(true);
-                follower.setTeleOpDrive(
-                        -gamepad.left_stick_y,
-                        -gamepad.left_stick_x,
-                        output,
-                        true
-                );
-
-            }
-
+        double follwerx = follower.getPose().getX();
+        double followery = follower.getPose().getY();
+        double redthingx = redThing.getX();
+        double redthingy = redThing.getY();
+        double angle = Math.atan2(followery-redthingy,follwerx-redthingx);
+        double heading = follower.getHeading();
+        heading = AngleUnit.normalizeRadians(heading);
+        double error = heading-angle;
 
             // or pressed B to cancel
-            if ((joystickInput&&!autoFalg) || gamepad.bWasPressed()) {
-                automatedDrive = false;
-                autoFalg = false;
-                follower.startTeleopDrive(true); // ensure teleop drive restarts
-            }
-        }
 
-// ====== MANUAL DRIVE ======
-        if (!automatedDrive) {
             follower.setTeleOpDrive(
                     -gamepad.left_stick_y,
                     -gamepad.left_stick_x,
                     -gamepad.right_stick_x,
                     true
             );
-        }
 
         telemetry.addData("Mode", automatedDrive ? "Auto" : "Manual");
         telemetry.addData("Position", follower.getPose());
     }
+
 
 
 
@@ -305,17 +225,16 @@ public class Drivetrain implements Subsystem {
 
     @Override
     public void update(Gamepad gamepad1, Gamepad gamepad2) {
-        update(gamepad1);
-    }
-
-    public void update(Gamepad gamepad) {
         follower.update();
         headingController.setP(kp);
 
-        this.combinedDrive(gamepad);
+        this.combinedDrive(gamepad1,gamepad2);
         telemetry.addData("position", follower.getPose());
         telemetry.addData("velocity", follower.getVelocity());
-        telemetry.addData("automatedDrive", automatedDrive);
+        telemetry.addData("automatedDrive", automatedDrive);    }
+
+    public void update(Gamepad gamepad) {
+
     }
 }
 
