@@ -80,9 +80,10 @@ public class NavaleBroganTest extends OpMode {
         //SHOOT
         DRIVE_STARTPOS_SHOOT_POS,
         SHOOT_PRELOAD,
+        END
         //States are used as different steps.
-        SHOOT_POS_DRIVE_INTAKEPOS,
-        INTAKE_ARTIFACTS
+        //SHOOT_POS_DRIVE_INTAKEPOS,
+        //INTAKE_ARTIFACTS
 
     }
 
@@ -99,6 +100,7 @@ public class NavaleBroganTest extends OpMode {
     private PathChain
             driveStartPosShootPos;
     private PathChain driveShootPosIntakePos;
+    private PathChain end;
 
     public void buildPaths() {
         driveStartPosShootPos = follower.pathBuilder()
@@ -111,6 +113,8 @@ public class NavaleBroganTest extends OpMode {
                 .setLinearHeadingInterpolation(shootPose.getHeading(), intakePose1.getHeading())
                 .addPath(new BezierLine(intakePose1, intakePose2))
                 .setLinearHeadingInterpolation(intakePose1.getHeading(), intakePose2.getHeading())
+                .build();
+        end = follower.pathBuilder()
                 .build();
 
     }
@@ -127,10 +131,17 @@ public class NavaleBroganTest extends OpMode {
 
                 if (!follower.isBusy()) {
                     follower.followPath(driveShootPosIntakePos, true);
-                    setPathState(null);
+                    setPathState(PathState.END);
 
                 }
                 break;
+
+            case END:
+                if(!follower.isBusy()) {
+                    follower.followPath(end, true);
+                }
+
+
 
 
             default:
