@@ -165,7 +165,6 @@ public class Intake implements Subsystem{
 
         else if(gamepad2.left_trigger>0.2) {
             setState(IntakeState.AUTORPMRED);
-            shooting = true;
         }
         else if (shooting){
             //do nothing AGAIN IS CRUCIAL MURDURKUR
