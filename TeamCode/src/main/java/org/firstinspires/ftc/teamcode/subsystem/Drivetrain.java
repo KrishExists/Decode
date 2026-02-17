@@ -73,15 +73,15 @@ public class Drivetrain implements Subsystem {
         this(h,t,false);
     }
     public Drivetrain(HardwareMap h, Telemetry t, boolean red) {
-        if(PoseStorage.pose!=null){
-            //startingPose = PoseStorage.pose;
-//            startingPose = new Pose(90, 115, Math.toRadians(20));
-            startingPose = PoseStorage.pose;
-            t.addData("Got pose",startingPose);
-        }
-        else{ // I t is
-            startingPose = new Pose(72,72,0);//to fix subtract 10 from x and add 10 to y. however this should not be thte case. for some reason its misinterpeting the pose by 10
-        }
+//        if(PoseStorage.pose!=null){
+//            //startingPose = PoseStorage.pose;
+////            startingPose = new Pose(90, 115, Math.toRadians(20));
+//            startingPose = PoseStorage.pose;
+//            t.addData("Got pose",startingPose);
+//        }
+//        else { // I t is
+            startingPose = new Pose(72, 72, 0);//to fix subtract 10 from x and add 10 to y. however this should not be thte case. for some reason its misinterpeting the pose by 10
+//        }
 
         follower = Constants.createFollower(h);
         follower.setStartingPose(startingPose);

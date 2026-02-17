@@ -30,8 +30,8 @@ public class TeamConstants {
     // =============================
     // Linkage Servo Positions
     // =============================
-    public static final double LINKAGE_REST = 0.5;
-    public static final double LINKAGE_SHOOT = 0.47;
+    public static final double LINKAGE_REST = 0.45;
+    public static final double LINKAGE_SHOOT = 0.45;
 
 
     // =============================

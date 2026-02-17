@@ -40,7 +40,7 @@ public class RedClose extends OpMode {
 
     private DcMotorEx transfer;
     private final Pose startPose = new Pose(121, 116.44743671567421, Math.toRadians(90));
-    private final Pose scorePose = new Pose(84, 84, Math.toRadians(45));
+    private final Pose scorePose = new Pose(84, 84, Math.toRadians(0));
     private final Pose scorePoseEnd = new Pose(90, 110, 0);
 
     private final Pose Spike1End = new Pose(115, 84, 0);
@@ -51,9 +51,8 @@ public class RedClose extends OpMode {
     private final Pose Bez3Control = new Pose(86, 27, 0);
     private final Pose Spike3End = new Pose(120, 36, 0);
 
-    private final Pose Gate = new Pose(125.5, 64, Math.toRadians(35));
+    private final Pose Gate = new Pose(125.5, 62, Math.toRadians(35));
     private final Pose GateControl = new Pose(118.04819277108433, 60.4578313253012, 0);
-    private final Pose GateSpec = new Pose(132,45, Math.toRadians(85));
     private final Pose backGate = new Pose(96, 67, 0);
 
 
@@ -76,12 +75,14 @@ public class RedClose extends OpMode {
         PrepSpike1 = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose, Spike1End))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Spike1End.getHeading(),0.6)
-//                .setNoDeceleration()
+                .setNoDeceleration()
                 .build();
 
         ScoreSpike1 = follower.pathBuilder()
                 .addPath(new BezierLine(Spike1End, scorePose))
                 .setLinearHeadingInterpolation(Spike1End.getHeading(), scorePose.getHeading())
+                .setNoDeceleration()
+
                 .build();
 
         GoGate = follower.pathBuilder()
@@ -92,6 +93,7 @@ public class RedClose extends OpMode {
         BackGate = follower.pathBuilder()
                 .addPath(new BezierCurve(Gate, backGate, scorePose))
                 .setLinearHeadingInterpolation(Gate.getHeading(), scorePose.getHeading())
+
                 .build();
 
         PrepSpike2 = follower.pathBuilder()
@@ -99,24 +101,29 @@ public class RedClose extends OpMode {
 
                 .addPath(new BezierCurve(scorePose, Bez2Control, Spike2End))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Spike2End.getHeading(),0.6)
-//                .setNoDeceleration()
+                .setNoDeceleration()
                 .build();
 
         ScoreSpike2 = follower.pathBuilder()
                 .addPath(new BezierCurve(Spike2End, Bez2Control, scorePose))
                 .setLinearHeadingInterpolation(Spike2End.getHeading(), scorePose.getHeading())
+                .setNoDeceleration()
 
                 .build();
 
         PrepSpike3 = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, Bez3Control, Spike3End))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Spike3End.getHeading())
-//                .setNoDeceleration()
+                .setNoDeceleration()
                 .build();
 
         ScoreSpike3 = follower.pathBuilder()
                 .addPath(new BezierLine(Spike3End, scorePoseEnd))
-                .setLinearHeadingInterpolation(Spike3End.getHeading(), scorePoseEnd.getHeading(),0.6)
+//                .setLinearHeadingInterpolation(Spike3End.getHeading(), scorePoseEnd.getHeading(),0.6)
+                .setTangentHeadingInterpolation()
+                .setReversed()
+                .setNoDeceleration()
+
                 .build();
     }
 

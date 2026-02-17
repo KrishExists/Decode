@@ -163,7 +163,7 @@ public class Intake implements Subsystem{
             shooting = true;
         }
 
-        else if(gamepad2.y) {
+        else if(gamepad2.left_trigger>0.2) {
             setState(IntakeState.AUTORPMRED);
             shooting = true;
         }
@@ -198,14 +198,19 @@ public class Intake implements Subsystem{
 
             case AUTORPMRED:
                 double distance = follower.getPose().distanceFrom(goal);
-                int rpm = 5;//linear regression model
+                double rpm = 9.43976 * distance +1500.948;//linear regression model
                 shooter.spinToRpm(rpm);
-                if(shooter.getRPM()>rpm-100&&shooter.getRPM()<rpm + 100){
+                if(shooter.getRPM()>rpm-25&&shooter.getRPM()<rpm + 100){
                     happend = true;
+
                 }
                 if (happend){
                     intake.setPower(TeamConstants.INTAKE_IN_POWER);
                     transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+                    blocker.setPosition(0.58);
+                }else{
+                    intake.setPower(0);
+                    transfer.setPower(0);
                 }
                 break;
             case RUNSLOW:
