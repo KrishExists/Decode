@@ -20,21 +20,21 @@ public class RedClosePaths extends OpMode {
     private static boolean holdend =true;
 
     // ---- POSES FROM FULL AUTO ----
-    private final Pose startPose = new Pose(123.2612669937254, 116.44743671567421, Math.toRadians(90));
-    private final Pose scorePose = new Pose(84, 84, Math.toRadians(0));
-    private final Pose scorePoseEnd = new Pose(90, 105, Math.toRadians(0));
+    private final Pose startPose = new Pose(121, 116.44743671567421, Math.toRadians(90));
+    private final Pose scorePose = new Pose(84, 84, 0);
+    private final Pose scorePoseEnd = new Pose(90, 110, 0);
 
-    private final Pose Spike1End = new Pose(125, 84, 0);
+    private final Pose Spike1End = new Pose(115, 84, 0);
 
     private final Pose Bez2Control = new Pose(85, 60, 0);
-    private final Pose Spike2End = new Pose(135, 60, 0);
+    private final Pose Spike2End = new Pose(120, 60, 0);
 
     private final Pose Bez3Control = new Pose(86, 27, 0);
-    private final Pose Spike3End = new Pose(135, 36, 0);
+    private final Pose Spike3End = new Pose(120, 36, 0);
 
-    private final Pose Gate = new Pose(132.78313253012047, 60.4578313253012, Math.toRadians(35));
+    private final Pose Gate = new Pose(125.5, 64, Math.toRadians(35));
     private final Pose GateControl = new Pose(118.04819277108433, 60.4578313253012, 0);
-    private final Pose GateSpec = new Pose(134,58, Math.toRadians(85));
+    private final Pose GateSpec = new Pose(132,45, Math.toRadians(85));
     private final Pose backGate = new Pose(96, 67, 0);
 
     private Path scorePreload;
@@ -52,7 +52,6 @@ public class RedClosePaths extends OpMode {
                 .addPath(new BezierLine(scorePose, Spike1End))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Spike1End.getHeading(),0.6)
                 .setNoDeceleration()
-                .setTValueConstraint(0.95)
                 .build();
 
         ScoreSpike1 = follower.pathBuilder()
@@ -78,24 +77,25 @@ public class RedClosePaths extends OpMode {
                 .addPath(new BezierCurve(scorePose, Bez2Control, Spike2End))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Spike2End.getHeading(),0.6)
                 .setNoDeceleration()
-                .setTValueConstraint(0.95)
                 .build();
 
         ScoreSpike2 = follower.pathBuilder()
                 .addPath(new BezierCurve(Spike2End, Bez2Control, scorePose))
                 .setLinearHeadingInterpolation(Spike2End.getHeading(), scorePose.getHeading())
+
                 .build();
 
         PrepSpike3 = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, Bez3Control, Spike3End))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Spike3End.getHeading())
                 .setNoDeceleration()
-                .setTValueConstraint(0.95)
                 .build();
 
         ScoreSpike3 = follower.pathBuilder()
                 .addPath(new BezierLine(Spike3End, scorePoseEnd))
-                .setLinearHeadingInterpolation(Spike3End.getHeading(), scorePoseEnd.getHeading(),0.6)
+                .setTangentHeadingInterpolation()
+                .setReversed()
+//                .setLinearHeadingInterpolation(Spike3End.getHeading(), scorePoseEnd.getHeading(),0.6)
                 .build();
     }
 
@@ -114,7 +114,7 @@ public class RedClosePaths extends OpMode {
                 break;
 
             case 2:
-                if (!follower.isBusy()) {
+                if (follower.getCurrentTValue()>0.9) {
                     follower.followPath(ScoreSpike2, holdend);
                     pathState++;
                 }
@@ -133,30 +133,43 @@ public class RedClosePaths extends OpMode {
                     pathState++;
                 }
                 break;
-
             case 5:
                 if (!follower.isBusy()) {
-                    follower.followPath(PrepSpike1, holdend);
+                    follower.followPath(GoGate, holdend);
                     pathState++;
                 }
                 break;
 
             case 6:
                 if (!follower.isBusy()) {
-                    follower.followPath(ScoreSpike1, holdend);
+                    follower.followPath(BackGate, holdend);
                     pathState++;
                 }
                 break;
 
             case 7:
                 if (!follower.isBusy()) {
-                    follower.followPath(PrepSpike3, holdend);
+                    follower.followPath(PrepSpike1, holdend);
                     pathState++;
                 }
                 break;
 
             case 8:
+                if (follower.getCurrentTValue()>0.9) {
+                    follower.followPath(ScoreSpike1, holdend);
+                    pathState++;
+                }
+                break;
+
+            case 9:
                 if (!follower.isBusy()) {
+                    follower.followPath(PrepSpike3, holdend);
+                    pathState++;
+                }
+                break;
+
+            case 10:
+                if (follower.getCurrentTValue()>0.9) {
                     follower.followPath(ScoreSpike3, holdend);
                     pathState = -1;
                 }

@@ -39,25 +39,23 @@ public class RedClose extends OpMode {
     private boolean happened = false;
 
     private DcMotorEx transfer;
-
-    private final Pose startPose = new Pose(123.2612669937254, 116.44743671567421, Math.toRadians(90));
+    private final Pose startPose = new Pose(121, 116.44743671567421, Math.toRadians(90));
     private final Pose scorePose = new Pose(84, 84, Math.toRadians(45));
-    private final Pose scorePoseEnd = new Pose(90, 105, Math.toRadians(25)); //yay yaya
+    private final Pose scorePoseEnd = new Pose(90, 110, 0);
 
-    private final Pose Bez1End = new Pose(98, 84, 0);
-    private final Pose Bez1Control = new Pose(85, 84, 0);
-    private final Pose Spike1End = new Pose(125, 84, 0);
+    private final Pose Spike1End = new Pose(115, 84, 0);
 
-    private final Pose Bez2End = new Pose(98, 60, 0);
     private final Pose Bez2Control = new Pose(85, 60, 0);
-    private final Pose Spike2End = new Pose(135, 60, 0);
+    private final Pose Spike2End = new Pose(120, 60, 0);
 
-    private final Pose Bez3End = new Pose(98, 36, 0);
-    private final Pose Bez3Control = new Pose(78, 36, 0);
-    private final Pose Spike3End = new Pose(135, 36, 0);
-    private final Pose Gate = new Pose(132.78313253012047,60.4578313253012,Math.toRadians(35));
-    private final Pose GateControl = new Pose(118.04819277108433,60.4578313253012,0);
-    private final Pose backGate = new Pose(96,67,0);
+    private final Pose Bez3Control = new Pose(86, 27, 0);
+    private final Pose Spike3End = new Pose(120, 36, 0);
+
+    private final Pose Gate = new Pose(125.5, 64, Math.toRadians(35));
+    private final Pose GateControl = new Pose(118.04819277108433, 60.4578313253012, 0);
+    private final Pose GateSpec = new Pose(132,45, Math.toRadians(85));
+    private final Pose backGate = new Pose(96, 67, 0);
+
 
     private Path scorePreload;
 
@@ -70,54 +68,55 @@ public class RedClose extends OpMode {
     private Servo blocker;
 
     // ---------------- Path Building ----------------
-    public void buildPaths() {
+    private void buildPaths() {
+
         scorePreload = new Path(new BezierLine(startPose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
         PrepSpike1 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, Bez1Control, Bez1End))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), Bez1End.getHeading())
-                .addPath(new BezierLine(Bez1End, Spike1End))
-                .setTangentHeadingInterpolation()
+                .addPath(new BezierLine(scorePose, Spike1End))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), Spike1End.getHeading(),0.6)
+//                .setNoDeceleration()
                 .build();
 
         ScoreSpike1 = follower.pathBuilder()
                 .addPath(new BezierLine(Spike1End, scorePose))
                 .setLinearHeadingInterpolation(Spike1End.getHeading(), scorePose.getHeading())
                 .build();
+
         GoGate = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose,GateControl,Gate))
-                .setLinearHeadingInterpolation(scorePose.getHeading(),Gate.getHeading())
-                .addPath(new BezierLine(Gate, new Pose(134, 58)))
-                .setLinearHeadingInterpolation(Gate.getHeading(), Math.toRadians(85))
+                .addPath(new BezierCurve(scorePose, GateControl, Gate))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), Gate.getHeading())
                 .build();
+
         BackGate = follower.pathBuilder()
-                .addPath(new BezierCurve(new Pose(134, 58),backGate,scorePose))
-                .setLinearHeadingInterpolation(Math.toRadians(85),scorePose.getHeading())
+                .addPath(new BezierCurve(Gate, backGate, scorePose))
+                .setLinearHeadingInterpolation(Gate.getHeading(), scorePose.getHeading())
                 .build();
 
         PrepSpike2 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, Bez2Control, Bez2End))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), Bez2End.getHeading())
-                .addPath(new BezierLine(Bez2End, Spike2End))
-                .setTangentHeadingInterpolation()
+
+
+                .addPath(new BezierCurve(scorePose, Bez2Control, Spike2End))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), Spike2End.getHeading(),0.6)
+//                .setNoDeceleration()
                 .build();
 
         ScoreSpike2 = follower.pathBuilder()
-                .addPath(new BezierCurve(Spike2End, Bez2Control,scorePose))
+                .addPath(new BezierCurve(Spike2End, Bez2Control, scorePose))
                 .setLinearHeadingInterpolation(Spike2End.getHeading(), scorePose.getHeading())
+
                 .build();
 
         PrepSpike3 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, Bez3Control, Bez3End))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), Bez3End.getHeading())
-                .addPath(new BezierLine(Bez3End, Spike3End))
-                .setTangentHeadingInterpolation()
+                .addPath(new BezierCurve(scorePose, Bez3Control, Spike3End))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), Spike3End.getHeading())
+//                .setNoDeceleration()
                 .build();
 
         ScoreSpike3 = follower.pathBuilder()
                 .addPath(new BezierLine(Spike3End, scorePoseEnd))
-                .setLinearHeadingInterpolation(Spike3End.getHeading(), scorePoseEnd.getHeading())
+                .setLinearHeadingInterpolation(Spike3End.getHeading(), scorePoseEnd.getHeading(),0.6)
                 .build();
     }
 
@@ -178,7 +177,7 @@ public class RedClose extends OpMode {
                 happened = true;
                 spinUp(true);
                 transfer.setPower(-1);
-                if (actionTimer.milliseconds()>1250 ) {
+                if (actionTimer.milliseconds()>750 ) {
                     if (skip) {
                         pathState = 67;
                         return;
@@ -210,7 +209,7 @@ public class RedClose extends OpMode {
                 transfer.setPower(0);
             }
         }
-        if (!follower.isBusy()) {
+        if (follower.getCurrentTValue()>0.95) {
             follower.followPath(path,true);
             pathState++;
             resetBooleans();
@@ -218,7 +217,7 @@ public class RedClose extends OpMode {
     }
     private void spinIntakeGate(PathChain path) {
         spinUpIntake();
-        if (!follower.isBusy()&&actionTimer.milliseconds()>900) {
+        if (!follower.isBusy()&&actionTimer.milliseconds()>700) {
             follower.followPath(path,true);
             pathState++;
             resetBooleans();
@@ -249,20 +248,28 @@ public class RedClose extends OpMode {
                 break;
             case 5:
                 resetTimers();
-                shoot(PrepSpike1);
+                shoot(GoGate);
                 break;
             case 6:
-                spinIntake(ScoreSpike1,250);// y= 89
+                resetTimers();
+                spinIntakeGate(BackGate);
                 break;
             case 7:
                 resetTimers();
-                shoot(PrepSpike3);
+                shoot(PrepSpike1);
                 break;
             case 8:
+                spinIntake(ScoreSpike1,250);// y= 89
+                break;
+            case 9:
+                resetTimers();
+                shoot(PrepSpike3);
+                break;
+            case 10:
                 resetTimers();
                 spinIntake(ScoreSpike3,250); // y=37
                 break;
-            case 9:
+            case 11:
                 resetTimers();
                 shoot(ScoreSpike3, true);
                 break;

@@ -212,10 +212,14 @@ public class Drivetrain implements Subsystem {
         telemetry.addData("Position", follower.getPose());
     }
 
+    public double distanceToGoal(){
+        return follower.getPose().distanceFrom(redThing);
+    }
 
-
-
-    @Override
+    public Pose returnPose()
+    {
+        return follower.getPose();
+    }    @Override
     public void init() {
         rightBack = hardwareMap.get(DcMotor.class, "backRightMotor");
         rightFront = hardwareMap.get(DcMotor.class, "frontRightMotor");
@@ -231,7 +235,8 @@ public class Drivetrain implements Subsystem {
         this.combinedDrive(gamepad1,gamepad2);
         telemetry.addData("position", follower.getPose());
         telemetry.addData("velocity", follower.getVelocity());
-        telemetry.addData("automatedDrive", automatedDrive);    }
+        telemetry.addData("automatedDrive", automatedDrive);
+    }
 
     public void update(Gamepad gamepad) {
 

@@ -126,25 +126,11 @@ public class NavaleBroganTest extends OpMode {
                 //check if follower did it's path.
 
                 if (!follower.isBusy()) {
-                    blocker.setPosition(TeamConstants.BLOCKER_OPEN);
-                    outtake.setLinkage(TeamConstants.LINKAGE_REST);
-                    outtake.spinToRpm(TeamConstants.SHOOTER_FAR_RPM);
-                    telemetry.addLine("DONE Path 1");
-                    telemetry.update();
-                    follower.followPath(driveStartPosShootPos, true);
-                    setPathState(PathState.SHOOT_POS_DRIVE_INTAKEPOS);
+                    follower.followPath(driveShootPosIntakePos, true);
+                    setPathState(null);
 
                 }
                 break;
-            case SHOOT_POS_DRIVE_INTAKEPOS:
-                follower.followPath(driveShootPosIntakePos, true);
-                setPathState(PathState.INTAKE_ARTIFACTS);
-                break;
-            case INTAKE_ARTIFACTS:
-                follower.followPath(driveShootPosIntakePos, true);
-                blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
-                intake.setPower(TeamConstants.INTAKE_FEED_POWER);
-                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
 
 
             default:

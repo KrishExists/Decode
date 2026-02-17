@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.opMode.teleOp.testers;
 
 
 import com.acmerobotics.dashboard.config.Config;
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -21,15 +22,16 @@ import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
 @TeleOp(name = "airtester", group = "Main")
 @Config
+@Configurable
 public class AirSortTeter extends LinearOpMode {
     private HardwareMap hw;
     private Outtake shooter;
     private DcMotorEx intake;
 
     private Robot robot;
-    private static int current;
-    private static int goal;
-    private static boolean reset = true;
+    public static int current;
+    public static int goal;
+    public static boolean reset = true;
     private String[] cpattern;
     private String[] iea;
     int pos = 0;
@@ -39,6 +41,8 @@ public class AirSortTeter extends LinearOpMode {
     private int count;
     private Servo blocker;
     private DcMotorEx transfer;
+    public static double servo1;
+    public static double servo2;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -52,7 +56,12 @@ public class AirSortTeter extends LinearOpMode {
         intake = hardwareMap.get(DcMotorEx.class, "Intake");
         telemetry.addLine("Initialized — Waiting for Start");
         telemetry.update();
-        robot.init();
+        goal = 0;
+        current = 0;
+        reset = true;
+        shooter.linkage.setPosition(0.47);
+        servo1 = 0.35;
+        servo2 = 0.55;
         waitForStart();
         if (isStopRequested()) return;
 
@@ -67,10 +76,13 @@ public class AirSortTeter extends LinearOpMode {
                 pos = 0;
                 secondcheck = false;
                 blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+                shooter.setPower(0);
+                intake.setPower(0);
+                transfer.setPower(0);
             }else{
                 shooter.spinToRpm(2400);
                 blocker.setPosition(TeamConstants.BLOCKER_OPEN);
-                if(shooter.getRPM()>2300){
+                if(shooter.getRPM()>2400){
                     happend = true;
                     secondcheck = true;
                 }
@@ -81,14 +93,17 @@ public class AirSortTeter extends LinearOpMode {
                     intake.setPower(1);
                     transfer.setPower(-1);
                     if(iea[count].equals(cpattern[pos])){
-                        shooter.linkage.setPosition(0.6);
+                        shooter.linkage.setPosition(servo2);
+                        telemetry.addLine("0.55");
+
                         if(shooter.getRPM()<2250&&secondcheck){
                             count++;
                             pos++;
                             secondcheck = false;
                         }
                     }else{
-                        shooter.linkage.setPosition(0.47);
+                        shooter.linkage.setPosition(servo1);
+                        telemetry.addLine("0.43");
                         if(shooter.getRPM()<2250){
                             count++;
                         }
@@ -105,6 +120,8 @@ public class AirSortTeter extends LinearOpMode {
                 pos = 0;
                 telemetry.addLine("pos 3");
             }
+            telemetry.addData("count",count);
+            telemetry.addData("pos",pos);
             telemetry.addData("Shooter RPM", shooter.getRPM());
             telemetry.update();
 
