@@ -141,10 +141,10 @@ public class Drivetrain implements Subsystem {
                 .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, 0, 0.8))
                 .build();
         if(red){
-            redThing = new Pose(130,135);
+            redThing = new Pose(144,144);
 
         }else{
-            redThing = new Pose(13,135);
+            redThing = new Pose(0,144);
         }
 
         this.hardwareMap = h;
