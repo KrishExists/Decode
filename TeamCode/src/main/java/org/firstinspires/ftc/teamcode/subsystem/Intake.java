@@ -75,13 +75,12 @@ public class Intake implements Subsystem{
         // Initialize state machine
         sm = new StateMachine<>(IntakeState.REST);
         interpLUT = new InterpLUT();
-        interpLUT.add(1.1, 0.2);
-        interpLUT.add(2.7, .5);
-        interpLUT.add(3.6, 0.75);
-        interpLUT.add(4.1, 0.9);
-        interpLUT.add(5, 1);
+        //input=distance and output=RPM
+        interpLUT.add(62, 2100);
+        interpLUT.add(69, 2250);
+        interpLUT.add(81, 2375);
+        interpLUT.add(100, 2480);
         interpLUT.createLUT();
-
 
         timerReset();
         timerStart();
