@@ -141,7 +141,7 @@ public class Drivetrain implements Subsystem {
                 .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, 0, 0.8))
                 .build();
         if(red){
-            redThing = new Pose(144,144);
+            redThing = new Pose(131,136);
 
         }else{
             redThing = new Pose(0,144);
@@ -200,7 +200,6 @@ public class Drivetrain implements Subsystem {
         double error = heading-angle;
 
             // or pressed B to cancel
-
             follower.setTeleOpDrive(
                     -gamepad.left_stick_y,
                     -gamepad.left_stick_x,
