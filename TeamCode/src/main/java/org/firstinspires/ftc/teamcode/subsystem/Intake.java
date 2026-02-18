@@ -92,7 +92,15 @@ public class Intake implements Subsystem{
         next = false;
         far = false;
         close= false;
-
+        interpLUT = new InterpLUT();
+        interpLUT.add(0, 0);
+        interpLUT.add(62, 2100);
+        interpLUT.add(69, 2250);
+        interpLUT.add(81, 2375);
+        interpLUT.add(100, 2480);
+        interpLUT.add(121, 2925);
+        interpLUT.add(138, 3300);
+        interpLUT.createLUT();
         // Map hardware
         intake = hw.get(DcMotor.class, "Intake");
         linkage = hw.get(Servo.class, "Linkage");
@@ -206,6 +214,8 @@ public class Intake implements Subsystem{
 
             case AUTORPMRED:
                 double distance = follower.getPose().distanceFrom(goal);
+                if(distance > 100)
+                    distance = 99;
 //                double rpm = 9.43976 * distance +1500.948;//linear regression model
                 double rpm = interpLUT.get(distance);
                 shooter.spinToRpm(rpm);
