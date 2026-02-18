@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import com.arcrobotics.ftclib.util.InterpLUT;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -42,7 +43,7 @@ public class Intake implements Subsystem{
     private boolean shooting = false;
 
     private final boolean transfer123 = false;
-
+    InterpLUT interpLUT;
 
 
     // State machine
@@ -73,6 +74,15 @@ public class Intake implements Subsystem{
 
         // Initialize state machine
         sm = new StateMachine<>(IntakeState.REST);
+        interpLUT = new InterpLUT();
+        interpLUT.add(1.1, 0.2);
+        interpLUT.add(2.7, .5);
+        interpLUT.add(3.6, 0.75);
+        interpLUT.add(4.1, 0.9);
+        interpLUT.add(5, 1);
+        interpLUT.createLUT();
+
+
         timerReset();
         timerStart();
     }
@@ -197,7 +207,8 @@ public class Intake implements Subsystem{
 
             case AUTORPMRED:
                 double distance = follower.getPose().distanceFrom(goal);
-                double rpm = 9.43976 * distance +1500.948;//linear regression model
+//                double rpm = 9.43976 * distance +1500.948;//linear regression model
+                double rpm = interpLUT.get(distance);
                 shooter.spinToRpm(rpm);
                 if(shooter.getRPM()>rpm-25&&shooter.getRPM()<rpm + 100){
                     happend = true;
