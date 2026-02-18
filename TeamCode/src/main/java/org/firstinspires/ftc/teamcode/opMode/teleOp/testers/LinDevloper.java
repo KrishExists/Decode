@@ -56,7 +56,7 @@ public class LinDevloper extends LinearOpMode {
         blocker = hardwareMap.get(Servo.class, "blocker");
         transfermotor = hardwareMap.get(DcMotorEx.class, "Transfer");
         intakemotor = hardwareMap.get(DcMotorEx.class, "Intake");
-        blockerpos = 0.55;
+        blockerpos = 0.58;
         blocker.setPosition(blockerpos);
         linkagepos = 0.47;
         linkage.setPosition(linkagepos);
