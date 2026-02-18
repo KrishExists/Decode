@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name = "BlueFar", group = "Autonomous")
+@Autonomous(name = "BlueFar", group = "Autonomous") // krish testing
 @Configurable // Panels
 public class BlueFar extends OpMode {
     private TelemetryManager panelsTelemetry;
