@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name = "ChowChinAutoFar", group = "Autonomous")
+@Autonomous(name = "Red Far", group = "Autonomous")
 @Configurable // Panels
 public class ChowChin extends OpMode {
     private TelemetryManager panelsTelemetry;
