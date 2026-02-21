@@ -41,12 +41,12 @@ public class Turret {
 boolean move = true;
         // Step 2
         //aroudn to is 90,360-90
-        if(degreeDiff<120&&degreeDiff>90){
+        if(degreeDiff<=120&&degreeDiff>90){
             degreeDiff = 90;
         }else if(degreeDiff >360-120&&degreeDiff<360-90){
         degreeDiff = -90;
         }
-        else if(degreeDiff>360-90){
+        else if(degreeDiff>=360-90){
             degreeDiff = 360-degreeDiff;
             degreeDiff *=-1;
         }
