@@ -53,7 +53,7 @@ boolean move = true;
         else if(degreeDiff>120&&degreeDiff<360-120){
             move = false;
         }
-        double servoPos = ((0.5/90) * degreeDiff) + 0.5;
+        double servoPos = ((0.00555555555) * degreeDiff) + 0.5;
         if(servoPos>1){
             servoPos = 1;
         } else if (servoPos<0) {
