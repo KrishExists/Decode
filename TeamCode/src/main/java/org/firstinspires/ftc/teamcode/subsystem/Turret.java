@@ -61,7 +61,7 @@ boolean move = true;
         }
         if(move) {
 
-
+        double gearratiobelow = 0.972222;
             turretServo.setPosition(servoPos);
             turretServo2.setPosition(servoPos);
         }
