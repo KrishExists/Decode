@@ -31,18 +31,14 @@ public class Intake implements Subsystem{
     public static boolean far;
     public static boolean close;
 
-    private double goodRPM;
     ElapsedTime timer = new ElapsedTime();
 
     public DcMotorEx transfer;
 
     private final Outtake shooter;
-    private final boolean rapid = false;
-    public boolean AtRPM = false;
     private final Telemetry telemetry;
     private boolean shooting = false;
 
-    private final boolean transfer123 = false;
     InterpLUT interpLUT;
 
 
@@ -152,14 +148,7 @@ public class Intake implements Subsystem{
             //do nothing AGAIN IS CRUCIAL MURDURKUR
         }
         else setState(IntakeState.REST);
-        if(far){
-            setState(IntakeState.SpeedFar);
-            shooting = true;
-        }
-        if(close){
-            setState(IntakeState.SpeedMid);
-            shooting = true;
-        }
+
 
         long t = sm.timeInStateMs();
 

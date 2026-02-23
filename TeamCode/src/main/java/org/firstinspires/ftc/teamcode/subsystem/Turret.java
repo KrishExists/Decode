@@ -64,7 +64,6 @@ public class Turret implements Subsystem {
         }
         if(move) {
 
-            double gearratiobelow = 0.972222;
             turretServo.setPosition(servoPos);
             turretServo2.setPosition(servoPos);
         }
@@ -75,7 +74,7 @@ public class Turret implements Subsystem {
     }
 
     public void update(Gamepad gamepad1, Gamepad gamepad2){
-       if(gamepad2.dpad_right){
+       if(gamepad2.leftBumperWasPressed()){
            auto = !auto;
        }
        if(auto){
