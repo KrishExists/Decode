@@ -55,8 +55,8 @@ public class Turret implements Subsystem {
         }
         else if(degreeDiff>120&&degreeDiff<360-120){
             move = false;
-        }
-        double servoPos = ((0.00555555555) * degreeDiff) + turretOriginal;
+        }double gearRatio = 35.0 / 36.0;
+        double servoPos = (0.00555555555 * degreeDiff * gearRatio) + turretOriginal;
         if(servoPos>1){
             servoPos = 1;
         } else if (servoPos<0) {
