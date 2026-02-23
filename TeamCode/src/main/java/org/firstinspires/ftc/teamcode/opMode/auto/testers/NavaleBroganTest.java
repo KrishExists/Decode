@@ -46,7 +46,7 @@ public class NavaleBroganTest extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         outtake = new Outtake(hardwareMap, telemetry);
         blocker = hardwareMap.get(Servo.class, "blocker");
-        intake = new Intake(hardwareMap, telemetry, outtake);
+        intake = new Intake(hardwareMap, telemetry, outtake,follower);
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
         buildPaths();
         follower.setPose(startPose);

@@ -6,8 +6,10 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class Turret {
-    private double turretD = 0.5;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+public class Turret implements Subsystem {
+    private double turretOriginal = 0.5;
 
     private HardwareMap hw;
     private Servo turretServo;
@@ -15,7 +17,7 @@ public class Turret {
     Follower follower;
     private boolean auto;
 
-    public Turret(HardwareMap hw, Follower follower){
+    public Turret(HardwareMap hw, Telemetry telemetry, Follower follower){
         auto = false;
         this.hw = hw;
         this.follower = follower;
@@ -54,7 +56,7 @@ public class Turret {
         else if(degreeDiff>120&&degreeDiff<360-120){
             move = false;
         }
-        double servoPos = ((0.00555555555) * degreeDiff) + 0.5;
+        double servoPos = ((0.00555555555) * degreeDiff) + turretOriginal;
         if(servoPos>1){
             servoPos = 1;
         } else if (servoPos<0) {
@@ -68,9 +70,10 @@ public class Turret {
         }
     }
     private void manual(){
-        turretServo.setPosition(0.5);
-        turretServo2.setPosition(0.5);
+        turretServo.setPosition(turretOriginal);
+        turretServo2.setPosition(turretOriginal);
     }
+
     public void update(Gamepad gamepad1, Gamepad gamepad2){
        if(gamepad2.dpad_right){
            auto = !auto;

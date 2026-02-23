@@ -13,7 +13,7 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
 
 
-@Autonomous(name = "NewFar", group = "Examples")
+@Autonomous(name = "NewFar", group = "Testers")
 @Configurable // Panels
 public class NewFar extends OpMode {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance

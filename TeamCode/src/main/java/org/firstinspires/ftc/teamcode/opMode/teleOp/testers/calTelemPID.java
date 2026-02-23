@@ -20,7 +20,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @Config
-@TeleOp(name = "Static Servo ", group = "Telemetry")
+@TeleOp(name = "Static Servo ", group = "Testers")
 public class calTelemPID extends LinearOpMode {
 
     // === Hardware ===

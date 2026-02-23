@@ -19,27 +19,35 @@ public class Robot implements Subsystem { //The Rhetorical Situation
     public Outtake outtake;
 
 
-    public Robot(HardwareMap h, Telemetry t, Drivetrain drive, Intake intake) {
+//    public Robot(HardwareMap h, Telemetry t, Drivetrain drive, Intake intake) {
+//        this.hardwareMap = h;
+//        this.telemetry = t;
+//
+//        this.drive = drive;
+//        this.intake = intake;
+//        this.outtake = new Outtake(h,t);
+//
+//
+//        subsystems = List.of(drive, intake);
+//    }
+
+//    public Robot(HardwareMap h, Telemetry t) {
+//        this(h,t,new Drivetrain(h,t),new Intake(h,t, new Outtake(h,t)));
+//    }
+
+    public Robot(HardwareMap h, Telemetry t, Drivetrain drive, Intake intake, Turret turret) {
         this.hardwareMap = h;
         this.telemetry = t;
 
         this.drive = drive;
         this.intake = intake;
-        this.outtake = new Outtake(h,t);
 
-
-        subsystems = List.of(drive, intake);
-    }
-    public Robot(HardwareMap h, Telemetry t) {
-        this(h,t,new Drivetrain(h,t),new Intake(h,t, new Outtake(h,t)));
+        subsystems = List.of(drive, intake,turret);
     }
 
 
-    @Override
     public void init() {
-        for(Subsystem s : subsystems){
-            s.init();
-        }
+        intake.init();//inits evt
     }
 
     @Override

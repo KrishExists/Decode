@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-@Autonomous(name = "Paths Red (Full Auto Paths)", group = "Examples")
+@Autonomous(name = "Paths Red (Full Auto Paths)", group = "Testers")
 @Config
 public class RedClosePaths extends OpMode {
 

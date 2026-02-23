@@ -55,36 +55,6 @@ public class Intake implements Subsystem{
     public static boolean next;
     private Follower follower;
     private Pose goal;
-
-    public Intake(HardwareMap hw, Telemetry t, Outtake shooter) {
-        this.telemetry = t;
-        this.shooter = shooter;
-        next = false;
-        far = false;
-        close= false;
-
-        // Map hardware
-        intake = hw.get(DcMotor.class, "Intake");
-        linkage = hw.get(Servo.class, "Linkage");
-        transfer = hw.get(DcMotorEx.class, "Transfer");
-        blocker = hw.get(Servo.class, "blocker");
-
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        blocker.setPosition(0.5);
-
-        // Initialize state machine
-        sm = new StateMachine<>(IntakeState.REST);
-        interpLUT = new InterpLUT();
-        //input=distance and output=RPM
-        interpLUT.add(62, 2100);
-        interpLUT.add(69, 2250);
-        interpLUT.add(81, 2375);
-        interpLUT.add(100, 2480);
-        interpLUT.createLUT();
-
-        timerReset();
-        timerStart();
-    }
     public Intake(HardwareMap hw, Telemetry t, Outtake shooter, Follower follower) {
         this.telemetry = t;
         this.shooter = shooter;
@@ -136,11 +106,6 @@ public class Intake implements Subsystem{
         timer.startTime();
     }
 
-
-    public void init() {
-        intake.setPower(TeamConstants.INTAKE_DEFAULT_POWER);
-        linkage.setPosition(TeamConstants.LINKAGE_REST);
-    }
 
 
 
@@ -311,6 +276,16 @@ public class Intake implements Subsystem{
 
         telemetry.addData("Rpm",shooter.getRPM());
     }
+    public void init(){
+        shooter.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
+        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+        intake.setPower(0);
+        transfer.setPower(0);
+        shooter.stop();
+        setState(IntakeState.REST);
+
+    }
+
 
 
 }

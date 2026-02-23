@@ -13,7 +13,7 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
 
 
-@Autonomous(name = "FarAutoRedPathsOnly", group = "Examples")
+@Autonomous(name = "FarAutoRedPathsOnly", group = "Testers")
 @Configurable // Panels
 public class FarAutoPaths extends OpMode {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance

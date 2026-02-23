@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Outtake;
 import org.firstinspires.ftc.teamcode.subsystem.Robot;
 
 
-@TeleOp(name = "LinDevloper", group = "Main")
+@TeleOp(name = "LinDevloper", group = "Testers")
 @Config
 public class LinDevloper extends LinearOpMode {
     private HardwareMap hw;
@@ -60,7 +60,6 @@ public class LinDevloper extends LinearOpMode {
         blocker.setPosition(blockerpos);
         linkagepos = 0.47;
         linkage.setPosition(linkagepos);
-        drive.init();
 
         waitForStart();
         if (isStopRequested()) return;

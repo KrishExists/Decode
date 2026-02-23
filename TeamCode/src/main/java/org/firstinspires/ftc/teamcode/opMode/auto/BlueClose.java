@@ -276,14 +276,15 @@ public class BlueClose extends OpMode {
     // ---------------- OpMode Methods ----------------
     @Override
     public void init() {
-        outtake = new Outtake(hardwareMap,telemetry);
-        intake = new Intake(hardwareMap,telemetry,outtake);
-        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-        outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
+
 
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
         follower.setPose(startPose);
+        outtake = new Outtake(hardwareMap,telemetry);
+        intake = new Intake(hardwareMap,telemetry,outtake,follower);
+        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
+        outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
 
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
         blocker = hardwareMap.get(Servo.class, "blocker");

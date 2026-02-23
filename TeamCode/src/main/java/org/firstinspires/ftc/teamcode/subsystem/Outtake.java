@@ -132,11 +132,7 @@ public void spinToRpm(double targetRPM) {
         linkage.setPosition(pos);
     }
 
-    @Override
-    public void init() {
-        setLinkage(TeamConstants.LINKAGE_REST);
-        stop();
-    }
+
 
     @Override
     public void update(Gamepad gamepad21, Gamepad gamepad2) {

@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
 
-@TeleOp(name = "airtester", group = "Main")
+@TeleOp(name = "airtester", group = "Testers")
 @Config
 @Configurable
 public class AirSortTeter extends LinearOpMode {

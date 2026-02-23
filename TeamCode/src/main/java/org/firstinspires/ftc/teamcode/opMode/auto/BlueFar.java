@@ -319,8 +319,7 @@ public class BlueFar extends OpMode {
 
     public void init() {
         // Initialize Subsystems
-        outtake = new Outtake(hardwareMap, telemetry);
-        intake = new Intake(hardwareMap, telemetry, outtake);
+
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
         blocker = hardwareMap.get(Servo.class, "blocker");
 
@@ -332,6 +331,8 @@ public class BlueFar extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
         follower.setPose(startPose);
+        outtake = new Outtake(hardwareMap, telemetry);
+        intake = new Intake(hardwareMap, telemetry, outtake,follower);
 
         paths = new Paths(follower);
 

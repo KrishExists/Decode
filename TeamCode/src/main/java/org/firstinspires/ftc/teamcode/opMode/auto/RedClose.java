@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Outtake;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
-@Autonomous(name = "Pedro Pathing Auto Red Close", group = "Autonomous")
+@Autonomous(name = "Red Close", group = "Autonomous")
 public class RedClose extends OpMode {
 
     private Follower follower;
@@ -290,15 +290,15 @@ public class RedClose extends OpMode {
     // ---------------- OpMode Methods ----------------
     @Override
     public void init() {
-        outtake = new Outtake(hardwareMap,telemetry);
-        intake = new Intake(hardwareMap,telemetry,outtake);
+
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
 
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
         follower.setPose(startPose);
-
+        outtake = new Outtake(hardwareMap,telemetry);
+        intake = new Intake(hardwareMap,telemetry,outtake,follower);
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
         blocker = hardwareMap.get(Servo.class, "blocker");
 
