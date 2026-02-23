@@ -13,16 +13,17 @@ public class Turret {
     private Servo turretServo;
     private Servo turretServo2;
     Follower follower;
+    private boolean auto;
 
     public Turret(HardwareMap hw, Follower follower){
+        auto = false;
         this.hw = hw;
         this.follower = follower;
         turretServo = hw.get(Servo.class, "TurretServo");
         turretServo2 = hw.get(Servo.class, "TurretServo2");
         turretServo2.setDirection(Servo.Direction.REVERSE);
     }
-
-    public void update(Gamepad gamepad, Gamepad gamepad1){
+    private void auto(){
         //Step 1 get locked heading
         double followerx = follower.getPose().getX();
         double followery = follower.getPose().getY();
@@ -38,13 +39,13 @@ public class Turret {
         double difference = robotheading - lockedHeading;
 
         double degreeDiff = Math.toDegrees(difference);
-boolean move = true;
+        boolean move = true;
         // Step 2
         //aroudn to is 90,360-90
         if(degreeDiff<=120&&degreeDiff>90){
             degreeDiff = 90;
         }else if(degreeDiff >360-120&&degreeDiff<360-90){
-        degreeDiff = -90;
+            degreeDiff = -90;
         }
         else if(degreeDiff>=360-90){
             degreeDiff = 360-degreeDiff;
@@ -61,10 +62,24 @@ boolean move = true;
         }
         if(move) {
 
-        double gearratiobelow = 0.972222;
+            double gearratiobelow = 0.972222;
             turretServo.setPosition(servoPos);
             turretServo2.setPosition(servoPos);
         }
+    }
+    private void manual(){
+        turretServo.setPosition(0.5);
+        turretServo2.setPosition(0.5);
+    }
+    public void update(Gamepad gamepad1, Gamepad gamepad2){
+       if(gamepad2.dpad_right){
+           auto = !auto;
+       }
+       if(auto){
+           auto();
+       }else{
+           manual();
+       }
     }
 
 }
