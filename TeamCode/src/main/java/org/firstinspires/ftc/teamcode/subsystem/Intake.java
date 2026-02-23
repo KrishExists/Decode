@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.util.ShootWhileMoving;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 import org.firstinspires.ftc.teamcode.util.StateMachine;
 
@@ -167,7 +168,14 @@ public class Intake implements Subsystem{
                 break;
 
             case AUTORPMRED:
-                double distance = follower.getPose().distanceFrom(goal);
+                double distance = 0.0;
+                if(false){
+                   Pose tempGaol; goal = ShootWhileMoving.getCompensatedGoal(follower,goal);
+                   distance = follower.getPose().distanceFrom(goal);
+                }else{
+                    distance = follower.getPose().distanceFrom(goal);
+
+                }
                 if(distance > 100)
                     distance = 99;
 //                double rpm = 9.43976 * distance +1500.948;//linear regression model
