@@ -91,7 +91,6 @@ public class Intake implements Subsystem{
 
     public void setPower(double power) {
         intake.setPower(power);
-        transfer.setPower(power);
     }
 
     public void setState(IntakeState s) { sm.setState(s); }
