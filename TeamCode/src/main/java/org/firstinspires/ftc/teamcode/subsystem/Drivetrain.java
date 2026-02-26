@@ -121,7 +121,6 @@ public class Drivetrain implements Subsystem {
                     true
             );
 
-        telemetry.addData("Position", follower.getPose());
     }
 
     public double distanceToGoal(){
@@ -139,8 +138,7 @@ public class Drivetrain implements Subsystem {
         headingController.setP(kp);
 
         this.combinedDrive(gamepad1);
-        telemetry.addData("position", follower.getPose());
-        telemetry.addData("velocity", follower.getVelocity());
+        telemetry.addData("Pose",follower.getPose());
     }
 
     public void update(Gamepad gamepad) {

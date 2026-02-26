@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
+import android.sax.StartElementListener;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -20,6 +24,7 @@ public class Turret implements Subsystem {
     Follower follower;
     private boolean auto;
     public static boolean automove;
+    Pose goal1;
 
     public Turret(HardwareMap hw, Telemetry telemetry, Follower follower){
         auto = false;
@@ -29,19 +34,16 @@ public class Turret implements Subsystem {
         turretServo2 = hw.get(Servo.class, "TurretServo2");
         turretServo2.setDirection(Servo.Direction.REVERSE);
         automove = false;
+        goal1 = new Pose(133,133);
     }
-    private void auto(){
+    private void auto(Pose Goal){
         //Step 1 get locked heading
         double followerx = follower.getPose().getX();
         double followery = follower.getPose().getY();
-
-        Pose Goal = new Pose(133,133);
-
         double goalx = Goal.getX();
         double goaly = Goal.getY();
 
         double lockedHeading = Math.atan2(goaly - followery, goalx - followerx);;
-
         double robotheading = follower.getHeading();
         double difference = robotheading - lockedHeading;
 
@@ -62,11 +64,60 @@ public class Turret implements Subsystem {
             move = false;
         }double gearRatio = 35.0 / 36.0;
         double servoPos = (0.00555555555 * degreeDiff * gearRatio) + turretOriginal;
+        telemetry.addData("servoPOs",servoPos);
         if(servoPos>1){
             servoPos = 1;
         } else if (servoPos<0) {
             servoPos = 0;
         }
+        if(move) {
+
+            turretServo.setPosition(servoPos);
+            turretServo2.setPosition(servoPos);
+        }
+    }
+    private void autotelem(){
+        //Step 1 get locked heading
+        double followerx = follower.getPose().getX();
+        double followery = follower.getPose().getY();
+
+
+        double goalx = goal1.getX();
+        double goaly = goal1.getY();
+
+        double lockedHeading = Math.atan2(goaly - followery, goalx - followerx);;
+        telemetry.addData("lockedHeading",lockedHeading);
+
+        double robotheading = follower.getHeading();
+        double difference = robotheading - lockedHeading;
+        double degreeDiff = Math.toDegrees(difference);
+        telemetry.addData("degree diff",degreeDiff);
+        boolean move = true;
+        // Step 2
+        //aroudn to is 90,360-90
+        if(degreeDiff<=120&&degreeDiff>90){
+            degreeDiff = 90;
+        }else if(degreeDiff >360-120&&degreeDiff<360-90){
+            degreeDiff = -90;
+        }
+        else if(degreeDiff>=360-90){
+            degreeDiff = 360-degreeDiff;
+            degreeDiff *=-1;
+        }
+        else if(degreeDiff>120&&degreeDiff<360-120){
+            move = false;
+        }
+        telemetry.addData("Degree diff 2",degreeDiff);
+        telemetry.addData("move",move);
+        double gearRatio = 35.0 / 36.0;
+        double servoPos = (0.00555555555 * degreeDiff * gearRatio) + turretOriginal;
+        telemetry.addData("Servo pos no clamp",servoPos);
+        if(servoPos>1){
+            servoPos = 1;
+        } else if (servoPos<0) {
+            servoPos = 0;
+        }
+        telemetry.addData("servopos clamp",servoPos);
         if(move) {
 
             turretServo.setPosition(servoPos);
@@ -75,45 +126,10 @@ public class Turret implements Subsystem {
     }
     private void autoMove(){
         //Step 1 get locked heading
-        double followerx = follower.getPose().getX();
-        double followery = follower.getPose().getY();
 
         Pose Goal = ShootWhileMoving.getCompensatedGoal(follower,new Pose(133,133));
-        double goalx = Goal.getX();
-        double goaly = Goal.getY();
+        auto(Goal);
 
-        double lockedHeading = Math.atan2(goaly - followery, goalx - followerx);;
-
-        double robotheading = follower.getHeading();
-        double difference = robotheading - lockedHeading;
-
-        double degreeDiff = Math.toDegrees(difference);
-        boolean move = true;
-        // Step 2
-        //aroudn to is 90,360-90
-        if(degreeDiff<=120&&degreeDiff>90){
-            degreeDiff = 90;
-        }else if(degreeDiff >360-120&&degreeDiff<360-90){
-            degreeDiff = -90;
-        }
-        else if(degreeDiff>=360-90){
-            degreeDiff = 360-degreeDiff;
-            degreeDiff *=-1;
-        }
-        else if(degreeDiff>120&&degreeDiff<360-120){
-            move = false;
-        }double gearRatio = 35.0 / 36.0;
-        double servoPos = (0.00555555555 * degreeDiff * gearRatio) + turretOriginal;
-        if(servoPos>1){
-            servoPos = 1;
-        } else if (servoPos<0) {
-            servoPos = 0;
-        }
-        if(move) {
-
-            turretServo.setPosition(servoPos);
-            turretServo2.setPosition(servoPos);
-        }
     }
     private void manual(){
         turretServo.setPosition(turretOriginal);
@@ -126,14 +142,40 @@ public class Turret implements Subsystem {
        }
        if(auto){
            if(!automove){
-               auto();
+               auto(goal1);
+            telemetry.addLine("Auto");
 
            }else{
                autoMove();
+               telemetry.addLine("Automove");
+
            }
        }else{
            manual();
+           telemetry.addLine("manual");
+
        }
+    }
+
+    public void updatetelem(Gamepad gamepad1, Gamepad gamepad2){
+        if(gamepad2.leftBumperWasPressed()){
+            auto = !auto;
+        }
+        if(auto){
+            if(!automove){
+                autotelem();
+                telemetry.addLine("Auto");
+
+            }else{
+                autoMove();
+                telemetry.addLine("Automove");
+
+            }
+        }else{
+            manual();
+            telemetry.addLine("manual");
+
+        }
     }
 
 }

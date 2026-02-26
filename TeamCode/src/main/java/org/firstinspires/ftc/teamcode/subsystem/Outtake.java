@@ -72,26 +72,12 @@ private PIDFController pidfController;
         return outtake2.getVelocity()*2.14;
     }
 
-//    public void spinToRpm(double targetRPM) {
-//        double currRPM = getRPM();
-//
-//        // PID feedback
-//        double pidPower = pidfController.calculate(currRPM, targetRPM);
-//
-//        // Feedforward
-//
-//        // Combine and clip
-//        double power = Range.clip(pidPower , 0, 1);
-//        outtake.setPower(power);
-//
-//    }
-public void spinToRpm(double targetRPM) {
+    public void spinToRpm(double targetRPM) {
     double currRPM = getRPM();
 
     // PID feedback
     double pidPower = pidfController.calculate(currRPM, targetRPM);
 
-    // Feedforward
 
     // Combine and clip
     double power = Range.clip(pidPower , 0, 1);
@@ -109,8 +95,6 @@ public void spinToRpm(double targetRPM) {
 
         outtake2.setPower(power2);
 
-    telemetry.addData("Combined Power", power);
-    telemetry.addData("Combined Power2", power2);
 
 }
 
@@ -144,15 +128,6 @@ public void spinToRpm(double targetRPM) {
         outtake2.setPower(p);
     }
 
-    public double getVelocity() {
-        return outtake.getVelocity();
-    }
 
-    public void setVelocity(int i) {
-        outtake.setVelocity(i);
-    }
 
-    public void resetTime(){
-        timer.reset();
-    }
 }

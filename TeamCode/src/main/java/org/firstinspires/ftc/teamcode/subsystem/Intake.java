@@ -114,14 +114,6 @@ public class Intake implements Subsystem{
         // -----------------------------
         // MAP GAMEPAD INPUT TO STATES
         // -----------------------------
-        //Button controls
-        //Dpad up for first ball. dpad left for second and third
-        //Dpad right to cancel
-        //Y for auto speed dont like see if i fix
-        //Right bumper for outtake
-        //Bottom 2 for outtake mid and outtake far just speeding up
-
-
         else if(gamepad2.right_trigger>0.2) setState(IntakeState.IntakeNEXT);
         else if (gamepad2.dpad_right) {
             setState(IntakeState.REST);
@@ -269,8 +261,8 @@ public class Intake implements Subsystem{
                 linkage.setPosition(TeamConstants.LINKAGE_REST);
                 break;
         }
-
-        telemetry.addData("Rpm",shooter.getRPM());
+        telemetry.addData("Intake state", sm.getState());
+        telemetry.addData("RPM",shooter.getRPM());
     }
     public void init(){
         shooter.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
