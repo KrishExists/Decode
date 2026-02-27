@@ -152,10 +152,8 @@ public class Intake implements Subsystem{
             case IntakeNEXT:
                 shooter.setPower(TeamConstants.SHOOTER_CLOSED);
                 blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
-
                 intake.setPower(TeamConstants.INTAKE_IN_POWER);
-
-                transfer.setPower(-1);
+                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 break;
 
             case AUTORPMRED:
