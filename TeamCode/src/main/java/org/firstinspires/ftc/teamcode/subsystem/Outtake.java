@@ -36,7 +36,7 @@ private PIDFController pidfController;
     public Outtake(HardwareMap hw, Telemetry t) {
         this.hardwareMap = hw;
         this.telemetry = t;
-        pidfController = new PIDFController(0.005,0,0,0.0002481);
+        pidfController = new PIDFController(0.005,0,0,0.00021);
 
         // Map motors
         outtake = hardwareMap.get(DcMotorEx.class, "Outtake");
@@ -52,7 +52,7 @@ private PIDFController pidfController;
         outtake2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         outtake.setDirection(DcMotorSimple.Direction.FORWARD);
-        outtake2.setDirection(DcMotorSimple.Direction.REVERSE);
+        outtake2.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Linkage servo
         linkage = hardwareMap.get(Servo.class, "Linkage");
@@ -65,11 +65,11 @@ private PIDFController pidfController;
 
     public double getRPM() {
         // identical to original Shooter logic
-        return outtake.getVelocity() * 2.14;
+        return Math.abs(outtake.getVelocity() * 2.14);
     }
 
     public double getRPM2() {
-        return outtake2.getVelocity()*2.14;
+        return Math.abs(outtake2.getVelocity()*2.14);
     }
 
     public void spinToRpm(double targetRPM) {

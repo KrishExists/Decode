@@ -26,6 +26,8 @@ public class calTelemPID extends LinearOpMode {
     // === Hardware ===
     private Servo linkage;
     private Servo blocker;
+    private Servo turret1;
+    private Servo turret2;
     private DcMotorEx shooter, shooter2;
     private DcMotor intake;
     private DcMotorEx leftFront, rightFront, leftRear, rightRear;
@@ -50,6 +52,9 @@ public class calTelemPID extends LinearOpMode {
     public static double linkagePos = 0.0;
     public static double transferPower = 0.0;
     public static double blockerPos = 0.55;
+    public static double turretpos = 0.5;
+    public static double turret1pos = 0.5;
+
     public static double shooterPower = 0.0;   // <-- NOW interpreted as TARGET RPM
     public static double intakePower = 0.0;
     public static double shooterPoser = 0.0;
@@ -61,14 +66,16 @@ public class calTelemPID extends LinearOpMode {
 
         // === Hardware Init ===
         linkage = hardwareMap.get(Servo.class, "Linkage");
-        blocker = hardwareMap.get(Servo.class, "blocker");
+        turret1 = hardwareMap.get(Servo.class, "TurretServo");
+        turret2 = hardwareMap.get(Servo.class, "TurretServo2");
+
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
 
         shooter = hardwareMap.get(DcMotorEx.class, "Outtake");
         shooter2 = hardwareMap.get(DcMotorEx.class, "Outtake2");
 
         shooter.setDirection(DcMotorSimple.Direction.FORWARD);
-        shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter2.setDirection(DcMotorSimple.Direction.FORWARD);
 
         shooter.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         shooter.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
@@ -89,9 +96,10 @@ public class calTelemPID extends LinearOpMode {
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
 
+
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         dashboard = FtcDashboard.getInstance();
-        blocker.setPosition(0.55);
+        //blocker.setPosition(0.55);
         telemetry.addLine("Init Complete");
         telemetry.update();
 
@@ -106,7 +114,8 @@ public class calTelemPID extends LinearOpMode {
             shooterPIDF.setPIDF(kP, kI, kD, kF);
             // === SERVO ===
             linkage.setPosition(linkagePos);
-            blocker.setPosition(blockerPos);
+            turret1.setPosition(turretpos);
+            turret2.setPosition(turretpos);
             transfer.setPower(transferPower);
 
             // === SHOOTER RPM CONTROL ===
@@ -119,7 +128,6 @@ public class calTelemPID extends LinearOpMode {
                 }
                 if(usesecond){
                     shooter2.setPower(shooterPoser);
-
                 }
             }
 
@@ -172,10 +180,10 @@ public class calTelemPID extends LinearOpMode {
     // ════════════════════════════════
 
     public double currentRPM() {
-        return shooter.getVelocity() * 2.14;
+        return Math.abs(shooter.getVelocity() * 2.14);
     }
     public double currentRPM1() {
-        return shooter2.getVelocity() * 2.14;
+        return Math.abs(shooter2.getVelocity() * 2.14);
     }
 
     public void spinToRpm(double targetRPM) {

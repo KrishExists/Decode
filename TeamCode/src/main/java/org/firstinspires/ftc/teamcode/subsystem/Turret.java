@@ -25,11 +25,13 @@ public class Turret implements Subsystem {
     private boolean auto;
     public static boolean automove;
     Pose goal1;
+    Telemetry telemetry;
 
     public Turret(HardwareMap hw, Telemetry telemetry, Follower follower){
         auto = false;
         this.hw = hw;
         this.follower = follower;
+        this.telemetry = telemetry;
         turretServo = hw.get(Servo.class, "TurretServo");
         turretServo2 = hw.get(Servo.class, "TurretServo2");
         turretServo2.setDirection(Servo.Direction.REVERSE);
@@ -109,11 +111,10 @@ public class Turret implements Subsystem {
         }
         telemetry.addData("Degree diff 2",degreeDiff);
         telemetry.addData("move",move);
-        double gearRatio = 35.0 / 36.0;
-        double servoPos = (0.00555555555 * degreeDiff * gearRatio) + turretOriginal;
+        double servoPos = 0.00444444 * degreeDiff + 0.5;
         telemetry.addData("Servo pos no clamp",servoPos);
-        if(servoPos>1){
-            servoPos = 1;
+        if(servoPos>0.9){
+            servoPos = 0.8;
         } else if (servoPos<0) {
             servoPos = 0;
         }
