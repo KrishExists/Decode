@@ -97,16 +97,16 @@ public class Turret implements Subsystem {
         boolean move = true;
         // Step 2
         //aroudn to is 90,360-90
-        if(degreeDiff<=120&&degreeDiff>90){
+        if(degreeDiff<=120&&degreeDiff>90){//turret hysteria right 90 is max here so thats why
             degreeDiff = 90;
-        }else if(degreeDiff >360-120&&degreeDiff<360-90){
-            degreeDiff = -90;
+        }else if(degreeDiff >360-150&&degreeDiff<360-120){//turret hysteria 120 is max so 30 range
+            degreeDiff = -120;
         }
-        else if(degreeDiff>=360-90){
+        else if(degreeDiff>=360-120){//helps do the negative sign instead of it being really large
             degreeDiff = 360-degreeDiff;
             degreeDiff *=-1;
         }
-        else if(degreeDiff>120&&degreeDiff<360-120){
+        else if(degreeDiff>120&&degreeDiff<360-150){//anything diff here
             move = false;
         }
         telemetry.addData("Degree diff 2",degreeDiff);
