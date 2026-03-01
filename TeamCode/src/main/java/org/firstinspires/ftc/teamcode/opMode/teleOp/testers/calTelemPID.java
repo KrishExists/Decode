@@ -70,7 +70,7 @@ public class calTelemPID extends LinearOpMode {
         turret2 = hardwareMap.get(Servo.class, "TurretServo2");
 
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
-
+        blocker = hardwareMap.get(Servo.class, "blocker");
         shooter = hardwareMap.get(DcMotorEx.class, "Outtake");
         shooter2 = hardwareMap.get(DcMotorEx.class, "Outtake2");
 
@@ -99,7 +99,7 @@ public class calTelemPID extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         dashboard = FtcDashboard.getInstance();
-        //blocker.setPosition(0.55);
+        blocker.setPosition(0.55);
         telemetry.addLine("Init Complete");
         telemetry.update();
 

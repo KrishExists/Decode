@@ -74,11 +74,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(10.88);
-//            .forwardZeroPowerAcceleration(-51.79219486028157)
-//            .lateralZeroPowerAcceleration(-66.1634807374069)
-//            .translationalPIDFCoefficients(new PIDFCoefficients(0.055,0,0,0))
-//            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.1,0,0.01,0.015))
+            .mass(10.88)
+            .forwardZeroPowerAcceleration(-39.530413505010806)
+            .lateralZeroPowerAcceleration(-73.6020209593495)
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.04,0,0,0.035))
+            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.15,0,0.01,0.037));
 //            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(2.2,0,0.03,0.01))
 //            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.01,0.0,0.00001,0.6,0.01))
 //            .centripetalScaling(0.0001)
@@ -96,9 +96,9 @@ public class Constants {
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
-//            .xVelocity(61.116120586245074)
-//            .yVelocity(43.232616514671506);
+            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+                .xVelocity(71.00331800565944)
+        .yVelocity(54.5600509042815);
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(5.6663)
             .strafePodX(-2)//2
