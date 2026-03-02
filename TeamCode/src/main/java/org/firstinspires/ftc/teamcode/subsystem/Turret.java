@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
-import android.sax.StartElementListener;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -46,32 +42,43 @@ public class Turret implements Subsystem {
         double goaly = Goal.getY();
 
         double lockedHeading = Math.atan2(goaly - followery, goalx - followerx);;
+        telemetry.addData("lockedHeading",lockedHeading);
+
         double robotheading = follower.getHeading();
         double difference = robotheading - lockedHeading;
-
         double degreeDiff = Math.toDegrees(difference);
+        telemetry.addData("degree diff",degreeDiff);
         boolean move = true;
         // Step 2
         //aroudn to is 90,360-90
-        if(degreeDiff<=120&&degreeDiff>90){
+        if(degreeDiff<=120&&degreeDiff>90){//turret hysteria right 90 is max here so thats why
             degreeDiff = 90;
-        }else if(degreeDiff >360-120&&degreeDiff<360-90){
+            move = true;
+
+        }else if(degreeDiff >360-120&&degreeDiff<360-90){//turret hysteria 120 is max so 30 range
             degreeDiff = -90;
+            move = true;
+
         }
-        else if(degreeDiff>=360-90){
+        else if(degreeDiff>=360-90){//helps do the negative sign instead of it being really large
             degreeDiff = 360-degreeDiff;
             degreeDiff *=-1;
+            move = true;
+
         }
-        else if(degreeDiff>120&&degreeDiff<360-120){
+        else if(degreeDiff>120&&degreeDiff<360-120){//anything diff here
             move = false;
-        }double gearRatio = 35.0 / 36.0;
-        double servoPos = (0.00555555555 * degreeDiff * gearRatio) + turretOriginal;
-        telemetry.addData("servoPOs",servoPos);
-        if(servoPos>1){
-            servoPos = 1;
-        } else if (servoPos<0) {
-            servoPos = 0;
         }
+        telemetry.addData("Degree diff 2",degreeDiff);
+        telemetry.addData("move",move);
+        double servoPos = 0.00444444 * degreeDiff + 0.5;
+        telemetry.addData("Servo pos no clamp",servoPos);
+        if(servoPos>0.9){
+            servoPos = 0.9;
+        } else if (servoPos<0.1) {
+            servoPos = 0.1;
+        }
+        telemetry.addData("servopos clamp",servoPos);
         if(move) {
 
             turretServo.setPosition(servoPos);
@@ -99,14 +106,20 @@ public class Turret implements Subsystem {
         //aroudn to is 90,360-90
         if(degreeDiff<=120&&degreeDiff>90){//turret hysteria right 90 is max here so thats why
             degreeDiff = 90;
-        }else if(degreeDiff >360-150&&degreeDiff<360-120){//turret hysteria 120 is max so 30 range
-            degreeDiff = -120;
+            move = true;
+
+        }else if(degreeDiff >360-120&&degreeDiff<360-90){//turret hysteria 120 is max so 30 range
+            degreeDiff = -90;
+            move = true;
+
         }
-        else if(degreeDiff>=360-120){//helps do the negative sign instead of it being really large
+        else if(degreeDiff>=360-90){//helps do the negative sign instead of it being really large
             degreeDiff = 360-degreeDiff;
             degreeDiff *=-1;
+            move = true;
+
         }
-        else if(degreeDiff>120&&degreeDiff<360-150){//anything diff here
+        else if(degreeDiff>120&&degreeDiff<360-120){//anything diff here
             move = false;
         }
         telemetry.addData("Degree diff 2",degreeDiff);
@@ -114,9 +127,9 @@ public class Turret implements Subsystem {
         double servoPos = 0.00444444 * degreeDiff + 0.5;
         telemetry.addData("Servo pos no clamp",servoPos);
         if(servoPos>0.9){
-            servoPos = 0.8;
-        } else if (servoPos<0) {
-            servoPos = 0;
+            servoPos = 0.9;
+        } else if (servoPos<0.1) {
+            servoPos = 0.1;
         }
         telemetry.addData("servopos clamp",servoPos);
         if(move) {
@@ -158,25 +171,9 @@ public class Turret implements Subsystem {
        }
     }
 
-    public void updatetelem(Gamepad gamepad1, Gamepad gamepad2){
-        if(gamepad2.leftBumperWasPressed()){
-            auto = !auto;
-        }
-        if(auto){
-            if(!automove){
-                autotelem();
-                telemetry.addLine("Auto");
-
-            }else{
-                autoMove();
-                telemetry.addLine("Automove");
-
-            }
-        }else{
-            manual();
-            telemetry.addLine("manual");
-
-        }
+    public void updatetelem(){
+        autotelem();
+        telemetry.addData("Turret pose", follower.getPose());
     }
 
 }

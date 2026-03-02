@@ -90,8 +90,8 @@ public class AirSortTeter extends LinearOpMode {
 
 
                     //intake 1, transfer -1
-                    intake.setPower(1);
-                    transfer.setPower(-1);
+                    intake.setPower(0.8);
+                    transfer.setPower(0.8);
                     if(iea[count].equals(cpattern[pos])){
                         shooter.linkage.setPosition(servo2);
                         telemetry.addLine("0.55");

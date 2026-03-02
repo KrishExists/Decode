@@ -155,7 +155,7 @@ public class Intake implements Subsystem{
                 shooter.setPower(TeamConstants.SHOOTER_CLOSED);
                 blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
                 intake.setPower(TeamConstants.INTAKE_IN_POWER);
-                transfer.setPower(TeamConstants.TRANSFER_REV);
+                transfer.setPower(TeamConstants.TRANSFER_REVEVERSED);
                 break;
 
             case AUTORPMRED:
@@ -187,7 +187,7 @@ public class Intake implements Subsystem{
                 break;
             case RUNSLOW:
                 intake.setPower(TeamConstants.intakeReversed);
-                transfer.setPower(TeamConstants.TRANSFER_REV);
+                transfer.setPower(TeamConstants.TRANSFER_REVEVERSED);
                 shooter.setPower(TeamConstants.SLIGHT_REVERSE_OUTTAKE);
 
                 break;
@@ -196,7 +196,7 @@ public class Intake implements Subsystem{
                 //kp is 0.07
                 //kd is 0.00001
                 intake.setPower(0);
-                linkage.setPosition(TeamConstants.LINKAGE_REST);
+                linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
                 shooter.spinToRpm(TeamConstants.SHOOTER_FARAUTO_RPM);
                 blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 transfer.setPower(0);
@@ -233,7 +233,7 @@ public class Intake implements Subsystem{
                 break;
             case RAPOD_FAR:
                 shooter.spinToRpm(TeamConstants.SHOOTER_FARAUTO_RPM);
-                linkage.setPosition(TeamConstants.LINKAGE_REST);
+                linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
                 if(shooter.getRPM()>TeamConstants.SHOOTER_FARAUTO_RPM-50){
                     happend = true;
                 }

@@ -5,14 +5,10 @@ import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.subsystem.Drivetrain;
-import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Outtake;
-import org.firstinspires.ftc.teamcode.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.subsystem.Turret;
 
 @TeleOp(name = "Turret Tester", group = "Testers")
@@ -55,7 +51,7 @@ public class TurretTester extends LinearOpMode {
         while (opModeIsActive()) {
             linkage.setPosition(linkagePos);
             drivetrain.update(gamepad1,gamepad2);
-            turret.updatetelem(gamepad1,gamepad2);
+            turret.updatetelem();
             outtake.spinToRpm(rpm);
             intake.setPower(intakePower);
             transfer.setPower(transferPower);
