@@ -30,14 +30,14 @@ public class TeamConstants {
     // =============================
     // Linkage Servo Positions
     // =============================
-    public static final double LINKAGE_REST = 0.45;
-    public static final double LINKAGE_SHOOT = 0.45;
+    public static final double LINKAGE_REST = 1;
+    public static final double LINKAGE_SHOOT = 1;
 
 
     // =============================
     // Shooter RPM Targets
     // =============================
-    public static final double SHOOTER_MID_RPM = 2300;
+    public static final double SHOOTER_MID_RPM = 3900;
     public static final double SHOOTER_FAR_RPM = 2850;
 
     public static final double SHOOTER_FARAUTO_RPM = 2950;

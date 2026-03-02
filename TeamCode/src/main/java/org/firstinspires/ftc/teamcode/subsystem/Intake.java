@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.arcrobotics.ftclib.util.InterpLUT;
+import com.bylazar.lights.RGBIndicator;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -29,6 +30,7 @@ public class Intake implements Subsystem{
     // Hardware
     private final DcMotor intake;
     private final Servo linkage;
+
     public static boolean far;
     public static boolean close;
 
@@ -153,7 +155,7 @@ public class Intake implements Subsystem{
                 shooter.setPower(TeamConstants.SHOOTER_CLOSED);
                 blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
                 intake.setPower(TeamConstants.INTAKE_IN_POWER);
-                transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+                transfer.setPower(TeamConstants.TRANSFER_REV);
                 break;
 
             case AUTORPMRED:
