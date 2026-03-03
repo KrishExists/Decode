@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opMode.teleOp.testers;
 
 import com.arcrobotics.ftclib.controller.wpilibcontroller.SimpleMotorFeedforward;
+import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,6 +17,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.subsystem.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystem.Turret;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
@@ -60,6 +63,7 @@ public class calTelemPID extends LinearOpMode {
     public static double shooterPoser = 0.0;
     public static boolean usesecond = true;
     public static boolean usefirst = true;
+    Turret turret;
 
     @Override
     public void runOpMode() {
@@ -94,6 +98,9 @@ public class calTelemPID extends LinearOpMode {
         rightRear.setDirection(DcMotor.Direction.REVERSE);
         shooter2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        Drivetrain drivetrain = new Drivetrain(hardwareMap,telemetry);
+        Follower follower = drivetrain.returnFollwer();
+        turret  = new Turret(hardwareMap,telemetry, follower);
 
 
 
@@ -133,6 +140,8 @@ public class calTelemPID extends LinearOpMode {
 
             // === INTAKE ===
             intake.setPower(intakePower);
+            drivetrain.update(gamepad1,gamepad2);
+            turret.updatetelem();
 
             // === APRILTAG ALIGN ===
 //            List<AprilTagDetection> detections = aprilTagProcessor.getDetections();

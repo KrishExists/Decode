@@ -38,6 +38,8 @@ public class LinDevloper extends LinearOpMode {
     public static double transferPower  = 0;
     public static double linkagepos = 0;
     public static double blockerpos = 0;
+    Servo turretServo;
+    Servo turretServo2;
 
 
     @Override
@@ -56,6 +58,11 @@ public class LinDevloper extends LinearOpMode {
         blocker = hardwareMap.get(Servo.class, "blocker");
         transfermotor = hardwareMap.get(DcMotorEx.class, "Transfer");
         intakemotor = hardwareMap.get(DcMotorEx.class, "Intake");
+        turretServo = hw.get(Servo.class, "TurretServo");
+        turretServo2 = hw.get(Servo.class, "TurretServo2");
+        turretServo.setPosition(0.5);
+        turretServo2.setPosition(0.5);
+
         blockerpos = 0.58;
         blocker.setPosition(blockerpos);
         linkagepos = 0.47;

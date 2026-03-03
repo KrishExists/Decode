@@ -30,7 +30,9 @@ public class Turret implements Subsystem {
         this.telemetry = telemetry;
         turretServo = hw.get(Servo.class, "TurretServo");
         turretServo2 = hw.get(Servo.class, "TurretServo2");
-        turretServo2.setDirection(Servo.Direction.REVERSE);
+        turretServo.setPosition(0.5);
+        turretServo2.setPosition(0.5);
+
         automove = false;
         goal1 = new Pose(133,133);
     }
@@ -80,7 +82,7 @@ public class Turret implements Subsystem {
         }
         telemetry.addData("servopos clamp",servoPos);
         if(move) {
-
+            telemetry.addLine("doing servo pose");
             turretServo.setPosition(servoPos);
             turretServo2.setPosition(servoPos);
         }
@@ -132,8 +134,9 @@ public class Turret implements Subsystem {
             servoPos = 0.1;
         }
         telemetry.addData("servopos clamp",servoPos);
-        if(move) {
-
+        if(true) {
+            telemetry.addLine("doing servo pose");
+            telemetry.addData("serov pos in loop",servoPos);
             turretServo.setPosition(servoPos);
             turretServo2.setPosition(servoPos);
         }
