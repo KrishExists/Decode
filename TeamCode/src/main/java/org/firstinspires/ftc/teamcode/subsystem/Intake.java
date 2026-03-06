@@ -63,12 +63,19 @@ public class Intake implements Subsystem{
         close= false;
         interpLUT = new InterpLUT();
         interpLUT.add(0, 0);
-        interpLUT.add(62, 2100);
-        interpLUT.add(69, 2250);
-        interpLUT.add(81, 2375);
-        interpLUT.add(100, 2480);
-        interpLUT.add(121, 2925);
-        interpLUT.add(138, 3300);
+        interpLUT.add(50, 3500);
+        interpLUT.add(55, 3550);
+        interpLUT.add(65, 3650);
+        interpLUT.add(70, 3700);
+        interpLUT.add(80, 3800);
+        interpLUT.add(97, 4050);
+        interpLUT.add(112, 4350);
+        interpLUT.add(124, 4500);
+        interpLUT.add(200, 4600);
+
+
+
+
         interpLUT.createLUT();
         // Map hardware
         intake = hw.get(DcMotor.class, "Intake");
@@ -153,9 +160,9 @@ public class Intake implements Subsystem{
 
             case IntakeNEXT:
                 shooter.setPower(TeamConstants.SHOOTER_CLOSED);
-                blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
-                intake.setPower(TeamConstants.INTAKE_IN_POWER);
-                transfer.setPower(TeamConstants.TRANSFER_REVEVERSED);
+//                blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+                intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
+                transfer.setPower(TeamConstants.TRANSFER_INTAKE_POWER);
                 break;
 
             case AUTORPMRED:
@@ -167,17 +174,20 @@ public class Intake implements Subsystem{
                     distance = follower.getPose().distanceFrom(goal);
 
                 }
-                if(distance > 100)
-                    distance = 99;
-//                double rpm = 9.43976 * distance +1500.948;//linear regression model
+                if(distance>100){
+                    shooter.linkage.setPosition(TeamConstants.LINKAGE_SHOOT_FAR);
+                }else{
+                    shooter.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
+
+                }
                 double rpm = interpLUT.get(distance);
                 shooter.spinToRpm(rpm);
-                if(shooter.getRPM()>rpm-25&&shooter.getRPM()<rpm + 100){
+                if(shooter.getRPM()>rpm&&shooter.getRPM()<rpm + 100){
                     happend = true;
 
                 }
                 if (happend){
-                    intake.setPower(TeamConstants.INTAKE_IN_POWER);
+                    intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
                     transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                     blocker.setPosition(0.58);
                 }else{
@@ -186,8 +196,8 @@ public class Intake implements Subsystem{
                 }
                 break;
             case RUNSLOW:
-                intake.setPower(TeamConstants.intakeReversed);
-                transfer.setPower(TeamConstants.TRANSFER_REVEVERSED);
+                intake.setPower(TeamConstants.INTAKE_REVERSED);
+                transfer.setPower(TeamConstants.TRANSFER_REVERSED);
                 shooter.setPower(TeamConstants.SLIGHT_REVERSE_OUTTAKE);
 
                 break;
@@ -195,11 +205,11 @@ public class Intake implements Subsystem{
             case SpeedFar:
                 //kp is 0.07
                 //kd is 0.00001
-                intake.setPower(0);
+                intake.setPower(TeamConstants.INTAKE_STOP);
                 linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
                 shooter.spinToRpm(TeamConstants.SHOOTER_FARAUTO_RPM);
-                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
-                transfer.setPower(0);
+//                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
+                transfer.setPower(TeamConstants.TRANSFER_CLOSED);
                 if(gamepad2.right_bumper||next){
                     setState(IntakeState.RAPOD_FAR);
                     shooting = false;
@@ -208,11 +218,11 @@ public class Intake implements Subsystem{
                 }
                 break;
             case SpeedMid:
-                intake.setPower(0);
+                intake.setPower(TeamConstants.INTAKE_STOP);
                 linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
                 shooter.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
-                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
-                transfer.setPower(0);
+//                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
+                transfer.setPower(TeamConstants.TRANSFER_CLOSED);
                 if(gamepad2.right_bumper||next){
                     setState(IntakeState.RAPOD_CLOSE);
                     shooting = false;
@@ -223,39 +233,39 @@ public class Intake implements Subsystem{
 
             case RAPOD_CLOSE:
                 shooter.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
-                if(shooter.getRPM()>TeamConstants.SHOOTER_MID_RPM-100){
+                if(shooter.getRPM()>TeamConstants.SHOOTER_MID_RPM-30){
                     happend = true;
                 }
                 if (happend){
-                    intake.setPower(TeamConstants.INTAKE_IN_POWER);
+                    intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
                     transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 }
                 break;
             case RAPOD_FAR:
                 shooter.spinToRpm(TeamConstants.SHOOTER_FARAUTO_RPM);
                 linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
-                if(shooter.getRPM()>TeamConstants.SHOOTER_FARAUTO_RPM-50){
+                if(shooter.getRPM()>TeamConstants.SHOOTER_FARAUTO_RPM-30){
                     happend = true;
                 }
                 if(happend){
-                    intake.setPower(TeamConstants.INTAKE_IN_POWER-0.3);
-                    transfer.setPower(TeamConstants.TRANSFER_IN_POWER-0.3 );
+                    intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
+                    transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
                 }
                 break;
 
             case REST:
                 happend = false;
-                intake.setPower(TeamConstants.INTAKE_DEFAULT_POWER);
+                intake.setPower(TeamConstants.INTAKE_STOP);
                 shooter.stop();
-                blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+//                blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
                 transfer.setPower(TeamConstants.TRANSFER_CLOSED);
                 linkage.setPosition(TeamConstants.LINKAGE_REST);
                 break;
             default:
                 happend = false;
-                blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+//                blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
 
-                intake.setPower(TeamConstants.INTAKE_DEFAULT_POWER);
+                intake.setPower(TeamConstants.INTAKE_STOP);
                 shooter.stop();
                 transfer.setPower(TeamConstants.TRANSFER_CLOSED);
                 linkage.setPosition(TeamConstants.LINKAGE_REST);
@@ -266,7 +276,7 @@ public class Intake implements Subsystem{
     }
     public void init(){
         shooter.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
-        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+//        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
         intake.setPower(0);
         transfer.setPower(0);
         shooter.stop();

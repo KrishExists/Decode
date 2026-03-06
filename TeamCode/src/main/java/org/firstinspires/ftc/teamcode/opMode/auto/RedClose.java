@@ -19,6 +19,7 @@ import com.bylazar.telemetry.TelemetryManager;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Outtake;
+import org.firstinspires.ftc.teamcode.subsystem.Turret;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
@@ -37,19 +38,20 @@ public class RedClose extends OpMode {
     private ElapsedTime actionTimer;
     private boolean ran = true;
     private boolean happened = false;
+    private Turret turret;
 
     private DcMotorEx transfer;
     private final Pose startPose = new Pose(121, 116.44743671567421, Math.toRadians(90));
     private final Pose scorePose = new Pose(84, 84, Math.toRadians(0));
     private final Pose scorePoseEnd = new Pose(90, 110, 0);
 
-    private final Pose Spike1End = new Pose(115, 84, 0);
+    private final Pose Spike1End = new Pose(127, 84, 0);
 
     private final Pose Bez2Control = new Pose(85, 60, 0);
-    private final Pose Spike2End = new Pose(120, 60, 0);
+    private final Pose Spike2End = new Pose(132, 60, 0);
 
     private final Pose Bez3Control = new Pose(86, 27, 0);
-    private final Pose Spike3End = new Pose(120, 36, 0);
+    private final Pose Spike3End = new Pose(1332, 36, 0);
 
     private final Pose Gate = new Pose(125.5, 62, Math.toRadians(35));
     private final Pose GateControl = new Pose(118.04819277108433, 60.4578313253012, 0);
@@ -75,13 +77,11 @@ public class RedClose extends OpMode {
         PrepSpike1 = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose, Spike1End))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Spike1End.getHeading(),0.6)
-                .setNoDeceleration()
                 .build();
 
         ScoreSpike1 = follower.pathBuilder()
                 .addPath(new BezierLine(Spike1End, scorePose))
                 .setLinearHeadingInterpolation(Spike1End.getHeading(), scorePose.getHeading())
-                .setNoDeceleration()
 
                 .build();
 
@@ -101,20 +101,17 @@ public class RedClose extends OpMode {
 
                 .addPath(new BezierCurve(scorePose, Bez2Control, Spike2End))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Spike2End.getHeading(),0.6)
-                .setNoDeceleration()
                 .build();
 
         ScoreSpike2 = follower.pathBuilder()
                 .addPath(new BezierCurve(Spike2End, Bez2Control, scorePose))
                 .setLinearHeadingInterpolation(Spike2End.getHeading(), scorePose.getHeading())
-                .setNoDeceleration()
 
                 .build();
 
         PrepSpike3 = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, Bez3Control, Spike3End))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Spike3End.getHeading())
-                .setNoDeceleration()
                 .build();
 
         ScoreSpike3 = follower.pathBuilder()
@@ -122,25 +119,23 @@ public class RedClose extends OpMode {
 //                .setLinearHeadingInterpolation(Spike3End.getHeading(), scorePoseEnd.getHeading(),0.6)
                 .setTangentHeadingInterpolation()
                 .setReversed()
-                .setNoDeceleration()
 
                 .build();
     }
 
     // ---------------- Robot Actions ----------------
     private void prepareToShoot() {
-        intake.setPower(0);
+        intake.setPower(TeamConstants.INTAKE_STOP);
         outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
-        blocker.setPosition(TeamConstants.BLOCKER_OPEN);
-        transfer.setPower(0);
-        telemetry.addLine("transfer poewr 0");
+//        blocker.setPosition(TeamConstants.BLOCKER_OPEN);
+        transfer.setPower(TeamConstants.TRANSFER_CLOSED);
     }
 
     private void spinUpIntake() {
         outtake.spinToRpm(TeamConstants.outtake_Stop);
-        intake.setPower(TeamConstants.INTAKE_IN_POWER);
-        transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
-        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+        intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
+        transfer.setPower(TeamConstants.TRANSFER_INTAKE_POWER);
+//        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
     }
 
     private void spinUpShooter() {
@@ -152,7 +147,7 @@ public class RedClose extends OpMode {
         spinUpShooter();
         if (withTransfer) {
             transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
-            intake.setPower(TeamConstants.INTAKE_IN_POWER);
+            intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
             telemetry.addLine("transfer at -1");
 
         }else{
@@ -175,15 +170,15 @@ public class RedClose extends OpMode {
     }
 
     private void shoot(PathChain nextPath, boolean skip) {
+        turret.autotelem();
         if (follower.isBusy()) {
                prepareToShoot();
         }
         if (!follower.isBusy()) {
-            if ((outtake.atSpeed(2250,3000)||happened) ) {
-                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
+            if ((outtake.atSpeed(3800,3900)||happened) ) {
+//                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 happened = true;
                 spinUp(true);
-                transfer.setPower(-1);
                 if (actionTimer.milliseconds()>750 ) {
                     if (skip) {
                         pathState = 67;
@@ -196,7 +191,6 @@ public class RedClose extends OpMode {
             } else {
                 telemetry.addLine("OUttake not above"); // Code never reaches here
                 spinUp(false);
-                transfer.setPower(0);
             }
         }
 
@@ -207,6 +201,7 @@ public class RedClose extends OpMode {
     }
 
     private void spinIntake(PathChain path,int y) {
+        turret.manual();
         if(follower.isBusy()) {
             if (follower.getPose().getY() < y) {
                 spinUpIntake();
@@ -223,8 +218,9 @@ public class RedClose extends OpMode {
         }
     }
     private void spinIntakeGate(PathChain path) {
+        turret.autoMove();
         spinUpIntake();
-        if (!follower.isBusy()&&actionTimer.milliseconds()>700) {
+        if (!follower.isBusy()&&actionTimer.milliseconds()>3000) {
             follower.followPath(path,true);
             pathState++;
             resetBooleans();
@@ -266,7 +262,8 @@ public class RedClose extends OpMode {
                 shoot(PrepSpike1);
                 break;
             case 8:
-                spinIntake(ScoreSpike1,250);// y= 89
+                spinIntake(ScoreSpike1,250);// y=
+                turret.manual();
                 break;
             case 9:
                 resetTimers();
@@ -292,7 +289,6 @@ public class RedClose extends OpMode {
     public void init() {
 
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-        outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
 
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
@@ -304,16 +300,16 @@ public class RedClose extends OpMode {
 
         pathTimer = new Timer();
         actionTimer = new ElapsedTime();
-        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+//        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
         //transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
 
         buildPaths();
         pathState = 0;
         outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
-
+        turret = new Turret(hardwareMap,telemetry,follower);
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
-        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+//        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
     }
 
     @Override
@@ -337,7 +333,6 @@ public class RedClose extends OpMode {
         panelsTelemetry.debug("Heading", Math.toDegrees(follower.getPose().getHeading()));
         panelsTelemetry.debug("Follower Busy", follower.isBusy());
         panelsTelemetry.debug("Shooter rpm",outtake.getRPM());
-        panelsTelemetry.debug("Transfer",transfer.getVelocity());
         panelsTelemetry.update(telemetry);
     }
 

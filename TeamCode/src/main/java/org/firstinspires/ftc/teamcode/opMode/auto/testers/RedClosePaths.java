@@ -21,7 +21,7 @@ public class RedClosePaths extends OpMode {
 
     // ---- POSES FROM FULL AUTO ----
     private final Pose startPose = new Pose(121, 116.44743671567421, Math.toRadians(90));
-    private final Pose scorePose = new Pose(84, 84, 0);
+    private final Pose scorePose = new Pose(84, 84, Math.toRadians(0));
     private final Pose scorePoseEnd = new Pose(90, 110, 0);
 
     private final Pose Spike1End = new Pose(115, 84, 0);
@@ -32,9 +32,8 @@ public class RedClosePaths extends OpMode {
     private final Pose Bez3Control = new Pose(86, 27, 0);
     private final Pose Spike3End = new Pose(120, 36, 0);
 
-    private final Pose Gate = new Pose(125.5, 64, Math.toRadians(35));
+    private final Pose Gate = new Pose(125.5, 62, Math.toRadians(35));
     private final Pose GateControl = new Pose(118.04819277108433, 60.4578313253012, 0);
-    private final Pose GateSpec = new Pose(132,45, Math.toRadians(85));
     private final Pose backGate = new Pose(96, 67, 0);
 
     private Path scorePreload;
@@ -57,18 +56,19 @@ public class RedClosePaths extends OpMode {
         ScoreSpike1 = follower.pathBuilder()
                 .addPath(new BezierLine(Spike1End, scorePose))
                 .setLinearHeadingInterpolation(Spike1End.getHeading(), scorePose.getHeading())
+                .setNoDeceleration()
+
                 .build();
 
         GoGate = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, GateControl, Gate))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Gate.getHeading())
-                .addPath(new BezierLine(Gate, GateSpec))
-                .setLinearHeadingInterpolation(Gate.getHeading(), GateSpec.getHeading())
                 .build();
 
         BackGate = follower.pathBuilder()
-                .addPath(new BezierCurve(GateSpec, backGate, scorePose))
-                .setLinearHeadingInterpolation(GateSpec.getHeading(), scorePose.getHeading())
+                .addPath(new BezierCurve(Gate, backGate, scorePose))
+                .setLinearHeadingInterpolation(Gate.getHeading(), scorePose.getHeading())
+
                 .build();
 
         PrepSpike2 = follower.pathBuilder()
@@ -82,6 +82,7 @@ public class RedClosePaths extends OpMode {
         ScoreSpike2 = follower.pathBuilder()
                 .addPath(new BezierCurve(Spike2End, Bez2Control, scorePose))
                 .setLinearHeadingInterpolation(Spike2End.getHeading(), scorePose.getHeading())
+                .setNoDeceleration()
 
                 .build();
 
@@ -93,9 +94,11 @@ public class RedClosePaths extends OpMode {
 
         ScoreSpike3 = follower.pathBuilder()
                 .addPath(new BezierLine(Spike3End, scorePoseEnd))
+//                .setLinearHeadingInterpolation(Spike3End.getHeading(), scorePoseEnd.getHeading(),0.6)
                 .setTangentHeadingInterpolation()
                 .setReversed()
-//                .setLinearHeadingInterpolation(Spike3End.getHeading(), scorePoseEnd.getHeading(),0.6)
+                .setNoDeceleration()
+
                 .build();
     }
 
@@ -114,7 +117,7 @@ public class RedClosePaths extends OpMode {
                 break;
 
             case 2:
-                if (follower.getCurrentTValue()>0.9) {
+                if (follower.getCurrentTValue()>0.95) {
                     follower.followPath(ScoreSpike2, holdend);
                     pathState++;
                 }
@@ -155,7 +158,7 @@ public class RedClosePaths extends OpMode {
                 break;
 
             case 8:
-                if (follower.getCurrentTValue()>0.9) {
+                if (follower.getCurrentTValue()>0.95) {
                     follower.followPath(ScoreSpike1, holdend);
                     pathState++;
                 }
@@ -169,7 +172,7 @@ public class RedClosePaths extends OpMode {
                 break;
 
             case 10:
-                if (follower.getCurrentTValue()>0.9) {
+                if (follower.getCurrentTValue()>0.95) {
                     follower.followPath(ScoreSpike3, holdend);
                     pathState = -1;
                 }

@@ -4,10 +4,12 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class ShootWhileMoving {
 
     // Tune these for your robot
-    static final double PROJECTILE_SPEED = 150.0; // inches per second
+    static final double PROJECTILE_SPEED = 284.0; // inches per second
 
     /**
      * Call this in your OpMode loop to continuously aim and shoot while moving.
@@ -17,12 +19,11 @@ public class ShootWhileMoving {
 
         Pose currentPose = follower.getPose();
         Vector velocity = follower.getVelocity();
-
         // --- First Pass ---
         double dx = realGoal.getX() - currentPose.getX();
         double dy = realGoal.getY() - currentPose.getY();
         double realDistance = Math.sqrt(dx * dx + dy * dy);
-
+        realDistance = currentPose.distanceFrom(realGoal);
         double flightTime = realDistance / PROJECTILE_SPEED;
 
         Pose virtualGoal = new Pose(
@@ -34,7 +35,7 @@ public class ShootWhileMoving {
         double dx2 = virtualGoal.getX() - currentPose.getX();
         double dy2 = virtualGoal.getY() - currentPose.getY();
         double refinedDistance = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-
+        refinedDistance = currentPose.distanceFrom(virtualGoal);
         double refinedFlightTime = refinedDistance / PROJECTILE_SPEED;
 
         Pose refinedVirtualGoal = new Pose(

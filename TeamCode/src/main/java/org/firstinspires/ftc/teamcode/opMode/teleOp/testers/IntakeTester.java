@@ -23,8 +23,8 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @Config
-@TeleOp(name = "Static Servo ", group = "Testers")
-public class calTelemPID extends LinearOpMode {
+@TeleOp(name = "Intake Tester ", group = "Testers")
+public class IntakeTester extends LinearOpMode {
 
     // === Hardware ===
     private Servo linkage;
@@ -141,7 +141,7 @@ public class calTelemPID extends LinearOpMode {
             // === INTAKE ===
             intake.setPower(intakePower);
             drivetrain.update(gamepad1,gamepad2);
-            turret.updatetelem();
+//            turret.updatetelem();
 
             // === APRILTAG ALIGN ===
 //            List<AprilTagDetection> detections = aprilTagProcessor.getDetections();

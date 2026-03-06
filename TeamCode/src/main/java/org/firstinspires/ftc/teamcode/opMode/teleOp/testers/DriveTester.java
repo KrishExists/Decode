@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Config
-@TeleOp(name = "YTester (Motor Power Dash)", group = "Testers")
-public class YTester extends OpMode {
+@TeleOp(name = "Drive Tester", group = "Testers")
+public class DriveTester extends OpMode {
 
     // ===== Dashboard Tunables =====
     public static double frontLeftPower  = 0.0;

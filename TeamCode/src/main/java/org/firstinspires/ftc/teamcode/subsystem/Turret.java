@@ -87,7 +87,7 @@ public class Turret implements Subsystem {
             turretServo2.setPosition(servoPos);
         }
     }
-    private void autotelem(){
+    public void autotelem(){
         //Step 1 get locked heading
         double followerx = follower.getPose().getX();
         double followery = follower.getPose().getY();
@@ -126,7 +126,7 @@ public class Turret implements Subsystem {
         }
         telemetry.addData("Degree diff 2",degreeDiff);
         telemetry.addData("move",move);
-        double servoPos = 0.00444444 * degreeDiff + 0.5;
+        double servoPos = 0.00444444 * degreeDiff + 0.5;//stuff
         telemetry.addData("Servo pos no clamp",servoPos);
         if(servoPos>0.9){
             servoPos = 0.9;
@@ -141,14 +141,14 @@ public class Turret implements Subsystem {
             turretServo2.setPosition(servoPos);
         }
     }
-    private void autoMove(){
+    public void autoMove(){
         //Step 1 get locked heading
 
         Pose Goal = ShootWhileMoving.getCompensatedGoal(follower,new Pose(133,133));
         auto(Goal);
 
     }
-    private void manual(){
+    public void manual(){
         turretServo.setPosition(turretOriginal);
         turretServo2.setPosition(turretOriginal);
     }
@@ -178,5 +178,9 @@ public class Turret implements Subsystem {
         autotelem();
         telemetry.addData("Turret pose", follower.getPose());
     }
+
+
+
+
 
 }

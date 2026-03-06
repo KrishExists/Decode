@@ -75,13 +75,13 @@ public class AirSortTeter extends LinearOpMode {
                 count = 0;
                 pos = 0;
                 secondcheck = false;
-                blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
+//                blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
                 shooter.setPower(0);
                 intake.setPower(0);
                 transfer.setPower(0);
             }else{
                 shooter.spinToRpm(2400);
-                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
+//                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
                 if(shooter.getRPM()>2400){
                     happend = true;
                     secondcheck = true;
