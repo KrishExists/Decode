@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -14,7 +13,6 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
-@Config
 public class Outtake implements Subsystem {
 
     // =======================
@@ -30,13 +28,13 @@ public class Outtake implements Subsystem {
 
     // Shooter PID variables (from Shooter class)
 
-private PIDFController pidfController;
+    private PIDFController pidfController;
     private final ElapsedTime timer = new ElapsedTime();
 
     public Outtake(HardwareMap hw, Telemetry t) {
         this.hardwareMap = hw;
         this.telemetry = t;
-        pidfController = new PIDFController(0.005,0,0,0.00021);
+        pidfController = new PIDFController(0.0009,0,0,0.000224);
 
         // Map motors
         outtake = hardwareMap.get(DcMotorEx.class, "Outtake");
