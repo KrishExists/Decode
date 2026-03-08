@@ -12,10 +12,11 @@ import org.firstinspires.ftc.teamcode.util.ShootWhileMoving;
 
 @Config
 public class Turret implements Subsystem {
-    private double turretOriginal = 0.5;
+    private double turretOriginal = 0.51;
 
     private HardwareMap hw;
     private Servo turretServo;
+    public static double SLOPE = 0.00444444;
     private Servo turretServo2;
     Follower follower;
     private boolean auto;
@@ -34,7 +35,7 @@ public class Turret implements Subsystem {
         turretServo2.setPosition(0.5);
 
         automove = false;
-        goal1 = new Pose(133,133);
+        goal1 = new Pose(135.62215477996966,130.15933232169954);
     }
     private void auto(Pose Goal){
         //Step 1 get locked heading
@@ -43,7 +44,7 @@ public class Turret implements Subsystem {
         double goalx = Goal.getX();
         double goaly = Goal.getY();
 
-        double lockedHeading = Math.atan2(goaly - followery, goalx - followerx);;
+        double lockedHeading = Math.atan2(goaly - followery, goalx - followerx);
         telemetry.addData("lockedHeading",lockedHeading);
 
         double robotheading = follower.getHeading();
@@ -73,7 +74,7 @@ public class Turret implements Subsystem {
         }
         telemetry.addData("Degree diff 2",degreeDiff);
         telemetry.addData("move",move);
-        double servoPos = 0.00444444 * degreeDiff + 0.5;
+        double servoPos = SLOPE * degreeDiff + 0.5;
         telemetry.addData("Servo pos no clamp",servoPos);
         if(servoPos>0.9){
             servoPos = 0.9;
@@ -96,7 +97,7 @@ public class Turret implements Subsystem {
         double goalx = goal1.getX();
         double goaly = goal1.getY();
 
-        double lockedHeading = Math.atan2(goaly - followery, goalx - followerx);;
+        double lockedHeading = Math.atan2(goaly - followery, goalx - followerx);
         telemetry.addData("lockedHeading",lockedHeading);
 
         double robotheading = follower.getHeading();
