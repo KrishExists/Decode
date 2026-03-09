@@ -113,7 +113,7 @@ public class IntakeTester extends LinearOpMode {
         // === Shooter PIDF Init ===
         shooterPIDF = new PIDFController(kP, kI, kD, kF);
 
-        shooterPIDF.setTolerance(50); // RPM tolerance
+        shooterPIDF.setTolerance(Double.POSITIVE_INFINITY,10); // RPM tolerance
 
         waitForStart();
 

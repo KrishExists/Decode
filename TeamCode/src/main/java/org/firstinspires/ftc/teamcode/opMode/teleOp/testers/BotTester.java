@@ -52,6 +52,7 @@ public class BotTester extends LinearOpMode {
 //    public static double kI2 = 0.0;
 //    public static double kD2 = 0.0;
 //    public static double kF2 = 0.000248;
+public static double kF2 = 0.0002014;
 
     private PIDFController shooterPIDF;
     private PIDFController shooterPIDF2;
@@ -116,15 +117,15 @@ public class BotTester extends LinearOpMode {
 
         // === Shooter PIDF Init ===
         shooterPIDF = new PIDFController(kP, kI, kD, kF);
-//        shooterPIDF2 = new PIDFController(kP2, kI2, kD2, kF2);
+        shooterPIDF2 = new PIDFController(kP, kI, kD, kF2);
 
-        shooterPIDF.setTolerance(50); // RPM tolerance
+        shooterPIDF.setTolerance(Double.POSITIVE_INFINITY,10); // RPM tolerance
 
         waitForStart();
 
         while (opModeIsActive()) {
             shooterPIDF.setPIDF(kP, kI, kD, kF);
-//            shooterPIDF2.setPIDF(kP2, kI, kD2, kF2);
+            shooterPIDF2.setPIDF(kP, kI, kD, kF2);
 
             // === SERVO ===
             linkage.setPosition(linkagePos);
@@ -214,7 +215,8 @@ public class BotTester extends LinearOpMode {
         double currRPM2 = currentRPM1();
 
         // PID feedback
-        double pidPower2 = shooterPIDF.calculate(currRPM2, targetRPM);
+        double pidPower2 = shooterPIDF2.calculate(currRPM2, targetRPM);//0.0002014
+        //0.005 kp
 
         // Feedforward
 
