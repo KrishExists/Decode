@@ -177,7 +177,7 @@ public class RedClose extends OpMode {
                prepareToShoot();
         }
         if (!follower.isBusy()) {
-            if ((outtake.atSpeed(3450,3550)||happened) ) {
+            if ((outtake.atSpeed(3450,3650)||happened) ) {
                 happened = true;
                 spinUp(true);
                 if (actionTimer.milliseconds()>1200) {
