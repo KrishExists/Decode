@@ -41,19 +41,19 @@ public class RedClose extends OpMode {
     private Turret turret;
 
     private DcMotorEx transfer;
-    private final Pose startPose = new Pose(126.737, 121.036, Math.toRadians(36));
+    private final Pose startPose = new Pose(121, 121.036, Math.toRadians(36));
     private final Pose scorePose = new Pose(84, 84, Math.toRadians(0));
     private final Pose scorePoseEnd = new Pose(90, 110, 0);
 
-    private final Pose Spike1End = new Pose(127, 83.472, 0);
+    private final Pose Spike1End = new Pose(123, 83.472, 0);
 
     private final Pose Bez2Control = new Pose(85, 60, 0);
-    private final Pose Spike2End = new Pose(130, 59, 0);
+    private final Pose Spike2End = new Pose(125, 54, 0);
 
     private final Pose Bez3Control = new Pose(79, 27, 0);
-    private final Pose Spike3End = new Pose(130, 36, 0);
+    private final Pose Spike3End = new Pose(115, 36, 0);
 
-    private final Pose Gate = new Pose(127.393, 60, Math.toRadians(35));
+    private final Pose Gate = new Pose(127.393, 62, Math.toRadians(35));
     private final Pose GateControl = new Pose(117.611, 55.651, 0);
     //private final Pose backGate = new Pose(96, 67, 0);
     private final Pose backGate = new Pose(135.040971168437, 50.25796661608498, Math.toRadians(90));//trying to back and intake away from gate

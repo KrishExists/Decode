@@ -34,11 +34,11 @@ public class Outtake implements Subsystem {
     public Outtake(HardwareMap hw, Telemetry t) {
         this.hardwareMap = hw;
         this.telemetry = t;
-        pidfController = new PIDFController(0.007,0,0,0.000248);
+        pidfController = new PIDFController(0.005,0,0,0.000215);
         pidfController.setTolerance(Double.POSITIVE_INFINITY, 10);
         // Map motors
-        outtake = hardwareMap.get(DcMotorEx.class, "Outtake");
-        outtake2 = hardwareMap.get(DcMotorEx.class, "Outtake2");
+        outtake = hardwareMap.get(DcMotorEx.class, "Outtake2");
+        outtake2 = hardwareMap.get(DcMotorEx.class, "Outtake");
 
         // Encoder + direction setup
         outtake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -50,7 +50,7 @@ public class Outtake implements Subsystem {
         outtake2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         outtake.setDirection(DcMotorSimple.Direction.FORWARD);
-        outtake2.setDirection(DcMotorSimple.Direction.REVERSE);
+        outtake2.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Linkage servo
         linkage = hardwareMap.get(Servo.class, "Linkage");
