@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.util.ShootWhileMoving;
 
 @Config
 public class Turret implements Subsystem {
-    private double turretOriginal = 0.51;
+    private double turretOriginal = 0.5;
 
     private HardwareMap hw;
     private Servo turretServo;
@@ -31,11 +31,11 @@ public class Turret implements Subsystem {
         this.telemetry = telemetry;
         turretServo = hw.get(Servo.class, "TurretServo");
         turretServo2 = hw.get(Servo.class, "TurretServo2");
-        turretServo.setPosition(0.5);
-        turretServo2.setPosition(0.5);
+        turretServo.setPosition(0.538);
+        turretServo2.setPosition(0.538);
 
         automove = false;
-        goal1 = new Pose(135.62215477996966,130.15933232169954);
+        goal1 = new Pose(144,144);
     }
     private void auto(Pose Goal){
         //Step 1 get locked heading
@@ -89,7 +89,7 @@ public class Turret implements Subsystem {
         }
     }
     public void autotelem(){
-        //Step 1 get locked heading
+        //Step 1 get locked heading for turret
         double followerx = follower.getPose().getX();
         double followery = follower.getPose().getY();
 
@@ -145,7 +145,7 @@ public class Turret implements Subsystem {
     public void autoMove(){
         //Step 1 get locked heading
 
-        Pose Goal = ShootWhileMoving.getCompensatedGoal(follower,new Pose(133,133));
+        Pose Goal = ShootWhileMoving.getCompensatedGoal(follower,new Pose(144,144));
         auto(Goal);
 
     }
