@@ -55,11 +55,7 @@ public class RedClose extends OpMode {
 
     private final Pose Gate = new Pose(126, 62, Math.toRadians(35));
     private final Pose GateControl = new Pose(117.611, 55.651, 0);
-    private final Pose GateBack = new Pose(120, 53, Math.toRadians(75));
-
-    //private final Pose backGate = new Pose(96, 67, 0);
-    private final Pose backGate = new Pose(135.040971168437, 50.25796661608498, Math.toRadians(90));//trying to back and intake away from gate
-    //change to 0 if it doesn't work
+    private final Pose GateBack = new Pose(133.94840667678298, 49.38391502276174, Math.toRadians(75));
 
 
     private Path scorePreload;
