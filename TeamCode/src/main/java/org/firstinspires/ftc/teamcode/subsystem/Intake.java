@@ -43,6 +43,7 @@ public class Intake implements Subsystem{
     private boolean shooting = false;
 
     InterpLUT interpLUT;
+    InterpLUT interpLUTshoot;
 
 
     // State machine
@@ -62,21 +63,36 @@ public class Intake implements Subsystem{
         far = false;
         close= false;
         interpLUT = new InterpLUT();
-        interpLUT.add(0, 0);
-        interpLUT.add(50, 3500);
-        interpLUT.add(55, 3550);
-        interpLUT.add(65, 3650);
-        interpLUT.add(70, 3700);
-        interpLUT.add(80, 3800);
-        interpLUT.add(97, 4050);
-        interpLUT.add(112, 4350);
-        interpLUT.add(124, 4500);
-        interpLUT.add(200, 4600);
+        interpLUT.add(0, 2500);
+        interpLUT.add(24, 2900);
+        interpLUT.add(39, 3000);
+        interpLUT.add(63, 3200);
+        interpLUT.add(78, 3420);
+        interpLUT.add(86, 3550);
+        interpLUT.add(100, 3550);
+
+        interpLUT.add(120, 3700);
+
+        interpLUT.add(132, 4400);
+
+        interpLUTshoot = new InterpLUT();
+        interpLUTshoot.add(0, 0);
+        interpLUTshoot.add(24, 0);
+        interpLUTshoot.add(39, 0.5);
+        interpLUTshoot.add(63, 0.75);
+        interpLUTshoot.add(78, 0.75);
+        interpLUTshoot.add(86, 0.8);
+        interpLUTshoot.add(120, 0.9);
+
+        interpLUTshoot.add(132, 1);
+
 
 
 
 
         interpLUT.createLUT();
+        interpLUTshoot.createLUT();
+
         // Map hardware
         intake = hw.get(DcMotor.class, "Intake");
         linkage = hw.get(Servo.class, "Linkage");
@@ -174,12 +190,8 @@ public class Intake implements Subsystem{
                     distance = follower.getPose().distanceFrom(goal);
 
                 }
-                if(distance>100){
-                    shooter.linkage.setPosition(TeamConstants.LINKAGE_SHOOT_FAR);
-                }else{
-                    shooter.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
+                shooter.linkage.setPosition(interpLUTshoot.get(distance));
 
-                }
                 double rpm = interpLUT.get(distance);
                 shooter.spinToRpm(rpm);
                 if(shooter.getRPM()>rpm&&shooter.getRPM()<rpm + 100){

@@ -16,7 +16,7 @@ public class Turret implements Subsystem {
 
     private HardwareMap hw;
     private Servo turretServo;
-    public static double SLOPE = 0.00444444;
+    public static double SLOPE = 0.00388889;
     private Servo turretServo2;
     Follower follower;
     private boolean auto;
@@ -31,8 +31,8 @@ public class Turret implements Subsystem {
         this.telemetry = telemetry;
         turretServo = hw.get(Servo.class, "TurretServo");
         turretServo2 = hw.get(Servo.class, "TurretServo2");
-        turretServo.setPosition(0.538);
-        turretServo2.setPosition(0.538);
+        turretServo.setPosition(0.5);
+        turretServo2.setPosition(0.5);
 
         automove = false;
         goal1 = new Pose(144,144);
@@ -129,9 +129,9 @@ public class Turret implements Subsystem {
         telemetry.addData("move",move);
         double servoPos = 0.00444444 * degreeDiff + 0.5;//stuff
         telemetry.addData("Servo pos no clamp",servoPos);
-        if(servoPos>0.9){
+        if(servoPos>0.85){
             servoPos = 0.9;
-        } else if (servoPos<0.1) {
+        } else if (servoPos<0.15) {
             servoPos = 0.1;
         }
         telemetry.addData("servopos clamp",servoPos);
@@ -152,6 +152,10 @@ public class Turret implements Subsystem {
     public void manual(){
         turretServo.setPosition(turretOriginal);
         turretServo2.setPosition(turretOriginal);
+    }
+    public void setPosition(double position){
+        turretServo.setPosition(position);
+        turretServo2.setPosition(position);
     }
 
     public void update(Gamepad gamepad1, Gamepad gamepad2){

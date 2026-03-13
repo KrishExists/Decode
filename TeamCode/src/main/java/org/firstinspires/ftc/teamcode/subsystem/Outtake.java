@@ -34,7 +34,7 @@ public class Outtake implements Subsystem {
     public Outtake(HardwareMap hw, Telemetry t) {
         this.hardwareMap = hw;
         this.telemetry = t;
-        pidfController = new PIDFController(0.005,0,0,0.000215);
+        pidfController = new PIDFController(0.001,0,0,0.00021);
         pidfController.setTolerance(Double.POSITIVE_INFINITY, 10);
         // Map motors
         outtake = hardwareMap.get(DcMotorEx.class, "Outtake2");

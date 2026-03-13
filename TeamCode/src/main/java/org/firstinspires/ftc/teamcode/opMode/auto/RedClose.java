@@ -53,8 +53,10 @@ public class RedClose extends OpMode {
     private final Pose Bez3Control = new Pose(79, 27, 0);
     private final Pose Spike3End = new Pose(115, 36, 0);
 
-    private final Pose Gate = new Pose(127.393, 62, Math.toRadians(35));
+    private final Pose Gate = new Pose(126, 62, Math.toRadians(35));
     private final Pose GateControl = new Pose(117.611, 55.651, 0);
+    private final Pose GateBack = new Pose(120, 53, Math.toRadians(75));
+
     //private final Pose backGate = new Pose(96, 67, 0);
     private final Pose backGate = new Pose(135.040971168437, 50.25796661608498, Math.toRadians(90));//trying to back and intake away from gate
     //change to 0 if it doesn't work
@@ -90,12 +92,13 @@ public class RedClose extends OpMode {
         GoGate = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, GateControl, Gate))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Gate.getHeading())
+                .addPath(new BezierLine(Gate, GateBack))
+                .setLinearHeadingInterpolation(Gate.getHeading(), GateBack.getHeading())
                 .build();
 
         BackGate = follower.pathBuilder()
-                .addPath(new BezierCurve(Gate, backGate, scorePose))
-                .setLinearHeadingInterpolation(Gate.getHeading(), scorePose.getHeading())
-
+                .addPath(new BezierLine(GateBack, scorePose))
+                .setLinearHeadingInterpolation(GateBack.getHeading(), scorePose.getHeading())
                 .build();
 
         PrepSpike2 = follower.pathBuilder()
@@ -128,7 +131,7 @@ public class RedClose extends OpMode {
     // ---------------- Robot Actions ----------------
     private void prepareToShoot() {
         intake.setPower(TeamConstants.INTAKE_STOP);
-        outtake.spinToRpm(3500);
+        outtake.spinToRpm(3400);
 //        blocker.setPosition(TeamConstants.BLOCKER_OPEN);
         transfer.setPower(TeamConstants.TRANSFER_CLOSED);
     }
@@ -172,12 +175,11 @@ public class RedClose extends OpMode {
     }
 
     private void shoot(PathChain nextPath, boolean skip) {
-        turret.autotelem();
         if (follower.isBusy()) {
                prepareToShoot();
         }
         if (!follower.isBusy()) {
-            if ((outtake.atSpeed(3450,3650)||happened) ) {
+            if ((outtake.atSpeed(3350,3500)||happened) ) {
                 happened = true;
                 spinUp(true);
                 if (actionTimer.milliseconds()>1200) {
@@ -202,7 +204,6 @@ public class RedClose extends OpMode {
     }
 
     private void spinIntake(PathChain path,int y) {
-        turret.manual();
         if(follower.isBusy()) {
             if (follower.getPose().getY() < y) {
                 spinUpIntake();
@@ -219,7 +220,6 @@ public class RedClose extends OpMode {
         }
     }
     private void spinIntakeGate(PathChain path) {
-        turret.autoMove();
         spinUpIntake();
         if (!follower.isBusy()&&actionTimer.milliseconds()>1500) {
             follower.followPath(path,true);
@@ -264,7 +264,6 @@ public class RedClose extends OpMode {
                 break;
             case 8:
                 spinIntake(ScoreSpike1,250);// y=
-                turret.manual();
                 break;
             case 9:
                 resetTimers();
@@ -311,6 +310,7 @@ public class RedClose extends OpMode {
         turret = new Turret(hardwareMap,telemetry,follower);
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
+        turret.setPosition(0.35);
 //        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
     }
 
