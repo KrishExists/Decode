@@ -48,10 +48,10 @@ public class RedClose extends OpMode {
     private final Pose Spike1End = new Pose(123.4, 83.472, 0);
 
     private final Pose Bez2Control = new Pose(85, 60, 0);
-    private final Pose Spike2End = new Pose(127, 55, 0);
+    private final Pose Spike2End = new Pose(133, 55, 0);
 
     private final Pose Bez3Control = new Pose(79, 27, 0);
-    private final Pose Spike3End = new Pose(127, 35, 0);
+    private final Pose Spike3End = new Pose(133, 35, 0);
 
     private final Pose Gate = new Pose(129, 61, Math.toRadians(31));
     private final Pose GateControl = new Pose(105.2443095599393, 59.28528072837631, 0);
@@ -192,7 +192,7 @@ public class RedClose extends OpMode {
                     resetBooleans();
                 }
             } else {
-                telemetry.addLine("OUttake not above"); // Code never reaches here
+                telemetry.addLine("Outtake not above"); // Code never reaches here
                 spinUp(false);
             }
         }
@@ -213,7 +213,7 @@ public class RedClose extends OpMode {
                 transfer.setPower(0);
             }
         }
-        if (follower.getCurrentTValue()>0.99) {
+        if (follower.getCurrentTValue()>0.95) {
             follower.followPath(path,true);
             pathState++;
             resetBooleans();

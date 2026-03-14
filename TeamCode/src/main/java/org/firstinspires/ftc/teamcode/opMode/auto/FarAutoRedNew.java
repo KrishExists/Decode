@@ -5,11 +5,17 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.TelemetryManager;
 import com.bylazar.telemetry.PanelsTelemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystem.Intake;
+import org.firstinspires.ftc.teamcode.subsystem.Outtake;
+import org.firstinspires.ftc.teamcode.subsystem.Turret;
+import org.firstinspires.ftc.teamcode.util.TeamConstants;
+
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "FarAutoPahts", group = "Testers")
 @Configurable // Panels
@@ -18,6 +24,13 @@ public class FarAutoRedNew extends OpMode {
     public Follower follower; // Pedro Pathing follower instance
     private int pathState; // Current autonomous path state (state machine)
     private Paths paths; // Paths defined in the Paths class
+    private Intake intake;
+    private Outtake outtake;
+    private Turret turret;
+    private boolean ran = true;
+    private boolean happened = false;
+    private ElapsedTime actionTimer;
+    private boolean skip;
 
     @Override
     public void init() {
@@ -43,6 +56,11 @@ public class FarAutoRedNew extends OpMode {
         panelsTelemetry.debug("Y", follower.getPose().getY());
         panelsTelemetry.debug("Heading", follower.getPose().getHeading());
         panelsTelemetry.update(telemetry);
+    }
+
+    private void resetBooleans() {
+        ran = true;
+        happened = false;
     }
 
     public static class Paths {
@@ -129,6 +147,51 @@ public class FarAutoRedNew extends OpMode {
                     .build();
 
         }
+    }
+
+    private void preparetoshoot(){
+        intake.setPower(TeamConstants.INTAKE_STOP);
+        outtake.spinToRpm(4500);
+        intake.transfer.setPower(TeamConstants.TRANSFER_CLOSED);
+    }
+    private void intake(){
+        intake.setPower(TeamConstants.TRANSFER_IN_POWER);
+        intake.transfer.setPower(TeamConstants.TRANSFER_INTAKE_POWER);
+    }
+    private void spinupeverthing(boolean withTransfer){
+        //shooter spinning up
+        outtake.spinToRpm(4500);
+        outtake.linkage.setPosition(1);
+        telemetry.addLine("Ready to Shoot");
+        //transfer + intake spin up
+        intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
+        intake.transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+        intake.setPower(0);
+        intake.transfer.setPower(0);
+        telemetry.addLine("transfer at 0");
+    }
+    private void shoot(PathChain nextPath, boolean skip){
+        if(follower.isBusy()){
+            preparetoshoot();
+        }
+        if ((outtake.atSpeed(4300,4600)||happened) ) {
+            happened = true;
+            spinupeverthing(true);
+            if (actionTimer.milliseconds()>1200) {
+                if (skip) {
+                    pathState = 0;
+                    return;
+                }
+                follower.followPath(nextPath,true);
+                pathState++;
+                resetBooleans();
+            }
+        } else {
+            telemetry.addLine("Outtake not reaching");
+            spinupeverthing(false);
+            telemetry.update();
+        }
+
     }
 
     public int autonomousPathUpdate() {

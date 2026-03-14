@@ -165,8 +165,13 @@ public class Turret implements Subsystem {
        }
        if(auto){
            if(!automove){
-               auto(goal1);
-            telemetry.addLine("Auto");
+               if(follower.getPose().getY() <= 72){
+                   auto(new Pose(136,144));
+               }
+               else{
+                   auto(goal1);
+               }
+               telemetry.addLine("Auto");
 
            }else{
                autoMove();
