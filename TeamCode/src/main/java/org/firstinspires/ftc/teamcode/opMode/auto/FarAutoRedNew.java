@@ -72,7 +72,7 @@ public class FarAutoRedNew extends OpMode {
         public PathChain HumanPickup;
         public PathChain LeaveHumanPlayer;
         public PathChain Park1;
-        private Pose startPose = new Pose(85.002, 10.489);
+        private Pose startPose = new Pose(86, 8);
         private Pose SpikePickControl = new Pose(96.916, 36.491);
         private Pose EndSpikePickup = new Pose(130.731, 36.874);
         private Pose ShootPose = new Pose(85.193, 10.818);
@@ -112,7 +112,7 @@ public class FarAutoRedNew extends OpMode {
                                     ShootPose
                             )
                     )
-                    .setTangentHeadingInterpolation()
+                    .setLinearHeadingInterpolation(0,0)
                     .setReversed()
                     .build();
 
@@ -198,30 +198,45 @@ public class FarAutoRedNew extends OpMode {
         switch (pathState){
             case 0:
             follower.followPath(paths.ShootFirst);
+            pathState++;
             case 1:
                 if(!follower.isBusy()){
                     follower.followPath(paths.SpikeMarkPickup);
+                    pathState++;
+
                 }
             case 2:
                 if(!follower.isBusy()){
                     follower.followPath(paths.ShootSpike1);
+                    pathState++;
+
                 }
             case 3:
                 if(!follower.isBusy()){
                     follower.followPath(paths.HumanPickup);
+                    pathState++;
+
                 }
             case 4:
                 if(!follower.isBusy()){
                     follower.followPath(paths.LeaveHumanPlayer);
+                    pathState++;
+
                 }
             case 5:
                 if(!follower.isBusy()){
                     follower.followPath(paths.LeaveHumanPlayer);
+                    pathState++;
+
                 }
             case 6:
                 if(!follower.isBusy()){
                     follower.followPath(paths.Park);
+                    pathState++;
+
                 }
+            case 7:
+
         }
         return pathState;
     }
