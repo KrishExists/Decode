@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode.opMode.auto;
+import android.widget.Spinner;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.bylazar.configurables.annotations.Configurable;
@@ -8,6 +10,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Outtake;
 import org.firstinspires.ftc.teamcode.subsystem.Turret;
+import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
 import com.pedropathing.geometry.BezierCurve;
@@ -18,6 +21,7 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.sun.tools.javac.comp.Enter;
 
 @Autonomous(name = "FarAutoPahts", group = "Testers")
 @Configurable // Panels
@@ -55,7 +59,7 @@ public class FarAutoRedNew extends OpMode {
     public void loop() {
         follower.update(); // Update Pedro Pathing
         pathState = autonomousPathUpdate(); // Update autonomous state machine
-
+        PoseStorage.pose = follower.getPose();
 
         // Log values to Panels and Driver Station
         panelsTelemetry.debug("Path State", pathState);
@@ -84,9 +88,8 @@ public class FarAutoRedNew extends OpMode {
         private Pose EndSpikePickup = new Pose(128, 36.874);
         private Pose ShootPose = new Pose(85.193, 10.818);
         private Pose EnterHuman = new Pose(136.904, 9.346);
-
-
-
+        private Pose BackHuman = new Pose(125, 8.519, 0);
+        private Pose EnterHuman2 = new Pose(133, 9.346);
 
 
 
@@ -130,6 +133,21 @@ public class FarAutoRedNew extends OpMode {
                             )
                     )
                     .setLinearHeadingInterpolation(0,0)
+                    .addPath(
+                            new BezierLine(
+                                    EnterHuman,
+                                    BackHuman
+
+                            )
+                    )
+                    .setLinearHeadingInterpolation(0,0)
+                    .addPath(
+                            new BezierLine(
+                                    BackHuman,
+                                    EnterHuman2
+                            )
+                    )
+                    .setLinearHeadingInterpolation(0,0)
                     .build();
 
             LeaveHumanPlayer = follower.pathBuilder()
@@ -164,12 +182,11 @@ public class FarAutoRedNew extends OpMode {
         outtake.spinToRpm(TeamConstants.outtake_Stop);
         intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
         intake.transfer.setPower(TeamConstants.TRANSFER_INTAKE_POWER);
-//        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
     }
 
     private void spinUpShooter() {
         telemetry.addLine("Ready to shoot");
-        outtake.spinToRpm(4300);
+        outtake.spinToRpm(4200);
     }
 
     private void spinUp(boolean withTransfer) {
@@ -201,23 +218,26 @@ public class FarAutoRedNew extends OpMode {
             prepareToShoot();
         }
         if (!follower.isBusy()) {
-            turret.auto(new Pose(125,144));
+            telemetry.addData("timer",actionTimer.milliseconds());
+
+            turret.auto(new Pose(130,144));
 
             if ((outtake.atSpeed(4150,4300)) ) {
                 happened = true;
                 spinUp(true);
-                if (actionTimer.milliseconds()>4500) {
-                    if (skip) {
-                        pathState = 67;
-                        return;
-                    }
-                    follower.followPath(nextPath,true);
-                    pathState++;
-                    resetBooleans();
-                }
+
             } else {
                 telemetry.addLine("Outtake not above"); // Code never reaches here
                 spinUp(false);
+            }
+            if (actionTimer.milliseconds()>3500) {
+                if (skip) {
+                    pathState = 67;
+                    return;
+                }
+                follower.followPath(nextPath,true);
+                pathState++;
+                resetBooleans();
             }
         }
 
@@ -266,11 +286,22 @@ public class FarAutoRedNew extends OpMode {
                 resetTimers();
                 spinIntake(paths.LeaveHumanPlayer,250);
                 break;
+
             case 5:
                 resetTimers();
-                shoot(paths.Park,true);
+                shoot(paths.HumanPickup);
                 break;
             case 6:
+                resetTimers();
+                spinIntake(paths.LeaveHumanPlayer,250);
+                break;
+            case 7:
+                follower.followPath(paths.Park);
+                pathState++;
+            case 8:
+                if(!follower.isBusy()){
+                    pathState++;
+                }
 
             default:
                 outtake.setPower(0);

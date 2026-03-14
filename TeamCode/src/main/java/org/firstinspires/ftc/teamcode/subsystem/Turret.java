@@ -49,6 +49,7 @@ public class Turret implements Subsystem {
         turretServo2.setPosition(0.5);
 
         automove = false;
+        this.red = red;
         if(red){
             goal1 = new Pose(144,144);
         }else{
@@ -57,16 +58,21 @@ public class Turret implements Subsystem {
     }
 
     public void auto(Pose Goal){
+        telemetry.addLine("--------------Turret Tele Data ------------");
+        telemetry.addLine("red turret");
         //Step 1 get locked heading
+        telemetry.addData("Red = ", red);
         double followerx = follower.getPose().getX();
         double followery = follower.getPose().getY();
         double goalx = Goal.getX();
         double goaly = Goal.getY();
+        telemetry.addData("Goal Pose:", "(" + goalx + "," + goaly + ")");
 
         double lockedHeading = Math.atan2(goaly - followery, goalx - followerx);
         telemetry.addData("lockedHeading",lockedHeading);
 
         double robotheading = follower.getHeading();
+        telemetry.addData("robot heading",robotheading);
         double difference = robotheading - lockedHeading;
         double degreeDiff = Math.toDegrees(difference);
         telemetry.addData("degree diff",degreeDiff);
@@ -234,21 +240,12 @@ public class Turret implements Subsystem {
            auto = !auto;
        }
        if(auto){
-           if(!automove) {
-               if (follower.getPose().getY() <= 72) {
-                   if(red){
-                       auto(new Pose(136, 144));
-                   }else{
-                       blue(new Pose(5, 144));
-                   }
-               } else {
-                   if(red){
-                       auto(goal1);
-                   }else{
-                       blue(goal1);
-                   }               }
-               telemetry.addLine("Auto");
+           if(red) {
+               auto(new Pose(144, 144));
            }
+           if(!red){
+               auto(new Pose(0, 144));}
+               telemetry.addLine("Auto");
 //           }else{
 //               autoMove();
 //               telemetry.addLine("Automove");

@@ -48,6 +48,7 @@ public class Drivetrain implements Subsystem {
     private static final boolean teleDrive = true;
     Pose redThing;
     private double servoStart = 0.5;
+    private Pose reset;
     PController headingController;
 
 
@@ -55,15 +56,14 @@ public class Drivetrain implements Subsystem {
         this(h,t,false);
     }
     public Drivetrain(HardwareMap h, Telemetry t, boolean red) {
-//        if(PoseStorage.pose!=null){
-//            //startingPose = PoseStorage.pose;
-//            startingPose = new Pose(90, 115, Math.toRadians(20));
-//            startingPose = PoseStorage.pose;
-//            t.addData("Got pose",startingPose);
-//        }
-//        else { // I t is
+        if(PoseStorage.pose!=null){
+            //startingPose = PoseStorage.pose;
+            startingPose = PoseStorage.pose;
+            t.addData("Got pose",startingPose);
+        }
+        else { // I t is
             startingPose = new Pose(72, 72, 0);//to fix subtract 10 from x and add 10 to y. however this should not be thte case. for some reason its misinterpeting the pose by 10
-//        }
+        }
 
         follower = Constants.createFollower(h);
         follower.setStartingPose(startingPose);
@@ -71,8 +71,10 @@ public class Drivetrain implements Subsystem {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         if(red){
             redThing = new Pose(131,136);
-
+            reset = new Pose(9.382,8.67,Math.toRadians(180));
+            //9.382  8.67   180
         }else{
+            reset = new Pose(133,8.67,Math.toRadians(0));
             redThing = new Pose(0,144);
         }
 
@@ -110,7 +112,7 @@ public class Drivetrain implements Subsystem {
 
     public void combinedDrive(Gamepad gamepad) {
         if(gamepad.dpad_up){
-            follower.setPose(new Pose(72,72,0));
+            follower.setPose(reset);
         }
 
 

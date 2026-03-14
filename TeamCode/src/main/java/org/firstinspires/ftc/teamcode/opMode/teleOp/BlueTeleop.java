@@ -33,8 +33,8 @@ public class BlueTeleop extends LinearOpMode {
         shooter = new Outtake(hw, telemetry);
         drive = new Drivetrain(hardwareMap, telemetry,false);
         Follower follower  = drive.returnFollwer();
-        intake = new Intake(hw, telemetry, shooter,follower);
-        Turret turret = new Turret(hw,telemetry,follower);
+        intake = new Intake(hw, telemetry, shooter,follower,false);
+        Turret turret = new Turret(hw,telemetry,follower,false);
         robot = new Robot(hw,telemetry,drive,intake,turret);
         robot.init();
         telemetry.addLine("Initialized — Waiting for Start");

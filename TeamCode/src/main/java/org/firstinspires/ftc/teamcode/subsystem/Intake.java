@@ -113,6 +113,68 @@ public class Intake implements Subsystem{
         timerStart();
 
     }
+    public Intake(HardwareMap hw, Telemetry t, Outtake shooter, Follower follower, boolean red) {
+        this.telemetry = t;
+        this.shooter = shooter;
+        this.follower = follower;
+        next = false;
+        far = false;
+        close= false;
+        interpLUT = new InterpLUT();
+        interpLUT.add(0, 2500);
+        interpLUT.add(24, 2900);
+        interpLUT.add(39, 3000);
+        interpLUT.add(63, 3200);
+        interpLUT.add(78, 3420);
+        interpLUT.add(86, 3550);
+        interpLUT.add(100, 3550);
+
+        interpLUT.add(120, 3700);
+
+        interpLUT.add(132, 4400);
+        interpLUT.add(170, 4600);
+        interpLUT.add(5000, 4600);
+
+        interpLUTshoot = new InterpLUT();
+        interpLUTshoot.add(0, 0);
+        interpLUTshoot.add(24, 0);
+        interpLUTshoot.add(39, 0.5);
+        interpLUTshoot.add(63, 0.75);
+        interpLUTshoot.add(78, 0.75);
+        interpLUTshoot.add(86, 0.8);
+        interpLUTshoot.add(120, 0.9);
+
+        interpLUTshoot.add(132, 1);
+        interpLUTshoot.add(170, 1);
+        interpLUTshoot.add(5000, 1);
+
+
+
+
+
+        interpLUT.createLUT();
+        interpLUTshoot.createLUT();
+
+        // Map hardware
+        intake = hw.get(DcMotor.class, "Intake");
+        linkage = hw.get(Servo.class, "Linkage");
+        transfer = hw.get(DcMotorEx.class, "Transfer");
+        blocker = hw.get(Servo.class, "blocker");
+
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        blocker.setPosition(0.5);
+        if(red){
+            goal = new Pose(133,133,0);
+        }else{
+            goal = new Pose(11,133,0);
+        }
+
+        // Initialize state machine
+        sm = new StateMachine<>(IntakeState.REST);
+        timerReset();
+        timerStart();
+
+    }
 
     public void setGamepad(Gamepad g) {
         this.gamepad = g;
@@ -198,7 +260,7 @@ public class Intake implements Subsystem{
 
                 double rpm = interpLUT.get(distance);
                 shooter.spinToRpm(rpm);
-                if(shooter.getRPM()>rpm&&shooter.getRPM()<rpm + 100){
+                if(shooter.getRPM()>=rpm-20&&shooter.getRPM()<rpm +50){
                     happend = true;
 
                 }
