@@ -50,7 +50,7 @@ public class RedClose extends OpMode {
     private final Pose Bez2Control = new Pose(85, 60, 0);
     private final Pose Spike2End = new Pose(133, 55, 0);
 
-    private final Pose Bez3Control = new Pose(79, 27, 0);
+    private final Pose Bez3Control = new Pose(66.32625189681336, 28.748103186646432, 0);
     private final Pose Spike3End = new Pose(133, 35, 0);
 
     private final Pose Gate = new Pose(129, 61, Math.toRadians(31));
