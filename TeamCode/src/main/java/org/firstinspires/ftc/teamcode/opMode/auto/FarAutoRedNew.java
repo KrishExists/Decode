@@ -11,7 +11,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
 
-@Autonomous(name = "Pedro Pathing Autonomous", group = "Autonomous")
+@Autonomous(name = "FarAutoPahts", group = "Testers")
 @Configurable // Panels
 public class FarAutoRedNew extends OpMode {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
@@ -24,7 +24,7 @@ public class FarAutoRedNew extends OpMode {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(72, 8, Math.toRadians(90)));
+        follower.setStartingPose(new Pose(85.002,10.489 , Math.toRadians(90)));
 
         paths = new Paths(follower); // Build paths
 
@@ -46,83 +46,120 @@ public class FarAutoRedNew extends OpMode {
     }
 
     public static class Paths {
-        public PathChain Path5;
-        public PathChain Path1;
-        public PathChain Path2;
-        public PathChain Path3;
-        public PathChain Path4;
-        public PathChain Path6;
+        public PathChain Park;
+        public PathChain ShootFirst;
+
+        public PathChain SpikeMarkPickup;
+        public PathChain ShootSpike1;
+        public PathChain HumanPickup;
+        public PathChain LeaveHumanPlayer;
+        public PathChain Park1;
+        private Pose startPose = new Pose(85.002, 10.489);
+        private Pose SpikePickControl = new Pose(96.916, 36.491);
+        private Pose EndSpikePickup = new Pose(130.731, 36.874);
+        private Pose ShootPose = new Pose(85.193, 10.818);
+        private Pose EnterHuman = new Pose(136.904, 9.346);
+
+
+
+
+
 
         public Paths(Follower follower) {
-            Path5 = follower.pathBuilder()
+            Park = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(80.255, 7.126),
+                                    ShootPose,
                                     new Pose(85.002, 10.489)
                             )
                     )
                     .setTangentHeadingInterpolation()
                     .build();
 
-            Path1 = follower.pathBuilder()
+            SpikeMarkPickup = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(85.002, 10.489),
-                                    new Pose(96.916, 36.491),
-                                    new Pose(130.731, 36.874)
+                                    ShootPose,
+                                    SpikePickControl,
+                                    EndSpikePickup
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
                     .build();
 
-            Path2 = follower.pathBuilder()
+            ShootSpike1 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(130.731, 36.874),
-                                    new Pose(85.193, 10.818)
+                                    EndSpikePickup,
+                                    ShootPose
                             )
                     )
                     .setTangentHeadingInterpolation()
                     .setReversed()
                     .build();
 
-            Path3 = follower.pathBuilder()
+            HumanPickup = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(85.193, 10.818),
-                                    new Pose(136.904, 9.346)
+                                    ShootPose,
+                                    EnterHuman
                             )
                     )
                     .setTangentHeadingInterpolation()
                     .build();
 
-            Path4 = follower.pathBuilder()
+            LeaveHumanPlayer = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(136.904, 9.346),
-                                    new Pose(85.338, 10.228)
+                                    EnterHuman,
+                                    ShootPose
                             )
                     )
                     .setTangentHeadingInterpolation()
                     .setReversed()
                     .build();
-
-            Path6 = follower.pathBuilder()
+            ShootFirst = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(85.338, 10.228),
-                                    new Pose(100.635, 14.981)
+                                    startPose,
+                                    ShootPose
                             )
                     )
-                    .setTangentHeadingInterpolation()
+                    .setLinearHeadingInterpolation(Math.toRadians(90),0)
                     .build();
+
         }
     }
 
     public int autonomousPathUpdate() {
-        // Add your state machine Here
-        // Access paths with paths.pathName
-        // Refer to the Pedro Pathing Docs (Auto Example) for an example state machine
-        return 0;
+        switch (pathState){
+            case 0:
+            follower.followPath(paths.ShootFirst);
+            case 1:
+                if(!follower.isBusy()){
+                    follower.followPath(paths.SpikeMarkPickup);
+                }
+            case 2:
+                if(!follower.isBusy()){
+                    follower.followPath(paths.ShootSpike1);
+                }
+            case 3:
+                if(!follower.isBusy()){
+                    follower.followPath(paths.HumanPickup);
+                }
+            case 4:
+                if(!follower.isBusy()){
+                    follower.followPath(paths.LeaveHumanPlayer);
+                }
+            case 5:
+                if(!follower.isBusy()){
+                    follower.followPath(paths.LeaveHumanPlayer);
+                }
+            case 6:
+                if(!follower.isBusy()){
+                    follower.followPath(paths.Park);
+                }
+        }
+        return pathState;
     }
 }

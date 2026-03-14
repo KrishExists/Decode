@@ -41,21 +41,21 @@ public class RedClose extends OpMode {
     private Turret turret;
 
     private DcMotorEx transfer;
-    private final Pose startPose = new Pose(121, 121.036, Math.toRadians(36));
+    private final Pose startPose = new Pose(124, 119.527, 0.7009);
     private final Pose scorePose = new Pose(84, 84, Math.toRadians(0));
     private final Pose scorePoseEnd = new Pose(90, 110, 0);
 
-    private final Pose Spike1End = new Pose(123, 83.472, 0);
+    private final Pose Spike1End = new Pose(123.4, 83.472, 0);
 
     private final Pose Bez2Control = new Pose(85, 60, 0);
-    private final Pose Spike2End = new Pose(125, 54, 0);
+    private final Pose Spike2End = new Pose(127, 55, 0);
 
     private final Pose Bez3Control = new Pose(79, 27, 0);
-    private final Pose Spike3End = new Pose(115, 36, 0);
+    private final Pose Spike3End = new Pose(127, 35, 0);
 
-    private final Pose Gate = new Pose(126, 62, Math.toRadians(35));
-    private final Pose GateControl = new Pose(117.611, 55.651, 0);
-    private final Pose GateBack = new Pose(133.94840667678298, 49.38391502276174, Math.toRadians(75));
+    private final Pose Gate = new Pose(129, 61, Math.toRadians(31));
+    private final Pose GateControl = new Pose(105.2443095599393, 59.28528072837631, 0);
+    private final Pose GateBack = new Pose(132, 47.617602427921085, Math.toRadians(90));
 
 
     private Path scorePreload;
@@ -88,13 +88,13 @@ public class RedClose extends OpMode {
         GoGate = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, GateControl, Gate))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Gate.getHeading())
-                .addPath(new BezierLine(Gate, GateBack))
-                .setLinearHeadingInterpolation(Gate.getHeading(), GateBack.getHeading())
+//                .addPath(new BezierLine(Gate, GateBack))
+//                .setLinearHeadingInterpolation(Gate.getHeading(), GateBack.getHeading())
                 .build();
 
         BackGate = follower.pathBuilder()
                 .addPath(new BezierLine(GateBack, scorePose))
-                .setLinearHeadingInterpolation(GateBack.getHeading(), scorePose.getHeading())
+                .setLinearHeadingInterpolation(Gate.getHeading(), scorePose.getHeading())
                 .build();
 
         PrepSpike2 = follower.pathBuilder()
@@ -141,13 +141,13 @@ public class RedClose extends OpMode {
 
     private void spinUpShooter() {
         telemetry.addLine("Ready to shoot");
-        outtake.spinToRpm(3500);
+        outtake.spinToRpm(3400);
     }
 
     private void spinUp(boolean withTransfer) {
         spinUpShooter();
         if (withTransfer) {
-            transfer.setPower(TeamConstants.TRANSFER_IN_POWER-0.2);
+            transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
             intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
             telemetry.addLine("transfer at 1");
 
@@ -175,7 +175,11 @@ public class RedClose extends OpMode {
                prepareToShoot();
         }
         if (!follower.isBusy()) {
-            if ((outtake.atSpeed(3350,3500)||happened) ) {
+            if(!skip){
+                turret.auto(new Pose(144,144));
+
+            }
+            if ((outtake.atSpeed(3350,3450)||happened) ) {
                 happened = true;
                 spinUp(true);
                 if (actionTimer.milliseconds()>1200) {
@@ -209,7 +213,7 @@ public class RedClose extends OpMode {
                 transfer.setPower(0);
             }
         }
-        if (follower.getCurrentTValue()>0.95) {
+        if (follower.getCurrentTValue()>0.99) {
             follower.followPath(path,true);
             pathState++;
             resetBooleans();
@@ -228,6 +232,7 @@ public class RedClose extends OpMode {
     private void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
+
                 follower.followPath(scorePreload);
                 pathState++;
                 break;
@@ -268,6 +273,7 @@ public class RedClose extends OpMode {
             case 10:
                 resetTimers();
                 spinIntake(ScoreSpike3,42); // y=37
+                turret.setPosition(0.14);
                 break;
             case 11:
                 resetTimers();
@@ -287,6 +293,7 @@ public class RedClose extends OpMode {
 
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
+
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
         follower.setPose(startPose);
@@ -304,9 +311,9 @@ public class RedClose extends OpMode {
         pathState = 0;
         outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
         turret = new Turret(hardwareMap,telemetry,follower);
-        panelsTelemetry.debug("Status", "Initialized");
+    turret.auto(new Pose(144,144));
+panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
-        turret.setPosition(0.35);
 //        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
     }
 

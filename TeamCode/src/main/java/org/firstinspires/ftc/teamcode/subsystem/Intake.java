@@ -74,6 +74,8 @@ public class Intake implements Subsystem{
         interpLUT.add(120, 3700);
 
         interpLUT.add(132, 4400);
+        interpLUT.add(170, 4600);
+        interpLUT.add(5000, 4600);
 
         interpLUTshoot = new InterpLUT();
         interpLUTshoot.add(0, 0);
@@ -85,6 +87,8 @@ public class Intake implements Subsystem{
         interpLUTshoot.add(120, 0.9);
 
         interpLUTshoot.add(132, 1);
+        interpLUTshoot.add(170, 1);
+        interpLUTshoot.add(5000, 1);
 
 
 

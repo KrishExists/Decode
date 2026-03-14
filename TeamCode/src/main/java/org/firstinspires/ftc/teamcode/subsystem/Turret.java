@@ -37,7 +37,7 @@ public class Turret implements Subsystem {
         automove = false;
         goal1 = new Pose(144,144);
     }
-    private void auto(Pose Goal){
+    public void auto(Pose Goal){
         //Step 1 get locked heading
         double followerx = follower.getPose().getX();
         double followery = follower.getPose().getY();
@@ -153,6 +153,7 @@ public class Turret implements Subsystem {
         turretServo.setPosition(turretOriginal);
         turretServo2.setPosition(turretOriginal);
     }
+
     public void setPosition(double position){
         turretServo.setPosition(position);
         turretServo2.setPosition(position);
