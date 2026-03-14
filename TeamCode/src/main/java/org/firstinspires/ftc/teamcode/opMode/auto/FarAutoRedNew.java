@@ -15,6 +15,8 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "FarAutoPahts", group = "Testers")
@@ -35,20 +37,25 @@ public class FarAutoRedNew extends OpMode {
     @Override
     public void init() {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
+        actionTimer = new ElapsedTime();
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(85.002,10.489 , Math.toRadians(90)));
+        follower.setStartingPose(new Pose(86,8 , Math.toRadians(0)));
+        outtake = new Outtake(hardwareMap,telemetry);
+        intake = new Intake(hardwareMap,telemetry,outtake,follower);
 
         paths = new Paths(follower); // Build paths
-
+        turret = new Turret(hardwareMap,telemetry, follower);
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
+
     }
 
     @Override
     public void loop() {
         follower.update(); // Update Pedro Pathing
         pathState = autonomousPathUpdate(); // Update autonomous state machine
+
 
         // Log values to Panels and Driver Station
         panelsTelemetry.debug("Path State", pathState);
@@ -73,8 +80,8 @@ public class FarAutoRedNew extends OpMode {
         public PathChain LeaveHumanPlayer;
         public PathChain Park1;
         private Pose startPose = new Pose(86, 8);
-        private Pose SpikePickControl = new Pose(96.916, 36.491);
-        private Pose EndSpikePickup = new Pose(130.731, 36.874);
+        private Pose SpikePickControl = new Pose(92, 36.491);
+        private Pose EndSpikePickup = new Pose(128, 36.874);
         private Pose ShootPose = new Pose(85.193, 10.818);
         private Pose EnterHuman = new Pose(136.904, 9.346);
 
@@ -91,7 +98,7 @@ public class FarAutoRedNew extends OpMode {
                                     new Pose(85.002, 10.489)
                             )
                     )
-                    .setTangentHeadingInterpolation()
+                    .setLinearHeadingInterpolation(0,0)
                     .build();
 
             SpikeMarkPickup = follower.pathBuilder()
@@ -113,7 +120,6 @@ public class FarAutoRedNew extends OpMode {
                             )
                     )
                     .setLinearHeadingInterpolation(0,0)
-                    .setReversed()
                     .build();
 
             HumanPickup = follower.pathBuilder()
@@ -123,7 +129,7 @@ public class FarAutoRedNew extends OpMode {
                                     EnterHuman
                             )
                     )
-                    .setTangentHeadingInterpolation()
+                    .setLinearHeadingInterpolation(0,0)
                     .build();
 
             LeaveHumanPlayer = follower.pathBuilder()
@@ -133,8 +139,7 @@ public class FarAutoRedNew extends OpMode {
                                     ShootPose
                             )
                     )
-                    .setTangentHeadingInterpolation()
-                    .setReversed()
+                    .setLinearHeadingInterpolation(0,0)
                     .build();
             ShootFirst = follower.pathBuilder()
                     .addPath(
@@ -148,50 +153,95 @@ public class FarAutoRedNew extends OpMode {
 
         }
     }
-
-    private void preparetoshoot(){
+    private void prepareToShoot() {
         intake.setPower(TeamConstants.INTAKE_STOP);
-        outtake.spinToRpm(4500);
+        outtake.spinToRpm(4300);
+//        blocker.setPosition(TeamConstants.BLOCKER_OPEN);
         intake.transfer.setPower(TeamConstants.TRANSFER_CLOSED);
     }
-    private void intake(){
-        intake.setPower(TeamConstants.TRANSFER_IN_POWER);
-        intake.transfer.setPower(TeamConstants.TRANSFER_INTAKE_POWER);
-    }
-    private void spinupeverthing(boolean withTransfer){
-        //shooter spinning up
-        outtake.spinToRpm(4500);
-        outtake.linkage.setPosition(1);
-        telemetry.addLine("Ready to Shoot");
-        //transfer + intake spin up
+
+    private void spinUpIntake() {
+        outtake.spinToRpm(TeamConstants.outtake_Stop);
         intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
-        intake.transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
-        intake.setPower(0);
-        intake.transfer.setPower(0);
-        telemetry.addLine("transfer at 0");
+        intake.transfer.setPower(TeamConstants.TRANSFER_INTAKE_POWER);
+//        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
     }
-    private void shoot(PathChain nextPath, boolean skip){
-        if(follower.isBusy()){
-            preparetoshoot();
+
+    private void spinUpShooter() {
+        telemetry.addLine("Ready to shoot");
+        outtake.spinToRpm(4300);
+    }
+
+    private void spinUp(boolean withTransfer) {
+        spinUpShooter();
+        if (withTransfer) {
+           intake.transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+            intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
+            telemetry.addLine("transfer at 1");
+
+        }else{
+            intake.setPower(0);
+           intake. transfer.setPower(0);
+            telemetry.addLine("transfer at 0");
         }
-        if ((outtake.atSpeed(4300,4600)||happened) ) {
-            happened = true;
-            spinupeverthing(true);
-            if (actionTimer.milliseconds()>1200) {
-                if (skip) {
-                    pathState = 0;
-                    return;
+    }
+
+    private void resetTimers() {
+        if (!follower.isBusy() && ran) {
+            actionTimer.reset();
+            ran = false;
+        }
+    }
+
+
+
+    private void shoot(PathChain nextPath, boolean skip) {
+        telemetry.addLine("In shoot");
+        if (follower.isBusy()) {
+            prepareToShoot();
+        }
+        if (!follower.isBusy()) {
+            turret.auto(new Pose(125,144));
+
+            if ((outtake.atSpeed(4150,4300)) ) {
+                happened = true;
+                spinUp(true);
+                if (actionTimer.milliseconds()>4500) {
+                    if (skip) {
+                        pathState = 67;
+                        return;
+                    }
+                    follower.followPath(nextPath,true);
+                    pathState++;
+                    resetBooleans();
                 }
-                follower.followPath(nextPath,true);
-                pathState++;
-                resetBooleans();
+            } else {
+                telemetry.addLine("Outtake not above"); // Code never reaches here
+                spinUp(false);
             }
-        } else {
-            telemetry.addLine("Outtake not reaching");
-            spinupeverthing(false);
-            telemetry.update();
         }
 
+    }
+
+    private void shoot(PathChain nextPath) {
+        shoot(nextPath, false);
+    } // This is the shooting method, shoot then advance to the next path
+
+    private void spinIntake(PathChain path,int y) {
+        if(follower.isBusy()) {
+            if (follower.getPose().getY() < y) {
+                spinUpIntake();
+            } else {
+                outtake.spinToRpm(0);
+                intake.setPower(0);
+                intake.transfer.setPower(0);
+            }
+        }
+        if (follower.getCurrentTValue()>0.99) {
+            follower.followPath(path,true);
+            pathState++;
+            resetBooleans();
+        }
     }
 
     public int autonomousPathUpdate() {
@@ -199,45 +249,37 @@ public class FarAutoRedNew extends OpMode {
             case 0:
             follower.followPath(paths.ShootFirst);
             pathState++;
+            break;
             case 1:
-                if(!follower.isBusy()){
-                    follower.followPath(paths.SpikeMarkPickup);
-                    pathState++;
-
-                }
+                resetTimers();
+                shoot(paths.SpikeMarkPickup);
+                break;
             case 2:
-                if(!follower.isBusy()){
-                    follower.followPath(paths.ShootSpike1);
-                    pathState++;
-
-                }
+                resetTimers();
+                spinIntake(paths.ShootSpike1,250);
+                break;
             case 3:
-                if(!follower.isBusy()){
-                    follower.followPath(paths.HumanPickup);
-                    pathState++;
-
-                }
+                resetTimers();
+                shoot(paths.HumanPickup);
+                break;
             case 4:
-                if(!follower.isBusy()){
-                    follower.followPath(paths.LeaveHumanPlayer);
-                    pathState++;
-
-                }
+                resetTimers();
+                spinIntake(paths.LeaveHumanPlayer,250);
+                break;
             case 5:
-                if(!follower.isBusy()){
-                    follower.followPath(paths.LeaveHumanPlayer);
-                    pathState++;
-
-                }
+                resetTimers();
+                shoot(paths.Park,true);
+                break;
             case 6:
-                if(!follower.isBusy()){
-                    follower.followPath(paths.Park);
-                    pathState++;
 
-                }
-            case 7:
+            default:
+                outtake.setPower(0);
+                intake.transfer.setPower(0);
+                intake.setPower(0);
+
 
         }
+
         return pathState;
     }
 }

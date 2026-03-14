@@ -11,7 +11,7 @@ public class TeamConstants {
     // =============================
     // Transfer / Outtake Constants
     // =============================
-    public static final double TRANSFER_INTAKE_POWER = -0.3;//what runs in intake
+    public static final double TRANSFER_INTAKE_POWER = -0.35;//what runs in intake
     public static final double TRANSFER_IN_POWER = 1;//what runs otherwise
 
     public static final double TRANSFER_CLOSED = 0;

@@ -23,6 +23,7 @@ public class Turret implements Subsystem {
     public static boolean automove;
     Pose goal1;
     Telemetry telemetry;
+    private boolean red;
 
     public Turret(HardwareMap hw, Telemetry telemetry, Follower follower){
         auto = false;
@@ -37,6 +38,24 @@ public class Turret implements Subsystem {
         automove = false;
         goal1 = new Pose(144,144);
     }
+    public Turret(HardwareMap hw, Telemetry telemetry, Follower follower, boolean red){
+        auto = false;
+        this.hw = hw;
+        this.follower = follower;
+        this.telemetry = telemetry;
+        turretServo = hw.get(Servo.class, "TurretServo");
+        turretServo2 = hw.get(Servo.class, "TurretServo2");
+        turretServo.setPosition(0.5);
+        turretServo2.setPosition(0.5);
+
+        automove = false;
+        if(red){
+            goal1 = new Pose(144,144);
+        }else{
+            goal1 = new Pose(0,144);
+        }
+    }
+
     public void auto(Pose Goal){
         //Step 1 get locked heading
         double followerx = follower.getPose().getX();
@@ -50,6 +69,57 @@ public class Turret implements Subsystem {
         double robotheading = follower.getHeading();
         double difference = robotheading - lockedHeading;
         double degreeDiff = Math.toDegrees(difference);
+        telemetry.addData("degree diff",degreeDiff);
+        boolean move = true;
+        // Step 2
+        //aroudn to is 90,360-90
+        if(degreeDiff<=120&&degreeDiff>90){//turret hysteria right 90 is max here so thats why
+            degreeDiff = 90;
+            move = true;
+
+        }else if(degreeDiff >360-120&&degreeDiff<360-90){//turret hysteria 120 is max so 30 range
+            degreeDiff = -90;
+            move = true;
+
+        }
+        else if(degreeDiff>=360-90){//helps do the negative sign instead of it being really large
+            degreeDiff = 360-degreeDiff;
+            degreeDiff *=-1;
+            move = true;
+
+        }
+        else if(degreeDiff>120&&degreeDiff<360-120){//anything diff here
+            move = false;
+        }
+        telemetry.addData("Degree diff 2",degreeDiff);
+        telemetry.addData("move",move);
+        double servoPos = SLOPE * degreeDiff + 0.5;
+        telemetry.addData("Servo pos no clamp",servoPos);
+        if(servoPos>0.9){
+            servoPos = 0.9;
+        } else if (servoPos<0.1) {
+            servoPos = 0.1;
+        }
+        telemetry.addData("servopos clamp",servoPos);
+        if(move) {
+            telemetry.addLine("doing servo pose");
+            turretServo.setPosition(servoPos);
+            turretServo2.setPosition(servoPos);
+        }
+    }
+    public void blue(Pose Goal){
+        //Step 1 get locked heading
+        double followerx = follower.getPose().getX();
+        double followery = follower.getPose().getY();
+        double goalx = Goal.getX();
+        double goaly = Goal.getY();
+
+        double lockedHeading = Math.atan2(goaly - followery, goalx - followerx);
+        telemetry.addData("lockedHeading",lockedHeading);
+
+        double robotheading = 90+(90-follower.getHeading());
+        double difference = robotheading - lockedHeading;
+        double degreeDiff = Math.toDegrees(difference) * -1;
         telemetry.addData("degree diff",degreeDiff);
         boolean move = true;
         // Step 2
@@ -164,20 +234,26 @@ public class Turret implements Subsystem {
            auto = !auto;
        }
        if(auto){
-           if(!automove){
-               if(follower.getPose().getY() <= 72){
-                   auto(new Pose(136,144));
-               }
-               else{
-                   auto(goal1);
-               }
+           if(!automove) {
+               if (follower.getPose().getY() <= 72) {
+                   if(red){
+                       auto(new Pose(136, 144));
+                   }else{
+                       blue(new Pose(5, 144));
+                   }
+               } else {
+                   if(red){
+                       auto(goal1);
+                   }else{
+                       blue(goal1);
+                   }               }
                telemetry.addLine("Auto");
-
-           }else{
-               autoMove();
-               telemetry.addLine("Automove");
-
            }
+//           }else{
+//               autoMove();
+//               telemetry.addLine("Automove");
+//
+//           }
        }else{
            manual();
            telemetry.addLine("manual");

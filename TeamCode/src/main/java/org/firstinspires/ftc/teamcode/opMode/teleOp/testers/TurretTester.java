@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opMode.teleOp.testers;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -51,7 +52,7 @@ public class TurretTester extends LinearOpMode {
         while (opModeIsActive()) {
             linkage.setPosition(linkagePos);
             drivetrain.update(gamepad1,gamepad2);
-            turret.updatetelem();
+            turret.auto(new Pose(0,144));
             outtake.spinToRpm(rpm);
             intake.setPower(intakePower);
             transfer.setPower(transferPower);
