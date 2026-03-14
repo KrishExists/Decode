@@ -102,7 +102,7 @@ public class FarAutoRedNew extends OpMode {
                                     EndSpikePickup
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
+                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                     .build();
 
             ShootSpike1 = follower.pathBuilder()
@@ -143,7 +143,7 @@ public class FarAutoRedNew extends OpMode {
                                     ShootPose
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90),0)
+                    .setLinearHeadingInterpolation(Math.toRadians(0),0)
                     .build();
 
         }

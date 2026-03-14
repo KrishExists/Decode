@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Turret;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
-@Autonomous(name = "Red Close", group = "Autonomous")
+@Autonomous(name = "RedClose", group = "Autonomous")
 public class RedClose extends OpMode {
 
     private Follower follower;
@@ -201,7 +201,7 @@ public class RedClose extends OpMode {
 
     private void shoot(PathChain nextPath) {
         shoot(nextPath, false);
-    }
+    } // This is the shooting method, shoot then advance to the next path
 
     private void spinIntake(PathChain path,int y) {
         if(follower.isBusy()) {
@@ -311,8 +311,8 @@ public class RedClose extends OpMode {
         pathState = 0;
         outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
         turret = new Turret(hardwareMap,telemetry,follower);
-    turret.auto(new Pose(144,144));
-panelsTelemetry.debug("Status", "Initialized");
+        turret.auto(new Pose(144,144));
+        panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
 //        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
     }

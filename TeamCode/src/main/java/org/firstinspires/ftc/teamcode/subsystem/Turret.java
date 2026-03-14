@@ -15,9 +15,9 @@ public class Turret implements Subsystem {
     private double turretOriginal = 0.5;
 
     private HardwareMap hw;
-    private Servo turretServo;
+    public Servo turretServo;
     public static double SLOPE = 0.00388889;
-    private Servo turretServo2;
+    public Servo turretServo2;
     Follower follower;
     private boolean auto;
     public static boolean automove;
