@@ -50,6 +50,8 @@ public class Drivetrain implements Subsystem {
     private double servoStart = 0.5;
     private Pose reset;
     PController headingController;
+    private char[] motifpattern;
+    private int index = 0;
 
 
     public Drivetrain(HardwareMap h, Telemetry t) {
@@ -138,7 +140,18 @@ public class Drivetrain implements Subsystem {
     public void update(Gamepad gamepad1, Gamepad gamepad2) {
         follower.update();
         headingController.setP(kp);
+        if(index!=3){
+            if(gamepad1.left_bumper){
+                motifpattern[index] = 'P';
+                index++;
+            }if(gamepad1.right_bumper){
+                motifpattern[index] = 'G';
+                index++;
+            }
+        }
+        if(index == 3){
 
+        }
         this.combinedDrive(gamepad1);
         telemetry.addData("Pose",follower.getPose());
     }

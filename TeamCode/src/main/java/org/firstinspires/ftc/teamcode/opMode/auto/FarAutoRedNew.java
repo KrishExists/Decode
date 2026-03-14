@@ -50,6 +50,7 @@ public class FarAutoRedNew extends OpMode {
 
         paths = new Paths(follower); // Build paths
         turret = new Turret(hardwareMap,telemetry, follower);
+
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
 
@@ -89,7 +90,7 @@ public class FarAutoRedNew extends OpMode {
         private Pose ShootPose = new Pose(85.193, 10.818);
         private Pose EnterHuman = new Pose(136.904, 9.346);
         private Pose BackHuman = new Pose(125, 8.519, 0);
-        private Pose EnterHuman2 = new Pose(133, 9.346);
+        private Pose EnterHuman2 = new Pose(130, 9.346);
 
 
 
@@ -98,7 +99,7 @@ public class FarAutoRedNew extends OpMode {
                     .addPath(
                             new BezierLine(
                                     ShootPose,
-                                    new Pose(85.002, 10.489)
+                                    new Pose(112.000, 9.346)
                             )
                     )
                     .setLinearHeadingInterpolation(0,0)
@@ -153,7 +154,7 @@ public class FarAutoRedNew extends OpMode {
             LeaveHumanPlayer = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    EnterHuman,
+                                    EnterHuman2,
                                     ShootPose
                             )
                     )
@@ -220,7 +221,7 @@ public class FarAutoRedNew extends OpMode {
         if (!follower.isBusy()) {
             telemetry.addData("timer",actionTimer.milliseconds());
 
-            turret.auto(new Pose(130,144));
+            turret.auto(new Pose(144,144));
 
             if ((outtake.atSpeed(4150,4300)) ) {
                 happened = true;
@@ -289,21 +290,16 @@ public class FarAutoRedNew extends OpMode {
 
             case 5:
                 resetTimers();
-                shoot(paths.HumanPickup);
+                shoot(paths.Park);
                 break;
             case 6:
-                resetTimers();
-                spinIntake(paths.LeaveHumanPlayer,250);
-                break;
-            case 7:
-                follower.followPath(paths.Park);
-                pathState++;
-            case 8:
                 if(!follower.isBusy()){
                     pathState++;
                 }
+                break;
 
             default:
+                telemetry.addLine("default");
                 outtake.setPower(0);
                 intake.transfer.setPower(0);
                 intake.setPower(0);

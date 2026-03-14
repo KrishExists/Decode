@@ -23,8 +23,8 @@ import org.firstinspires.ftc.teamcode.subsystem.Turret;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
-@Autonomous(name = "RedClose", group = "Autonomous")
-public class RedClose extends OpMode {
+@Autonomous(name = "BlueCloseNew", group = "Autonomous")
+public class BlueNewClose extends OpMode {
 
     private Follower follower;
     private TelemetryManager panelsTelemetry;
@@ -41,21 +41,21 @@ public class RedClose extends OpMode {
     private Turret turret;
 
     private DcMotorEx transfer;
-    private final Pose startPose = new Pose(124, 119.527, 0.7009);
-    private final Pose scorePose = new Pose(84, 84, Math.toRadians(0));
-    private final Pose scorePoseEnd = new Pose(90, 110, 0);
+    private final Pose startPose = new Pose(144-124, 119.527, Math.toRadians(180)-0.7009);
+    private final Pose scorePose = new Pose(144-84, 84, Math.toRadians(180));
+    private final Pose scorePoseEnd = new Pose(144-90, 110, Math.toRadians(180)-0);
 
-    private final Pose Spike1End = new Pose(123.4, 83.472, 0);
+    private final Pose Spike1End = new Pose(144-123.4, 83.472, Math.toRadians(180)-0);
 
-    private final Pose Bez2Control = new Pose(85, 60, 0);
-    private final Pose Spike2End = new Pose(133, 55, 0);
+    private final Pose Bez2Control = new Pose(144-85, 60, Math.toRadians(180)-0);
+    private final Pose Spike2End = new Pose(144-133, 55, Math.toRadians(180)-0);
 
-    private final Pose Bez3Control = new Pose(66.32625189681336, 28.748103186646432, 0);
-    private final Pose Spike3End = new Pose(133, 35, 0);
+    private final Pose Bez3Control = new Pose(144-66.32625189681336, 28.748103186646432, Math.toRadians(180)-0);
+    private final Pose Spike3End = new Pose(144-133, 35, Math.toRadians(180)-0);
 
-    private final Pose Gate = new Pose(129, 61, Math.toRadians(31));
-    private final Pose GateControl = new Pose(105.2443095599393, 59.28528072837631, 0);
-    private final Pose GateBack = new Pose(132, 47.617602427921085, Math.toRadians(90));
+    private final Pose Gate = new Pose(144-129, 61, Math.toRadians(180-31));
+    private final Pose GateControl = new Pose(144-105.2443095599393, 59.28528072837631, Math.toRadians(180)-0);
+    private final Pose GateBack = new Pose(144-132, 47.617602427921085, Math.toRadians(90));
 
 
     private Path scorePreload;
@@ -172,11 +172,11 @@ public class RedClose extends OpMode {
 
     private void shoot(PathChain nextPath, boolean skip) {
         if (follower.isBusy()) {
-               prepareToShoot();
+            prepareToShoot();
         }
         if (!follower.isBusy()) {
             if(!skip){
-                turret.auto(new Pose(144,144));
+                turret.auto(new Pose(144-144,144));
 
             }
             if ((outtake.atSpeed(3350,3450)||happened) ) {
@@ -273,7 +273,7 @@ public class RedClose extends OpMode {
             case 10:
                 resetTimers();
                 spinIntake(ScoreSpike3,42); // y=37
-                turret.auto(new Pose(144,144));
+                turret.auto(new Pose(144-144,144));
                 break;
             case 11:
                 resetTimers();
@@ -311,7 +311,7 @@ public class RedClose extends OpMode {
         pathState = 0;
         outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
         turret = new Turret(hardwareMap,telemetry,follower);
-        turret.auto(new Pose(144,144));
+        turret.auto(new Pose(144-144,144));
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
 //        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);

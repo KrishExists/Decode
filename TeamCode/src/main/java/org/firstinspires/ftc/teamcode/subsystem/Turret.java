@@ -32,8 +32,6 @@ public class Turret implements Subsystem {
         this.telemetry = telemetry;
         turretServo = hw.get(Servo.class, "TurretServo");
         turretServo2 = hw.get(Servo.class, "TurretServo2");
-        turretServo.setPosition(0.5);
-        turretServo2.setPosition(0.5);
 
         automove = false;
         goal1 = new Pose(144,144);
