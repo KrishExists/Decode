@@ -20,7 +20,12 @@ public class Turret implements Subsystem {
     public static double SLOPE = 0.00388889;
     public Servo turretServo2;
     Follower follower;
+
     private boolean auto;
+
+    public static double turretOffsetInchesx = 0;
+
+    public static double turretOffsetInchesy = 0;
     public static boolean automove;
     Pose goal1;
     Telemetry telemetry;
@@ -153,12 +158,21 @@ public class Turret implements Subsystem {
 
 
     public void pointToGoalPinPoint(Pose cur) {
+
+        Pose turretPos = new Pose(
+                cur.getX() * Math.cos(cur.getHeading()) - turretOffsetInchesx * Math.cos(cur.getHeading()),
+                cur.getY() * Math.sin(cur.getHeading()) - turretOffsetInchesy * Math.sin(cur.getHeading())
+        );
+
         Pose goal = getGoalPose();
         double fieldAngle = Math.atan2(
-                goal.getY() - cur.getY(),
-                goal.getX() - cur.getX()
+                goal.getY() - turretPos.getY(),
+                goal.getX() - turretPos.getX()
         );
-        double relAngle = fieldAngle - cur.getHeading();
+
+
+//
+        double relAngle = fieldAngle - turretPos.getHeading();
         while (relAngle > Math.PI)  relAngle -= 2 * Math.PI;
         while (relAngle < -Math.PI) relAngle += 2 * Math.PI;
         double angleDeg = Math.toDegrees(relAngle);
