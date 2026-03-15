@@ -64,10 +64,12 @@ public class Turret implements Subsystem {
         double followery = follower.getPose().getY();
         double goalx = Goal.getX();
         double goaly = Goal.getY();
+
+
         telemetry.addData("Goal Pose:", "(" + goalx + "," + goaly + ")");
 
         double lockedHeading = Math.atan2(goaly - followery, goalx - followerx);
-        telemetry.addData("lockedHeading",lockedHeading);
+        telemetry.addData("lockedHeading",Math.toDegrees(lockedHeading));
 
         double robotheading = follower.getHeading();
         telemetry.addData("robot heading",robotheading);
@@ -111,57 +113,101 @@ public class Turret implements Subsystem {
             turretServo2.setPosition(servoPos);
         }
     }
-    public void blue(Pose Goal){
-        //Step 1 get locked heading
-        double followerx = follower.getPose().getX();
-        double followery = follower.getPose().getY();
-        double goalx = Goal.getX();
-        double goaly = Goal.getY();
+//    public void blue(Pose Goal){
+//        //Step 1 get locked heading
+//        double followerx = follower.getPose().getX();
+//        double followery = follower.getPose().getY();
+//        double goalx = Goal.getX();
+//        double goaly = Goal.getY();
+//
+//        double lockedHeading = Math.atan2(goaly - followery, goalx - followerx);
+//        telemetry.addData("lockedHeading",lockedHeading);
+//
+//        double robotheading = 90+(90-follower.getHeading());
+//        double difference = robotheading - lockedHeading;
+//        double degreeDiff = Math.toDegrees(difference) * -1;
+//        telemetry.addData("degree diff",degreeDiff);
+//        boolean move = true;
+//        // Step 2
+//        //aroudn to is 90,360-90
+//        if(degreeDiff<=120&&degreeDiff>90){//turret hysteria right 90 is max here so thats why
+//            degreeDiff = 90;
+//            move = true;
+//
+//        }else if(degreeDiff >360-120&&degreeDiff<360-90){//turret hysteria 120 is max so 30 range
+//            degreeDiff = -90;
+//            move = true;
+//
+//        }
+//        else if(degreeDiff>=360-90){//helps do the negative sign instead of it being really large
+//            degreeDiff = 360-degreeDiff;
+//            degreeDiff *=-1;
+//            move = true;
+//
+//        }
+//        else if(degreeDiff>120&&degreeDiff<360-120){//anything diff here
+//            move = false;
+//        }
+//        telemetry.addData("Degree diff 2",degreeDiff);
+//        telemetry.addData("move",move);
+//        double servoPos = SLOPE * degreeDiff + 0.5;
+//        telemetry.addData("Servo pos no clamp",servoPos);
+//        if(servoPos>0.9){
+//            servoPos = 0.9;
+//        } else if (servoPos<0.1) {
+//            servoPos = 0.1;
+//        }
+//        telemetry.addData("servopos clamp",servoPos);
+//        if(move) {
+//            telemetry.addLine("doing servo pose");
+//            turretServo.setPosition(servoPos);
+//            turretServo2.setPosition(servoPos);
+//        }
+//    }
+public void auto2(Pose Goal){
+        red = false;
+    telemetry.addLine("--------------Turret Tele Data ------------");
+    telemetry.addLine("red turret");
+    //Step 1 get locked heading
+    telemetry.addData("Red = ", red);
+    double followerx = follower.getPose().getX();
+    double followery = follower.getPose().getY();
+    double goalx = Goal.getX();
+    double goaly = Goal.getY();
+    telemetry.addData("Goal Pose:", "(" + goalx + "," + goaly + ")");
+    double lockedHeading = Math.atan2(goaly - followery, goalx - followerx);
+    telemetry.addData("lockedHeading",lockedHeading);
 
-        double lockedHeading = Math.atan2(goaly - followery, goalx - followerx);
-        telemetry.addData("lockedHeading",lockedHeading);
+    double robotheading = follower.getHeading();
+    telemetry.addData("robot heading",robotheading);
+    double difference = robotheading - lockedHeading;
+    double degreeDiff = Math.toDegrees(difference);
 
-        double robotheading = 90+(90-follower.getHeading());
-        double difference = robotheading - lockedHeading;
-        double degreeDiff = Math.toDegrees(difference) * -1;
-        telemetry.addData("degree diff",degreeDiff);
-        boolean move = true;
-        // Step 2
-        //aroudn to is 90,360-90
-        if(degreeDiff<=120&&degreeDiff>90){//turret hysteria right 90 is max here so thats why
-            degreeDiff = 90;
-            move = true;
-
-        }else if(degreeDiff >360-120&&degreeDiff<360-90){//turret hysteria 120 is max so 30 range
-            degreeDiff = -90;
-            move = true;
-
-        }
-        else if(degreeDiff>=360-90){//helps do the negative sign instead of it being really large
-            degreeDiff = 360-degreeDiff;
-            degreeDiff *=-1;
-            move = true;
-
-        }
-        else if(degreeDiff>120&&degreeDiff<360-120){//anything diff here
-            move = false;
-        }
-        telemetry.addData("Degree diff 2",degreeDiff);
-        telemetry.addData("move",move);
-        double servoPos = SLOPE * degreeDiff + 0.5;
-        telemetry.addData("Servo pos no clamp",servoPos);
-        if(servoPos>0.9){
-            servoPos = 0.9;
-        } else if (servoPos<0.1) {
-            servoPos = 0.1;
-        }
-        telemetry.addData("servopos clamp",servoPos);
-        if(move) {
-            telemetry.addLine("doing servo pose");
-            turretServo.setPosition(servoPos);
-            turretServo2.setPosition(servoPos);
-        }
+    telemetry.addData("Degree DIFFF: ", degreeDiff);
+    telemetry.addData("degree diff",degreeDiff);
+    boolean move = true;//its 60
+    // Step 2
+    //aroudn to is 90,360-90
+    if(degreeDiff<=-360&&degreeDiff>-360+90){
+        degreeDiff = -360-degreeDiff;
+        degreeDiff *=-1;
     }
+    telemetry.addData("Degree diff 2",degreeDiff);
+    telemetry.addData("move",move);
+    double servoPos = SLOPE * degreeDiff + 0.5;
+    telemetry.addData("Servo pos no clamp",servoPos);
+    if(servoPos>0.9){
+        servoPos = 0.9;
+    } else if (servoPos<0.1) {
+        servoPos = 0.1;
+    }
+    telemetry.addData("servopos clamp",servoPos);
+    if(move) {
+        telemetry.addLine("doing servo pose");
+        turretServo.setPosition(servoPos);
+        turretServo2.setPosition(servoPos);
+    }
+}
     public void autotelem(){
         //Step 1 get locked heading for turret
         double followerx = follower.getPose().getX();
@@ -175,6 +221,7 @@ public class Turret implements Subsystem {
         telemetry.addData("lockedHeading",lockedHeading);
 
         double robotheading = follower.getHeading();
+        telemetry.addData("robot heading", Math.toDegrees(robotheading));
         double difference = robotheading - lockedHeading;
         double degreeDiff = Math.toDegrees(difference);
         telemetry.addData("degree diff",degreeDiff);
@@ -199,6 +246,7 @@ public class Turret implements Subsystem {
         else if(degreeDiff>120&&degreeDiff<360-120){//anything diff here
             move = false;
         }
+        degreeDiff *=-1;
         telemetry.addData("Degree diff 2",degreeDiff);
         telemetry.addData("move",move);
         double servoPos = 0.00444444 * degreeDiff + 0.5;//stuff
@@ -216,6 +264,8 @@ public class Turret implements Subsystem {
             turretServo2.setPosition(servoPos);
         }
     }
+
+
     public void autoMove(){
         //Step 1 get locked heading
 
@@ -242,11 +292,13 @@ public class Turret implements Subsystem {
                auto(new Pose(144, 144));
            }
            if(!red){
-               auto(new Pose(0, 144));}
+               auto2(new Pose(0, 144));}
                telemetry.addLine("Auto");
 //           }else{
 //               autoMove();
-//               telemetry.addLine("Automove");
+//               telemetry.ad
+//
+//               dLine("Automove");
 //
 //           }
        }else{
@@ -254,6 +306,10 @@ public class Turret implements Subsystem {
            telemetry.addLine("manual");
 
        }
+    }
+
+    public void blue(Pose goal) {
+
     }
 
     public void updatetelem(){

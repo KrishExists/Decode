@@ -59,9 +59,9 @@ public class AirSortTeter extends LinearOpMode {
         goal = 0;
         current = 0;
         reset = true;
-        shooter.linkage.setPosition(0.47);
-        servo1 = 0.35;
-        servo2 = 0.55;
+        shooter.linkage.setPosition(1);
+        servo1 = 1;
+        servo2 = 0.5;
         waitForStart();
         if (isStopRequested()) return;
 
@@ -80,9 +80,9 @@ public class AirSortTeter extends LinearOpMode {
                 intake.setPower(0);
                 transfer.setPower(0);
             }else{
-                shooter.spinToRpm(2400);
+                shooter.spinToRpm(3500);
 //                blocker.setPosition(TeamConstants.BLOCKER_OPEN);
-                if(shooter.getRPM()>2400){
+                if(shooter.getRPM()>3400){
                     happend = true;
                     secondcheck = true;
                 }
@@ -90,13 +90,13 @@ public class AirSortTeter extends LinearOpMode {
 
 
                     //intake 1, transfer -1
-                    intake.setPower(0.8);
-                    transfer.setPower(0.8);
+                    intake.setPower(1);
+                    transfer.setPower(1);
                     if(iea[count].equals(cpattern[pos])){
                         shooter.linkage.setPosition(servo2);
                         telemetry.addLine("0.55");
 
-                        if(shooter.getRPM()<2250&&secondcheck){
+                        if(shooter.getRPM()<3250&&secondcheck){
                             count++;
                             pos++;
                             secondcheck = false;
@@ -104,7 +104,7 @@ public class AirSortTeter extends LinearOpMode {
                     }else{
                         shooter.linkage.setPosition(servo1);
                         telemetry.addLine("0.43");
-                        if(shooter.getRPM()<2250){
+                        if(shooter.getRPM()<3250){
                             count++;
                         }
                     }

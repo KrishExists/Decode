@@ -3,6 +3,8 @@
 package org.firstinspires.ftc.teamcode.opMode.teleOp;
 
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -30,6 +32,7 @@ public class RedTeleop extends LinearOpMode {
 
 
 // ===== Initialize Hardware & Subsystems =====
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         hw = hardwareMap;
         shooter = new Outtake(hw, telemetry);
         drive = new Drivetrain(hardwareMap, telemetry,true);

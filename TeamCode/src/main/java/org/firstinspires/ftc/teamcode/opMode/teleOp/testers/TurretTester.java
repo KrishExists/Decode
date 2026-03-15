@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opMode.teleOp.testers;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -27,6 +29,7 @@ public class TurretTester extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         rpm = 0;
         // === Hardware Init ===
         linkage = hardwareMap.get(Servo.class, "Linkage");
@@ -41,7 +44,7 @@ public class TurretTester extends LinearOpMode {
         Drivetrain drivetrain = new Drivetrain(hardwareMap,telemetry);
         Outtake outtake = new Outtake(hardwareMap,telemetry);
         Follower follower = drivetrain.returnFollwer();
-        Turret turret = new Turret(hardwareMap,telemetry,follower);
+        Turret turret = new Turret(hardwareMap,telemetry,follower,false);
         telemetry.addLine("Initialized — Waiting for Start");
         telemetry.update();
         waitForStart();
@@ -52,7 +55,7 @@ public class TurretTester extends LinearOpMode {
         while (opModeIsActive()) {
             linkage.setPosition(linkagePos);
             drivetrain.update(gamepad1,gamepad2);
-            turret.blue(new Pose(0,144));
+            turret.auto2(new Pose(0,144));
             outtake.spinToRpm(rpm);
             intake.setPower(intakePower);
             transfer.setPower(transferPower);

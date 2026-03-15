@@ -175,10 +175,8 @@ public class BlueNewClose extends OpMode {
             prepareToShoot();
         }
         if (!follower.isBusy()) {
-            if(!skip){
-                turret.auto(new Pose(144-144,144));
+            turret.blue(new Pose(0,144));
 
-            }
             if ((outtake.atSpeed(3350,3450)||happened) ) {
                 happened = true;
                 spinUp(true);
@@ -273,7 +271,6 @@ public class BlueNewClose extends OpMode {
             case 10:
                 resetTimers();
                 spinIntake(ScoreSpike3,42); // y=37
-                turret.auto(new Pose(144-144,144));
                 break;
             case 11:
                 resetTimers();
@@ -311,7 +308,7 @@ public class BlueNewClose extends OpMode {
         pathState = 0;
         outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
         turret = new Turret(hardwareMap,telemetry,follower);
-        turret.auto(new Pose(144-144,144));
+        turret.blue(new Pose(0,144));
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
 //        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
