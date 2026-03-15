@@ -69,34 +69,49 @@ public class Turret implements Subsystem {
         telemetry.addData("Goal Pose:", "(" + goalx + "," + goaly + ")");
 
         double lockedHeading = Math.atan2(goaly - followery, goalx - followerx);
+        lockedHeading = Math.toDegrees(lockedHeading);
+        lockedHeading = Math.abs(lockedHeading);
         telemetry.addData("lockedHeading",Math.toDegrees(lockedHeading));
 
         double robotheading = follower.getHeading();
+        robotheading = Math.toDegrees(robotheading);
+        if(robotheading>0) {
+            robotheading = 180-robotheading;
+        }
+        else if(robotheading < 0) {
+            robotheading = -180-robotheading;
+        }
         telemetry.addData("robot heading",robotheading);
-        double difference = robotheading - lockedHeading;
-        double degreeDiff = Math.toDegrees(difference);
+        double difference = lockedHeading - robotheading;
+        double degreeDiff = difference;
+        if(degreeDiff<0) {
+            degreeDiff*=-1;
+            degreeDiff = 360-degreeDiff;
+
+        }
         telemetry.addData("degree diff",degreeDiff);
         boolean move = true;
         // Step 2
         //aroudn to is 90,360-90
-        if(degreeDiff<=120&&degreeDiff>90){//turret hysteria right 90 is max here so thats why
-            degreeDiff = 90;
-            move = true;
 
-        }else if(degreeDiff >360-120&&degreeDiff<360-90){//turret hysteria 120 is max so 30 range
-            degreeDiff = -90;
-            move = true;
-
-        }
-        else if(degreeDiff>=360-90){//helps do the negative sign instead of it being really large
-            degreeDiff = 360-degreeDiff;
-            degreeDiff *=-1;
-            move = true;
-
-        }
-        else if(degreeDiff>120&&degreeDiff<360-120){//anything diff here
-            move = false;
-        }
+//        if(degreeDiff<=120&&degreeDiff>90){//turret hysteria right 90 is max here so thats why
+//            degreeDiff = 90;
+//            move = true;
+//
+//        }else if(degreeDiff >360-120&&degreeDiff<360-90){//turret hysteria 120 is max so 30 range
+//            degreeDiff = -90;
+//            move = true;
+//
+//        }
+//        else if(degreeDiff>=360-90){//helps do the negative sign instead of it being really large
+//            degreeDiff = 360-degreeDiff;
+//            degreeDiff *=-1;
+//            move = true;
+//
+//        }
+//        else if(degreeDiff>120&&degreeDiff<360-120){//anything diff here
+//            move = false;
+//        }
         telemetry.addData("Degree diff 2",degreeDiff);
         telemetry.addData("move",move);
         double servoPos = SLOPE * degreeDiff + 0.5;
