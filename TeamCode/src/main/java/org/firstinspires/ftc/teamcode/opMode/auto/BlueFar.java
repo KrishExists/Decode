@@ -221,7 +221,7 @@ public class BlueFar extends OpMode {
         if (!follower.isBusy()) {
             telemetry.addData("timer",actionTimer.milliseconds());
 
-            turret.blue(new Pose(0,144));
+            turret.auto2(new Pose(0,144));
 
             if ((outtake.atSpeed(4150,4300)) ) {
                 happened = true;

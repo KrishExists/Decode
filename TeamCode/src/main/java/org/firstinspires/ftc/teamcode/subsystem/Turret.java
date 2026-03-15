@@ -165,6 +165,7 @@ public class Turret implements Subsystem {
 //        }
 //    }
 public void auto2(Pose Goal){
+        //THIS IS THE GOOD ONE
     red = false;
     telemetry.addLine("--------------Turret Tele Data ------------");
     telemetry.addLine("blue turret");
