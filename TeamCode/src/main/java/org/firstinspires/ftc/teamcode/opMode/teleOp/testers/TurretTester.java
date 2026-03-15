@@ -55,7 +55,7 @@ public class TurretTester extends LinearOpMode {
         while (opModeIsActive()) {
             linkage.setPosition(linkagePos);
             drivetrain.update(gamepad1,gamepad2);
-            turret.auto2(new Pose(0,144));
+            turret.pointToGoalPinPoint(follower.getPose());
             outtake.spinToRpm(rpm);
             intake.setPower(intakePower);
             transfer.setPower(transferPower);

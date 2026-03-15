@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -23,6 +24,8 @@ public class Turret implements Subsystem {
     public static boolean automove;
     Pose goal1;
     Telemetry telemetry;
+
+    public static double OFFSET = 0.2;
     private boolean red;
 
     public Turret(HardwareMap hw, Telemetry telemetry, Follower follower){
@@ -127,6 +130,44 @@ public class Turret implements Subsystem {
             turretServo.setPosition(servoPos);
             turretServo2.setPosition(servoPos);
         }
+    }
+
+    public void setServoPos(double pos){
+        turretServo.setPosition(pos);
+        turretServo2.setPosition(pos);
+
+    }
+
+    public Pose getGoalPose(){
+        Pose goalPos;
+
+        if (red){
+            goalPos = new Pose(144,144);
+        } else {
+            goalPos = new Pose(0,144);
+        }
+
+        return goalPos;
+
+    }
+
+
+    public void pointToGoalPinPoint(Pose cur) {
+        Pose goal = getGoalPose();
+        double fieldAngle = Math.atan2(
+                goal.getY() - cur.getY(),
+                goal.getX() - cur.getX()
+        );
+        double relAngle = fieldAngle - cur.getHeading();
+        while (relAngle > Math.PI)  relAngle -= 2 * Math.PI;
+        while (relAngle < -Math.PI) relAngle += 2 * Math.PI;
+        double angleDeg = Math.toDegrees(relAngle);
+        double servoPos = OFFSET + SLOPE * angleDeg;
+        if (servoPos > 0.9) servoPos = 0.9;
+        if (servoPos < 0.1) servoPos = 0.1;
+        setServoPos(servoPos);
+        telemetry.addData("Turret Servo Position", servoPos);
+        telemetry.addData("Turret Angle", angleDeg);
     }
 //    public void blue(Pose Goal){
 //        //Step 1 get locked heading
