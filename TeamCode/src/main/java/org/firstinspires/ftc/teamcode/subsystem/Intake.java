@@ -260,7 +260,7 @@ public class Intake implements Subsystem{
 
                 double rpm = interpLUT.get(distance);
                 shooter.spinToRpm(rpm);
-                if(shooter.getRPM()>=rpm-20&&shooter.getRPM()<rpm +50){
+                if(shooter.getRPM()>=rpm&&shooter.getRPM()<rpm +50){
                     happend = true;
 
                 }
