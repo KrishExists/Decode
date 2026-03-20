@@ -39,7 +39,7 @@ public class RedTeleop extends LinearOpMode {
         Follower follower  = drive.returnFollwer();
         intake = new Intake(hw, telemetry, shooter,follower,true);
         Turret turret = new Turret(hw,telemetry,follower,true);
-        robot = new Robot(hw,telemetry,drive,intake,turret);
+        robot = new Robot(hw,telemetry,drive,intake,turret, null);
         telemetry.addLine("Initialized — Waiting for Start");
         telemetry.update();
         robot.init();

@@ -1,9 +1,70 @@
+//package org.firstinspires.ftc.teamcode.subsystem;
+//
+//import com.qualcomm.robotcore.hardware.Gamepad;
+//import com.qualcomm.robotcore.hardware.HardwareMap;
+//
+//import org.firstinspires.ftc.robotcore.external.Telemetry;
+//
+//import java.util.List;
+//
+//public class Robot implements Subsystem { //The Rhetorical Situation
+//
+//    public List<Subsystem> subsystems;
+//
+//    HardwareMap hardwareMap;
+//    Telemetry telemetry;
+//
+//    public Drivetrain drive;
+//    public Intake intake;
+//    public Outtake outtake;
+//
+//
+////    public Robot(HardwareMap h, Telemetry t, Drivetrain drive, Intake intake) {
+////        this.hardwareMap = h;
+////        this.telemetry = t;
+////
+////        this.drive = drive;
+////        this.intake = intake;
+////        this.outtake = new Outtake(h,t);
+////
+////
+////        subsystems = List.of(drive, intake);
+////    }
+//
+////    public Robot(HardwareMap h, Telemetry t) {
+////        this(h,t,new Drivetrain(h,t),new Intake(h,t, new Outtake(h,t)));
+////    }
+//
+//    public Robot(HardwareMap h, Telemetry t, Drivetrain drive, Intake intake, Turret turret) {
+//        this.hardwareMap = h;
+//        this.telemetry = t;
+//
+//        this.drive = drive;
+//        this.intake = intake;
+//
+//        subsystems = List.of(drive, intake,turret);
+//    }
+//
+//
+//    public void init() {
+//        intake.init();//inits evt
+//    }
+//
+//    @Override
+//    public void update(Gamepad gamepad1,Gamepad gamepad2){
+//        for(Subsystem s : subsystems){
+//            s.update(gamepad1, gamepad2);
+//        }
+//    }
+//}
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.StateMachine.StateMachine;
 
 import java.util.List;
 
@@ -17,6 +78,7 @@ public class Robot implements Subsystem { //The Rhetorical Situation
     public Drivetrain drive;
     public Intake intake;
     public Outtake outtake;
+    private StateMachine stateMachine;
 
 
 //    public Robot(HardwareMap h, Telemetry t, Drivetrain drive, Intake intake) {
@@ -34,8 +96,7 @@ public class Robot implements Subsystem { //The Rhetorical Situation
 //    public Robot(HardwareMap h, Telemetry t) {
 //        this(h,t,new Drivetrain(h,t),new Intake(h,t, new Outtake(h,t)));
 //    }
-
-    public Robot(HardwareMap h, Telemetry t, Drivetrain drive, Intake intake, Turret turret) {
+    public Robot(HardwareMap h, Telemetry t, Drivetrain drive, Intake intake, Turret turret, Gamepad gamepad) {
         this.hardwareMap = h;
         this.telemetry = t;
 
@@ -43,6 +104,11 @@ public class Robot implements Subsystem { //The Rhetorical Situation
         this.intake = intake;
 
         subsystems = List.of(drive, intake,turret);
+        stateMachine  = new StateMachine();
+
+
+
+
     }
 
 
@@ -52,8 +118,6 @@ public class Robot implements Subsystem { //The Rhetorical Situation
 
     @Override
     public void update(Gamepad gamepad1,Gamepad gamepad2){
-        for(Subsystem s : subsystems){
-            s.update(gamepad1, gamepad2);
-        }
+
     }
 }
