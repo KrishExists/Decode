@@ -14,6 +14,9 @@ public class State {
     public Runnable onStop = () -> {};
 
     public String next = null;
+    // in State.java
+    public final List<Double> updateTimestamps = new ArrayList<>();
+    public final List<Runnable> updateRunnables = new ArrayList<>();
 
     public final Map<String, String> nextOtherChannels = new HashMap<>();
     public final List<Transition> transitions = new ArrayList<>();
@@ -38,9 +41,18 @@ public class State {
     }
 
     public void update() {
-        if (started) {
-            onUpdate.run();
+        if (!started) return;
+
+        long elapsed = System.currentTimeMillis() - startTimeMs;
+
+        Runnable active = onUpdate;
+        for (int i = 0; i < updateTimestamps.size(); i++) {
+            if (elapsed >= (long)(updateTimestamps.get(i) * 1000)) {
+                active = updateRunnables.get(i);
+            }
         }
+
+        active.run();
     }
 
     public void stop() {

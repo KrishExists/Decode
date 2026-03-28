@@ -21,18 +21,22 @@ public class StateBuilder {
         return this;
     }
 
-    public StateBuilder chained() {
-        state.type = StateType.CHAINED;
-        return this;
-    }
 
     public StateBuilder onStart(Runnable r) {
         state.onStart = r != null ? r : () -> {};
         return this;
     }
 
+    // existing
     public StateBuilder onUpdate(Runnable r) {
-        state.onUpdate = r != null ? r : () -> {};
+        state.onUpdate = r;
+        return this;
+    }
+
+    // new overload — same method name, different parameters
+    public StateBuilder onUpdate(double seconds, Runnable r) {
+        state.updateTimestamps.add(seconds);
+        state.updateRunnables.add(r);
         return this;
     }
 
@@ -46,21 +50,17 @@ public class StateBuilder {
         return this;
     }
 
-    // unified transition (buttons, triggers, sensors, anything)
-    public StateBuilder nextOnButton(BooleanSupplier condition, String nextState) {
+    // how to transtionto next stuff
+    public StateBuilder nextOn(BooleanSupplier condition, String nextState) {
         state.transitions.add(new State.Transition(condition, nextState));
         return this;
     }
 
-    // alias for readability
-    public StateBuilder nextIf(BooleanSupplier condition, String nextState) {
-        return nextOnButton(condition, nextState);
-    }
 
     public StateBuilder nextOtherChannel(String channel, String targetState) {
         state.nextOtherChannels.put(channel, targetState);
         return this;
-    }
+    }// work on this
 
     public State build() {
         return state;

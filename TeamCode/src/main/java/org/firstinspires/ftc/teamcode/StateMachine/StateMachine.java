@@ -7,8 +7,13 @@ public class StateMachine {
 
     private final Map<String, Map<String, State>> statesByChannel = new LinkedHashMap<>();
     private final Map<String, State> activeStates = new LinkedHashMap<>();
+    Buttons gb1;
+    Buttons gb2;
 
-
+    public StateMachine(Buttons gb1, Buttons gb2){
+        this.gb1  = gb1;
+        this.gb2 = gb2;
+    }
     public StateMachine addState(String name, String channel, Function<StateBuilder, StateBuilder> config) {
         State s = new State(name);
         StateBuilder builder = new StateBuilder(s);
@@ -62,7 +67,6 @@ public class StateMachine {
      * will cleanly stop the current state before starting the new one.
      */
     public void setInitialState(String channel, String stateName) {
-        // fix: stop existing state if channel is already active
         State existing = activeStates.get(channel);
         if (existing != null) existing.stop();
 
@@ -78,6 +82,8 @@ public class StateMachine {
 
     /** Call this every loop iteration (inside opMode.loop() or a while loop). */
     public void updateAll() {
+        gb1.update();
+        gb2.update();
         for (String channel : new ArrayList<>(activeStates.keySet())) {
             updateChannel(channel);
         }
@@ -127,10 +133,6 @@ public class StateMachine {
             return;
         }
 
-        // 4. CHAINED — advance immediately next tick (after one update())
-        if (current.type == StateType.CHAINED) {
-            if (current.next != null) switchState(channel, current.next);
-        }
     }
 
     private void switchState(String channel, String nextName) {
@@ -148,4 +150,13 @@ public class StateMachine {
         activeStates.put(channel, next);
         next.start();
     }
+    public void init() {
+        validate();
+        for (String channel : statesByChannel.keySet()) {
+            if (!activeStates.containsKey(channel))
+                throw new RuntimeException(
+                        "[StateMachine] channel \"" + channel + "\" has no initial state — call setInitialState() before init()");
+        }
+    }
+
 }

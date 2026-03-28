@@ -80,6 +80,7 @@ public class TestPedroHelper extends OpMode {
         PrepSpike1 = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose, Spike1End))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Spike1End.getHeading(),0.6)
+                .addParametricCallback(0.5 , this::prepareToShoot)
                 .build();
 
         ScoreSpike1 = follower.pathBuilder()
