@@ -10,7 +10,7 @@ public class StateMachine {
     Buttons gb1;
     Buttons gb2;
 
-    public StateMachine(Buttons gb1, Buttons gb2){
+    public StateMachine(){
         this.gb1  = gb1;
         this.gb2 = gb2;
     }
