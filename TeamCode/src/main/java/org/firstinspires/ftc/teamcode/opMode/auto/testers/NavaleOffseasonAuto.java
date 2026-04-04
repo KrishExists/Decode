@@ -17,7 +17,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Outtake;
 import org.firstinspires.ftc.teamcode.subsystem.Turret;
-import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
 
@@ -29,7 +28,7 @@ public class NavaleOffseasonAuto extends OpMode {
     private int pathState; // Current autonomous path state (state machine)
     private Paths paths; // Paths defined in the Paths class
     private boolean happened = false;
-    private boolean ran = true;
+    private boolean ran = false;
     private Intake intake;
     private Outtake outtake;
     private Turret turret;
@@ -49,7 +48,7 @@ public class NavaleOffseasonAuto extends OpMode {
         turret = new Turret(hardwareMap, telemetry, follower);
 
         outtake = new Outtake(hardwareMap, telemetry);
-        outtake.linkage.setPosition(0.6);
+        outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
 
 
         intake = new Intake(hardwareMap, telemetry, outtake, follower);
@@ -65,8 +64,8 @@ public class NavaleOffseasonAuto extends OpMode {
     @Override
     public void loop() {
         follower.update(); // Update Pedro Pathing
-        pathState = autonomousPathUpdate(); // Update autonomous state machine
         turret.auto(new Pose(144,144));
+        pathState = autonomousPathUpdate(); // Update autonomous state machine
 
         // Log values to Panels and Driver Station
         panelsTelemetry.debug("Path State", pathState);
@@ -79,7 +78,7 @@ public class NavaleOffseasonAuto extends OpMode {
         pathState = state;
     }
     private void resetBooleans() {
-        ran = true;
+        ran = false;
         happened = false;
     }
 
@@ -90,7 +89,6 @@ public class NavaleOffseasonAuto extends OpMode {
         public PathChain intakeSpike2;
         public PathChain scorePose2;
         public PathChain goGate;
-        public PathChain intakeGate;
         public PathChain scorePose3;
         public PathChain intakeSpike3;
         public PathChain scorePoseFINAL;
@@ -110,7 +108,7 @@ public class NavaleOffseasonAuto extends OpMode {
                     .addPath(
                             new BezierLine(
                                     new Pose(108.225, 97.184),
-                                    new Pose(126.300, 82.121)
+                                    new Pose(126, 82.121)
                             )
                     )
                     .setTangentHeadingInterpolation()
@@ -119,7 +117,7 @@ public class NavaleOffseasonAuto extends OpMode {
             scorePose1 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(121.930, 83.690),
+                                    new Pose(126, 82.121),
                                     new Pose(91.520, 82.656)
                             )
                     )
@@ -151,7 +149,7 @@ public class NavaleOffseasonAuto extends OpMode {
             goGate = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(91.785, 83.121),
+                                    new Pose(92.3, 83.3),
                                     new Pose(127.6, 61)
                             )
                     )
@@ -222,18 +220,19 @@ public class NavaleOffseasonAuto extends OpMode {
             actionTimer.reset();
         }
         if (!follower.isBusy()) {
-            if(!skip){
-                turret.auto(new Pose(144,144));
-            }
+//            if(!skip){
+//                //turret.auto(new Pose(144,144));
+//            }
             if ((outtake.atSpeed(3100,3300)||happened) ) {
                 happened = true;
                 spinUp(true);
                 if (actionTimer.milliseconds()>1200) {
                     if (skip) {
+                        setPathState(99); //stops evt
                         return;
                     }
                     follower.followPath(nextPath,true);
-                    pathState++;
+                    setPathState(pathState + 1);
                     resetBooleans();
                 }
             } else {
@@ -258,7 +257,8 @@ public class NavaleOffseasonAuto extends OpMode {
 
             case 2: // Driving to intakeSpike1 — spin up intake along the way
                 spinupIntake();
-                if (!follower.isBusy()) {
+                if (!ran) ran = follower.isBusy(); // wait until we confirm path is running
+                if (ran && !follower.isBusy()) {   // only then check for completion
                     follower.followPath(paths.scorePose1);
                     resetBooleans();
                     setPathState(3);
@@ -271,7 +271,8 @@ public class NavaleOffseasonAuto extends OpMode {
 
             case 4: // Driving to intakeSpike2 — spin up intake along the way
                 spinupIntake();
-                if (!follower.isBusy()) {
+                if (!ran) ran = follower.isBusy(); // wait until we confirm path is running
+                if (ran && !follower.isBusy()) {   // only then check for completion
                     follower.followPath(paths.scorePose2);
                     resetBooleans();
                     setPathState(5);
@@ -284,10 +285,17 @@ public class NavaleOffseasonAuto extends OpMode {
 
             case 6: // Driving to gate — spin up intake along the way
                 spinupIntake();
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.scorePose3);
-                    resetBooleans();
-                    setPathState(7);
+                if (!ran) ran = follower.isBusy(); // wait until we confirm path is running
+                if (ran && !follower.isBusy()) {
+                    if(!happened){
+                        happened = true;
+                        actionTimer.reset();
+                    }
+                    if(actionTimer.milliseconds() > 1500) {
+                        follower.followPath(paths.scorePose3);
+                        resetBooleans();
+                        setPathState(7);
+                    }
                 }
                 break;
 
@@ -297,7 +305,8 @@ public class NavaleOffseasonAuto extends OpMode {
 
             case 8: // Driving to intakeSpike3 — spin up intake along the way
                 spinupIntake();
-                if (!follower.isBusy()) {
+                if (!ran) ran = follower.isBusy(); // wait until we confirm path is running
+                if (ran && !follower.isBusy()) {   // only then check for completion
                     follower.followPath(paths.scorePoseFINAL);
                     resetBooleans();
                     setPathState(9);
@@ -306,13 +315,13 @@ public class NavaleOffseasonAuto extends OpMode {
 
             case 9: // Final shot, no next path
                 shoot(null, true);
+                telemetry.addLine("Finished");
                 break;
-
-            case 10: // End state
+            default:
                 outtake.setPower(0);
                 intake.setPower(0);
                 transfer.setPower(0);
-                telemetry.addLine("Finished");
+                telemetry.addLine("Default");
                 break;
         }
         return pathState;
