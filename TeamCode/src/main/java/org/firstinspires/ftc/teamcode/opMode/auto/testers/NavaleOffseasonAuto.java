@@ -33,7 +33,6 @@ public class NavaleOffseasonAuto extends OpMode {
     private Outtake outtake;
     private Turret turret;
     private DcMotorEx transfer;
-    private TeamConstants teamConstants;
     private ElapsedTime actionTimer;
 
 
@@ -59,6 +58,10 @@ public class NavaleOffseasonAuto extends OpMode {
 
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
+    }
+    @Override
+    public void start(){
+        setPathState(0);
     }
 
     @Override
@@ -207,12 +210,21 @@ public class NavaleOffseasonAuto extends OpMode {
     }
 
     public void spinupIntake(){
+        outtake.setPower(TeamConstants.outtake_Stop);
         intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
         transfer.setPower(TeamConstants.TRANSFER_INTAKE_POWER);
-
     }
     public void prepareToShoot(){
-        outtake.spinToRpm(3150);
+        outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
+    }
+    private void spinIntake(PathChain nextPath) {
+        spinupIntake();
+        if (!ran) ran = follower.isBusy();
+        if (ran && !follower.isBusy()) {
+            follower.followPath(nextPath);
+            resetBooleans();
+            setPathState(pathState + 1);
+        }
     }
     private void shoot(PathChain nextPath, boolean skip) {
         if (!happened) {
@@ -240,7 +252,6 @@ public class NavaleOffseasonAuto extends OpMode {
                 spinUp(false);
             }
         }
-
     }
 
     public int autonomousPathUpdate() {
@@ -256,13 +267,7 @@ public class NavaleOffseasonAuto extends OpMode {
                 break;
 
             case 2: // Driving to intakeSpike1 — spin up intake along the way
-                spinupIntake();
-                if (!ran) ran = follower.isBusy(); // wait until we confirm path is running
-                if (ran && !follower.isBusy()) {   // only then check for completion
-                    follower.followPath(paths.scorePose1);
-                    resetBooleans();
-                    setPathState(3);
-                }
+                spinIntake(paths.scorePose1);
                 break;
 
             case 3: // Shoot at scorePose1, then follow intakeSpike2
@@ -270,13 +275,7 @@ public class NavaleOffseasonAuto extends OpMode {
                 break;
 
             case 4: // Driving to intakeSpike2 — spin up intake along the way
-                spinupIntake();
-                if (!ran) ran = follower.isBusy(); // wait until we confirm path is running
-                if (ran && !follower.isBusy()) {   // only then check for completion
-                    follower.followPath(paths.scorePose2);
-                    resetBooleans();
-                    setPathState(5);
-                }
+                spinIntake(paths.scorePose2);
                 break;
 
             case 5: // Shoot at scorePose2, then follow goGate
@@ -289,9 +288,9 @@ public class NavaleOffseasonAuto extends OpMode {
                 if (ran && !follower.isBusy()) {
                     if(!happened){
                         happened = true;
-                        actionTimer.reset();
+                        actionTimer.reset(); //reseting the timer from the last shoot method
                     }
-                    if(actionTimer.milliseconds() > 1500) {
+                    if (actionTimer.milliseconds() > 1500) {
                         follower.followPath(paths.scorePose3);
                         resetBooleans();
                         setPathState(7);
@@ -304,13 +303,7 @@ public class NavaleOffseasonAuto extends OpMode {
                 break;
 
             case 8: // Driving to intakeSpike3 — spin up intake along the way
-                spinupIntake();
-                if (!ran) ran = follower.isBusy(); // wait until we confirm path is running
-                if (ran && !follower.isBusy()) {   // only then check for completion
-                    follower.followPath(paths.scorePoseFINAL);
-                    resetBooleans();
-                    setPathState(9);
-                }
+                spinIntake(paths.scorePoseFINAL);
                 break;
 
             case 9: // Final shot, no next path

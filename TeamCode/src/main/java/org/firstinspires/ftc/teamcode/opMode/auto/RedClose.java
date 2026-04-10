@@ -232,7 +232,6 @@ public class RedClose extends OpMode {
     private void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-
                 follower.followPath(scorePreload);
                 pathState++;
                 break;
