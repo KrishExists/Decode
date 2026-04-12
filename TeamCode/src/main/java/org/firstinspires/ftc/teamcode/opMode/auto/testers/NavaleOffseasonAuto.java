@@ -40,14 +40,14 @@ public class NavaleOffseasonAuto extends OpMode {
     public void init() {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(126.361, 117.693, Math.toRadians(38)));
+        follower.setStartingPose(new Pose(124.006, 118.335, Math.toRadians(38)));
 
         paths = new Paths(follower);
 
         turret = new Turret(hardwareMap, telemetry, follower);
 
         outtake = new Outtake(hardwareMap, telemetry);
-        outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
+        outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT); //0.75
 
 
         intake = new Intake(hardwareMap, telemetry, outtake, follower);
@@ -67,7 +67,7 @@ public class NavaleOffseasonAuto extends OpMode {
     @Override
     public void loop() {
         follower.update(); // Update Pedro Pathing
-        turret.auto(new Pose(144,144));
+        turret.auto(new Pose(144,140));
         pathState = autonomousPathUpdate(); // Update autonomous state machine
 
         // Log values to Panels and Driver Station
@@ -100,8 +100,8 @@ public class NavaleOffseasonAuto extends OpMode {
             scorePreload = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(126.361, 117.693),
-                                    new Pose(108.225, 97.184)
+                                    new Pose(124.006, 118.335),
+                                    new Pose(100.089938, 94.6147764)
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(38), Math.toRadians(330))
@@ -110,8 +110,8 @@ public class NavaleOffseasonAuto extends OpMode {
             intakeSpike1 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(108.225, 97.184),
-                                    new Pose(126, 82.121)
+                                    new Pose(100.089938, 94.6147764),
+                                    new Pose(121.7, 80.1)
                             )
                     )
                     .setTangentHeadingInterpolation()
@@ -120,7 +120,7 @@ public class NavaleOffseasonAuto extends OpMode {
             scorePose1 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(126, 82.121),
+                                    new Pose(121.7, 80.1),
                                     new Pose(91.520, 82.656)
                             )
                     )
@@ -132,7 +132,7 @@ public class NavaleOffseasonAuto extends OpMode {
                             new BezierCurve(
                                     new Pose(91.520, 82.656),
                                     new Pose(109.492, 56.062),
-                                    new Pose(127.378, 60.842)
+                                    new Pose(127.6, 60.842)
                             )
                     )
                     .setTangentHeadingInterpolation()
@@ -141,7 +141,7 @@ public class NavaleOffseasonAuto extends OpMode {
             scorePose2 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(127.378, 60.842),
+                                    new Pose(127.6, 60.842),
                                     new Pose(92.3, 83.3)
                             )
                     )
@@ -151,22 +151,23 @@ public class NavaleOffseasonAuto extends OpMode {
 
             goGate = follower.pathBuilder()
                     .addPath(
-                            new BezierLine(
+                            new BezierCurve(
                                     new Pose(92.3, 83.3),
-                                    new Pose(127.6, 61)
+                                    new Pose(116.13070438637367,55.95324025078109),
+                                    new Pose(129.31255673222392, 59.5)
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(330), Math.toRadians(30))
+                    .setLinearHeadingInterpolation(Math.toRadians(330), Math.toRadians(31))
                     .build();
 
             scorePose3 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(127.6, 61),
+                                    new Pose(129.31255673222392, 59.5),
                                     new Pose(84.398, 72.495)
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(30), Math.toRadians(330))
+                    .setLinearHeadingInterpolation(Math.toRadians(31), Math.toRadians(330))
                     .build();
 
             intakeSpike3 = follower.pathBuilder()
@@ -210,12 +211,13 @@ public class NavaleOffseasonAuto extends OpMode {
     }
 
     public void spinupIntake(){
-        outtake.setPower(TeamConstants.outtake_Stop);
         intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
         transfer.setPower(TeamConstants.TRANSFER_INTAKE_POWER);
     }
     public void prepareToShoot(){
         outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
+        intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
+        transfer.setPower(TeamConstants.TRANSFER_CLOSED);
     }
     private void spinIntake(PathChain nextPath) {
         spinupIntake();
@@ -235,7 +237,7 @@ public class NavaleOffseasonAuto extends OpMode {
 //            if(!skip){
 //                //turret.auto(new Pose(144,144));
 //            }
-            if ((outtake.atSpeed(3100,3300)||happened) ) {
+            if ((outtake.atSpeed(3450,3550)||happened) ) {
                 happened = true;
                 spinUp(true);
                 if (actionTimer.milliseconds()>1200) {
@@ -306,7 +308,9 @@ public class NavaleOffseasonAuto extends OpMode {
                 spinIntake(paths.scorePoseFINAL);
                 break;
 
-            case 9: // Final shot, no next path
+            case 9:
+                // Final shot, no next path
+                turret.auto(new Pose(144,135));
                 shoot(null, true);
                 telemetry.addLine("Finished");
                 break;

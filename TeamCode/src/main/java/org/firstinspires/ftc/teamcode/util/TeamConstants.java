@@ -33,7 +33,7 @@ public class TeamConstants {
     // =============================
     // Shooter RPM Targets
     // =============================
-    public static final double SHOOTER_MID_RPM = 3200;
+    public static final double SHOOTER_MID_RPM = 3500;
     public static final double SHOOTER_FAR_RPM = 4200;
 
     public static final double SHOOTER_FARAUTO_RPM = 2950;
