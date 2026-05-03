@@ -97,9 +97,10 @@ public class Turret implements Subsystem {
         else if(degreeDiff>120&&degreeDiff<360-120){//anything diff here
             move = false;
         }
+        //degreeDiff *= -1;
         telemetry.addData("Degree diff 2",degreeDiff);
         telemetry.addData("move",move);
-        double servoPos = SLOPE * degreeDiff + 0.5;
+        double servoPos = SLOPE * degreeDiff + 0.54;
         telemetry.addData("Servo pos no clamp",servoPos);
         if(servoPos>0.9){
             servoPos = 0.9;
