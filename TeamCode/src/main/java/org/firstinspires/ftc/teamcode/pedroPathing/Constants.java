@@ -75,18 +75,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @Configurable
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(11.762)
-            .useSecondaryDrivePIDF(true)
-            .useSecondaryHeadingPIDF(true)
-            .useSecondaryTranslationalPIDF(true)
-            .forwardZeroPowerAcceleration(-39.530413505010806)
-            .lateralZeroPowerAcceleration(-73.6020209593495)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.04,0,0,0.035))
-            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.15,0,0.01,0.03))
-            .headingPIDFCoefficients(new PIDFCoefficients(1.1, 0, 0.06, 0.015))
-            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(0.9,0,0.025,0.01))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.012,0.0,0,0.1,0.15))
-            .centripetalScaling(0.0001);
+            .mass(11.762);
 
 
 
@@ -100,18 +89,16 @@ public class Constants {
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-                .xVelocity(71.00331800565944)
-        .yVelocity(54.5600509042815);
+            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(5.6)//5.66634
-            .strafePodX(1.6)//1.63783
+            .forwardPodY(0)
+            .strafePodX(0)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinIMU")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(0.98, 200, 1, 1);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)

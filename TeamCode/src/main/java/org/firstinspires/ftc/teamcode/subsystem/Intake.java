@@ -38,7 +38,7 @@ public class Intake implements Subsystem{
 
     public DcMotorEx transfer;
 
-    private final Outtake shooter;
+    public final Outtake shooter;
     private final Telemetry telemetry;
     private boolean shooting = false;
 
@@ -182,6 +182,9 @@ public class Intake implements Subsystem{
 
     public void setPower(double power) {
         intake.setPower(power);
+    }
+    public void transferpower(double power){
+        transfer.setPower(power);
     }
 
     public void setState(IntakeState s) { sm.setState(s); }

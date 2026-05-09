@@ -16,6 +16,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 
+import org.firstinspires.ftc.teamcode.PedroHelper.AutoBuilder;
+import org.firstinspires.ftc.teamcode.PedroHelper.AutoRoutine;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Outtake;
@@ -23,8 +25,8 @@ import org.firstinspires.ftc.teamcode.subsystem.Turret;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
-@Autonomous(name = "RedClose", group = "Autonomous")
-public class RedClose extends OpMode {
+@Autonomous(name = "PedroHelper", group = "Autonomous")
+public class TestPedroHelper extends OpMode {
 
     private Follower follower;
     private TelemetryManager panelsTelemetry;
@@ -41,6 +43,7 @@ public class RedClose extends OpMode {
     private Turret turret;
 
     private DcMotorEx transfer;
+    AutoRoutine autoBuilder;
     private final Pose startPose = new Pose(124, 119.527, 0.7009);
     private final Pose scorePose = new Pose(84, 84, Math.toRadians(0));
     private final Pose scorePoseEnd = new Pose(90, 110, 0);
@@ -77,6 +80,7 @@ public class RedClose extends OpMode {
         PrepSpike1 = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose, Spike1End))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), Spike1End.getHeading(),0.6)
+                .addParametricCallback(0.5 , this::prepareToShoot)
                 .build();
 
         ScoreSpike1 = follower.pathBuilder()
@@ -170,24 +174,16 @@ public class RedClose extends OpMode {
         happened = false;
     }
 
-    private void shoot(PathChain nextPath, boolean skip) {
+    private void shoot() {
         if (follower.isBusy()) {
-               prepareToShoot();
+            prepareToShoot();
         }
         if (!follower.isBusy()) {
-            if(!skip){
-                turret.auto(new Pose(144,144));
 
-            }
             if ((outtake.atSpeed(3350,3450)||happened) ) {
                 happened = true;
                 spinUp(true);
                 if (actionTimer.milliseconds()>1200) {
-                    if (skip) {
-                        pathState = 67;
-                        return;
-                    }
-                    follower.followPath(nextPath,true);
                     pathState++;
                     resetBooleans();
                 }
@@ -199,26 +195,8 @@ public class RedClose extends OpMode {
 
     }
 
-    private void shoot(PathChain nextPath) {
-        shoot(nextPath, false);
-    } // This is the shooting method, shoot then advance to the next path
 
-    private void spinIntake(PathChain path,int y) {
-        if(follower.isBusy()) {
-            if (follower.getPose().getY() < y) {
-                spinUpIntake();
-            } else {
-                outtake.spinToRpm(0);
-                intake.setPower(0);
-                transfer.setPower(0);
-            }
-        }
-        if (follower.getCurrentTValue()>0.95) {
-            follower.followPath(path,true);
-            pathState++;
-            resetBooleans();
-        }
-    }
+
     private void spinIntakeGate(PathChain path) {
         spinUpIntake();
         if (!follower.isBusy()&&actionTimer.milliseconds()>1500) {
@@ -230,60 +208,7 @@ public class RedClose extends OpMode {
 
     // ---------------- State Machine ----------------
     private void autonomousPathUpdate() {
-        switch (pathState) {
-            case 0:
-                follower.followPath(scorePreload);
-                pathState++;
-                break;
-            case 1:
-                resetTimers();
-                shoot(PrepSpike2);
-                break;
-            case 2:
-                spinIntake(ScoreSpike2,250); // y= 65
-                break;
-            case 3:
-                resetTimers();
-                shoot(GoGate);
-                break;
-            case 4:
-                resetTimers();
-                spinIntakeGate(BackGate);
-                break;
-            case 5:
-                resetTimers();
-                shoot(GoGate);
-                break;
-            case 6:
-                resetTimers();
-                spinIntakeGate(BackGate);
-                break;
-            case 7:
-                resetTimers();
-                shoot(PrepSpike1);
-                break;
-            case 8:
-                spinIntake(ScoreSpike1,250);// y=
-                break;
-            case 9:
-                resetTimers();
-                shoot(PrepSpike3);
-                break;
-            case 10:
-                resetTimers();
-                spinIntake(ScoreSpike3,42); // y=37
-                turret.auto(new Pose(144,144));
-                break;
-            case 11:
-                resetTimers();
-                shoot(ScoreSpike3, true);
-                break;
 
-            default:
-                outtake.stop();
-                transfer.setPower(TeamConstants.TRANSFER_CLOSED);
-                intake.setPower(TeamConstants.SHOOTER_CLOSED);
-        }
     }
 
     // ---------------- OpMode Methods ----------------
@@ -291,28 +216,57 @@ public class RedClose extends OpMode {
     public void init() {
 
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-
-
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(startPose);
-        follower.setPose(startPose);
+        turret = new Turret(hardwareMap,telemetry,follower);
         outtake = new Outtake(hardwareMap,telemetry);
         intake = new Intake(hardwareMap,telemetry,outtake,follower);
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
-        blocker = hardwareMap.get(Servo.class, "blocker");
-
         pathTimer = new Timer();
         actionTimer = new ElapsedTime();
 //        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
         //transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
-
         buildPaths();
-        pathState = 0;
         outtake.linkage.setPosition(TeamConstants.LINKAGE_SHOOT);
-        turret = new Turret(hardwareMap,telemetry,follower);
-        turret.auto(new Pose(144,144));
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
+        autoBuilder = new AutoBuilder(follower)
+                .startAt(startPose)
+
+                .drive(scorePreload)
+                .onStart(() -> prepareToShoot())
+                .onComplete(() -> spinUp(true))
+                .waitMs(1500)
+
+                .drive(PrepSpike2)
+                .onStart(() -> stop())
+                .atPercent(0.6, () -> spinUpIntake())
+                .drive(ScoreSpike2)
+                .onStart(() -> stop())
+                .atPercent(0.6, () -> prepareToShoot())
+                .onComplete(() -> spinUp(true))
+                .waitMs(1500)
+
+                .drive(PrepSpike1)
+                .onStart(() -> stop())
+                .atPercent(0.6, () -> spinUpIntake())
+                .drive(ScoreSpike1)
+                .onStart(() -> stop())
+                .atPercent(0.6, () -> prepareToShoot())
+                .onComplete(() -> spinUp(true))
+                .waitMs(1500)
+
+                .drive(PrepSpike3)
+                .onStart(() -> stop())
+                .atPercent(0.6, () -> spinUpIntake())
+                .drive(ScoreSpike3)
+                .onStart(() -> stop())
+                .atPercent(0.6, () -> prepareToShoot())
+                .onComplete(() -> spinUp(true))
+                .waitMs(1500)
+
+                .build();
+
+
 //        blocker.setPosition(TeamConstants.BLOCKER_CLOSE);
     }
 
@@ -327,7 +281,7 @@ public class RedClose extends OpMode {
     @Override
     public void loop() {
         follower.update();
-        autonomousPathUpdate();
+        autoBuilder.update();
         PoseStorage.pose = follower.getPose();
 
         // Telemetry
@@ -342,5 +296,8 @@ public class RedClose extends OpMode {
 
     @Override
     public void stop() {
+        intake.setPower(0);
+        transfer.setPower(0);
+        outtake.setPower(0);
     }
 }
