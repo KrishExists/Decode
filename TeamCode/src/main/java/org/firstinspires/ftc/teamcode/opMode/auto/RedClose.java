@@ -174,6 +174,7 @@ public class RedClose extends OpMode {
         if (follower.isBusy()) {
                prepareToShoot();
         }
+        turret.auto(new Pose(130,144));
         if (!follower.isBusy()) {
             if(!skip){
                 turret.auto(new Pose(144,144));
@@ -213,7 +214,7 @@ public class RedClose extends OpMode {
                 transfer.setPower(0);
             }
         }
-        if (follower.getCurrentTValue()>0.95) {
+        if (follower.getCurrentTValue()>0.98) {
             follower.followPath(path,true);
             pathState++;
             resetBooleans();
@@ -251,12 +252,14 @@ public class RedClose extends OpMode {
                 spinIntakeGate(BackGate);
                 break;
             case 5:
-                resetTimers();
-                shoot(GoGate);
+//                resetTimers();
+//                shoot(GoGate);
+                pathState++;
                 break;
             case 6:
-                resetTimers();
-                spinIntakeGate(BackGate);
+//                resetTimers();
+//                spinIntakeGate(BackGate);
+                pathState++;
                 break;
             case 7:
                 resetTimers();
