@@ -60,6 +60,7 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.control.FilteredPIDFCoefficients;
+import com.pedropathing.control.PredictiveBrakingCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
@@ -75,8 +76,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @Configurable
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(11.762);
-
+            .mass(11.762)
+            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.1,0.11214094555309,0.0020672534174));
 
 
         public static MecanumConstants driveConstants = new MecanumConstants()

@@ -275,7 +275,7 @@ public class RedClose extends OpMode {
             case 10:
                 resetTimers();
                 spinIntake(ScoreSpike3,42); // y=37
-                turret.auto(new Pose(144,144));
+                turret.auto(new Pose(144,140));
                 break;
             case 11:
                 resetTimers();

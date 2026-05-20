@@ -53,7 +53,7 @@ public class NavaleOffseasonAuto extends OpMode {
 
 
         turret = new Turret(hardwareMap, telemetry, follower);
-        turret.auto(new Pose(144,144));
+        //turret.auto(new Pose(144,144));
 
 
         outtake = new Outtake(hardwareMap, telemetry);
@@ -126,7 +126,7 @@ public class NavaleOffseasonAuto extends OpMode {
                     .addPath(
                             new BezierLine(
                                     new Pose(100.089938, 94.6147764),
-                                    new Pose(123.211, 79.343)
+                                    new Pose(126.42168150057272, 78.70105255143288)
                             )
                     )
                     .setTangentHeadingInterpolation()
@@ -173,7 +173,7 @@ public class NavaleOffseasonAuto extends OpMode {
                             new BezierCurve(
                                     new Pose(92.3, 83.3),
                                     new Pose(116.13070438637367,56.4),
-                                    new Pose(128.540, 59.3)
+                                    new Pose(128.540, 58.7)
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(330), Math.toRadians(29))
@@ -255,7 +255,7 @@ public class NavaleOffseasonAuto extends OpMode {
         outtake.setPower(0);
     }
     public void prepareToShoot(){
-        outtake.spinToRpm(TeamConstants.SHOOTER_MID_RPM);
+        outtake.spinToRpm(3500);
         intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
         transfer.setPower(TeamConstants.TRANSFER_INTAKE_POWER);
     }
@@ -277,7 +277,7 @@ public class NavaleOffseasonAuto extends OpMode {
         if (!follower.isBusy()) {
             if(!skip){
             }
-            if ((outtake.atSpeed(3400,3500)||happened) ) {
+            if ((outtake.atSpeed(3450,3550)||happened) ) {
                 happened = true;
                 spinUp(true);
                 if (actionTimer.milliseconds()>1200) {
