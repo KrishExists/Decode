@@ -57,7 +57,7 @@ public class NavaleOffseasonAuto extends OpMode {
 
 
         outtake = new Outtake(hardwareMap, telemetry);
-        outtake.linkage.setPosition(0.85);
+        outtake.linkage.setPosition(0.9);
 
         intake = new Intake(hardwareMap, telemetry, outtake, follower);
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
@@ -255,7 +255,7 @@ public class NavaleOffseasonAuto extends OpMode {
         outtake.setPower(0);
     }
     public void prepareToShoot(){
-        outtake.spinToRpm(3500);
+        outtake.spinToRpm(3450);
         intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
         transfer.setPower(TeamConstants.TRANSFER_INTAKE_POWER);
     }
@@ -277,7 +277,7 @@ public class NavaleOffseasonAuto extends OpMode {
         if (!follower.isBusy()) {
             if(!skip){
             }
-            if ((outtake.atSpeed(3450,3550)||happened) ) {
+            if ((outtake.atSpeed(3400,3500)||happened) ) {
                 happened = true;
                 spinUp(true);
                 if (actionTimer.milliseconds()>1200) {
@@ -362,6 +362,7 @@ public class NavaleOffseasonAuto extends OpMode {
 
             case 9:
                 // Final shot, no next path
+                turret.auto(new Pose(144,140));
                 outtake.linkage.setPosition(0.85);
                 shoot(null, true);
                 telemetry.addLine("Finished");
