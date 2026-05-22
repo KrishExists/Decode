@@ -177,7 +177,7 @@ public class RedClose extends OpMode {
         turret.auto(new Pose(130,144));
         if (!follower.isBusy()) {
             if(!skip){
-                turret.auto(new Pose(144,144));
+                //turret.auto(new Pose(144,144));
 
             }
             if ((outtake.atSpeed(3350,3450)||happened) ) {

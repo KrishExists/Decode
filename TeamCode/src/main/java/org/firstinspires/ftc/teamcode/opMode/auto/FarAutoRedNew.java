@@ -23,7 +23,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.sun.tools.javac.comp.Enter;
 
-@Autonomous(name = "FarAutoPahts", group = "Testers")
+@Autonomous
 @Configurable // Panels
 public class FarAutoRedNew extends OpMode {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance

@@ -57,7 +57,7 @@ public class NavaleOffseasonAuto extends OpMode {
 
 
         outtake = new Outtake(hardwareMap, telemetry);
-        outtake.linkage.setPosition(0.9);
+        outtake.linkage.setPosition(0.6);
 
         intake = new Intake(hardwareMap, telemetry, outtake, follower);
         transfer = hardwareMap.get(DcMotorEx.class, "Transfer");
@@ -72,6 +72,7 @@ public class NavaleOffseasonAuto extends OpMode {
     @Override
     public void start(){
         setPathState(0);
+        outtake.spinToRpm(3400);
     }
 
 
@@ -126,7 +127,7 @@ public class NavaleOffseasonAuto extends OpMode {
                     .addPath(
                             new BezierLine(
                                     new Pose(100.089938, 94.6147764),
-                                    new Pose(126.42168150057272, 78.70105255143288)
+                                    new Pose(127.1, 78.1)
                             )
                     )
                     .setTangentHeadingInterpolation()
@@ -184,7 +185,7 @@ public class NavaleOffseasonAuto extends OpMode {
                     .addPath(
                             new BezierLine(
                                     new Pose(129.31255673222392, 59.5),
-                                    new Pose(84.398, 72.495)
+                                    new Pose(87.82268554335522, 77.20421993622574)
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(31), Math.toRadians(330))
@@ -196,7 +197,7 @@ public class NavaleOffseasonAuto extends OpMode {
                             new BezierCurve(
                                     new Pose(84.398, 72.495),
                                     new Pose(90.178, 29.710),
-                                    new Pose(123.347, 34.602)
+                                    new Pose(128.485, 34.802)
                             )
                     )
                     .setTangentHeadingInterpolation()
@@ -255,9 +256,9 @@ public class NavaleOffseasonAuto extends OpMode {
         outtake.setPower(0);
     }
     public void prepareToShoot(){
-        outtake.spinToRpm(3450);
-        intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
-        transfer.setPower(TeamConstants.TRANSFER_INTAKE_POWER);
+        outtake.spinToRpm(3350);
+        intake.setPower(TeamConstants.INTAKE_STOP);
+        transfer.setPower(TeamConstants.TRANSFER_CLOSED);
     }
     private void spinIntake(PathChain nextPath) {
         spinupIntake();
@@ -277,10 +278,10 @@ public class NavaleOffseasonAuto extends OpMode {
         if (!follower.isBusy()) {
             if(!skip){
             }
-            if ((outtake.atSpeed(3400,3500)||happened) ) {
+            if ((outtake.atSpeed(3300,3500)||happened) ) {
                 happened = true;
                 spinUp(true);
-                if (actionTimer.milliseconds()>1200) {
+                if (actionTimer.milliseconds()>2000) {
                     if (skip) {
                         setPathState(99); //stops evt
                         return;
@@ -318,8 +319,8 @@ public class NavaleOffseasonAuto extends OpMode {
 
 
             case 3: // Shoot at scorePose1, then follow intakeSpike2
-                outtake.linkage.setPosition(1);
                 shoot(paths.intakeSpike2);
+                outtake.linkage.setPosition(1);
                 break;
 
 
@@ -362,7 +363,7 @@ public class NavaleOffseasonAuto extends OpMode {
 
             case 9:
                 // Final shot, no next path
-                turret.auto(new Pose(144,140));
+                turret.setPosition(0.2);
                 outtake.linkage.setPosition(0.85);
                 shoot(null, true);
                 telemetry.addLine("Finished");
