@@ -215,11 +215,90 @@ public class NavaleOffseasonAuto extends OpMode {
                     .build();
         }
     }
-    private void shoot(PathChain nextPath) {
-        shoot(nextPath, false);
+//    private void shoot(PathChain nextPath) {
+//        shoot(nextPath, false);
+//    }
+//    //the different robot actions in each path lolz
+//    private void spinUp(boolean withTransfer) {
+//        if (withTransfer) {
+//            transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
+//            intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
+//            telemetry.addLine("transfer at 1");
+//
+//        }else{
+//            intake.setPower(0);
+//            transfer.setPower(0);
+//            telemetry.addLine("transfer at 0");
+//        }
+//    }
+//
+//    public void spinupIntake(){
+//        intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
+//        transfer.setPower(TeamConstants.TRANSFER_INTAKE_POWER);
+//        outtake.setPower(0);
+//    }
+//    public void prepareToShoot(){
+//        outtake.spinToRpm(3500);
+//        intake.setPower(TeamConstants.INTAKE_STOP);
+//        transfer.setPower(TeamConstants.TRANSFER_CLOSED);
+//    }
+//    private void spinIntake(PathChain nextPath) {
+//        spinupIntake();
+//        if (!ran) ran = follower.isBusy();
+//        if (ran && !follower.isBusy()) {
+//            follower.followPath(nextPath);
+//            resetBooleans();
+//            setPathState(pathState + 1);
+//        }
+//    }
+//    private void shoot(PathChain nextPath, boolean skip) {
+//        if (!happened) {
+//            prepareToShoot();
+//            actionTimer.reset();
+//        }
+//        turret.auto(new Pose(144,144));
+//        if (!follower.isBusy()) {
+//            if(!skip){
+//            }
+//            if ((outtake.atSpeed(3300,3600)||happened) ) {
+//                happened = true;
+//                telemetry.addData("RPM", outtake.getRPM());
+//                spinUp(true);
+//                if (actionTimer.milliseconds()>1200) {
+//                    if (skip) {
+//                        setPathState(99); //stops evt
+//                        return;
+//                    }
+//                    follower.followPath(nextPath,true);
+//                    setPathState(pathState + 1);
+//                    resetBooleans();
+//                }
+//            } else {
+//                telemetry.addLine("Outtake not above"); // Code never reaches here
+//                spinUp(false);
+//            }
+//        }
+//    }
+private void prepareToShoot() {
+    intake.setPower(TeamConstants.INTAKE_STOP);
+    outtake.spinToRpm(3400);
+//        blocker.setPosition(TeamConstants.BLOCKER_OPEN);
+    transfer.setPower(TeamConstants.TRANSFER_CLOSED);
+}
+
+    private void spinUpIntake() {
+        outtake.spinToRpm(TeamConstants.outtake_Stop);
+        intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
+        transfer.setPower(TeamConstants.TRANSFER_INTAKE_POWER);
     }
-    //the different robot actions in each path lolz
+
+    private void spinUpShooter() {
+        telemetry.addLine("Ready to shoot");
+        outtake.spinToRpm(3400);
+    }
+
     private void spinUp(boolean withTransfer) {
+        spinUpShooter();
         if (withTransfer) {
             transfer.setPower(TeamConstants.TRANSFER_IN_POWER);
             intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
@@ -232,67 +311,69 @@ public class NavaleOffseasonAuto extends OpMode {
         }
     }
 
-//    private void shootGate(){
-//        if (!ran) ran = follower.isBusy(); // wait until we confirm path is running
-//        if (ran && !follower.isBusy()) {
-//            if(!happened){
-//                happened = true;
-//                actionTimer.reset(); //reseting the timer from the last shoot method
-//            }
-//            if (actionTimer.milliseconds() > 1500) {
-//                follower.followPath(paths.scorePose3);
-//                resetBooleans();
-//                setPathState(7);
-//            }
-//        }
-//    }
-
-
-    public void spinupIntake(){
-        intake.setPower(TeamConstants.INTAKE_INTAKE_POWER);
-        transfer.setPower(TeamConstants.TRANSFER_INTAKE_POWER);
-        outtake.setPower(0);
-    }
-    public void prepareToShoot(){
-        outtake.spinToRpm(3500);
-        intake.setPower(TeamConstants.INTAKE_STOP);
-        transfer.setPower(TeamConstants.TRANSFER_CLOSED);
-    }
-    private void spinIntake(PathChain nextPath) {
-        spinupIntake();
-        if (!ran) ran = follower.isBusy();
-        if (ran && !follower.isBusy()) {
-            follower.followPath(nextPath);
-            resetBooleans();
-            setPathState(pathState + 1);
+    private void resetTimers() {
+        if (!follower.isBusy() && ran) {
+            actionTimer.reset();
+            ran = false;
         }
     }
+
     private void shoot(PathChain nextPath, boolean skip) {
-        if (!happened) {
+        if (follower.isBusy()) {
             prepareToShoot();
             actionTimer.reset();
         }
         turret.auto(new Pose(144,144));
         if (!follower.isBusy()) {
             if(!skip){
+                //turret.auto(new Pose(144,144));
             }
-            if ((outtake.atSpeed(3300,3600)||happened) ) {
+            if ((outtake.atSpeed(3350,3450)||happened) ) {
                 happened = true;
-                telemetry.addData("RPM", outtake.getRPM());
                 spinUp(true);
                 if (actionTimer.milliseconds()>1200) {
                     if (skip) {
-                        setPathState(99); //stops evt
+                        pathState = 67;
                         return;
                     }
                     follower.followPath(nextPath,true);
-                    setPathState(pathState + 1);
+                    pathState++;
                     resetBooleans();
                 }
             } else {
                 telemetry.addLine("Outtake not above"); // Code never reaches here
                 spinUp(false);
             }
+        }
+
+    }
+
+    private void shoot(PathChain nextPath) {
+        shoot(nextPath, false);
+    } // This is the shooting method, shoot then advance to the next path
+
+    private void spinIntake(PathChain path,int y) {
+        if(follower.isBusy()) {
+            if (follower.getPose().getY() < y) {
+                spinUpIntake();
+            } else {
+                outtake.spinToRpm(0);
+                intake.setPower(0);
+                transfer.setPower(0);
+            }
+        }
+        if (follower.getCurrentTValue()>0.98) {
+            follower.followPath(path,true);
+            pathState++;
+            resetBooleans();
+        }
+    }
+    private void spinIntakeGate(PathChain path) {
+        spinUpIntake();
+        if (!follower.isBusy()&&actionTimer.milliseconds()>1500) {
+            follower.followPath(path,true);
+            pathState++;
+            resetBooleans();
         }
     }
 
@@ -313,7 +394,7 @@ public class NavaleOffseasonAuto extends OpMode {
 
 
             case 2: // Driving to intakeSpike1 — spin up intake along the way
-                spinIntake(paths.scorePose1);
+                spinIntake(paths.scorePose1, 250);
                 break;
 
 
@@ -324,7 +405,7 @@ public class NavaleOffseasonAuto extends OpMode {
 
 
             case 4: // Driving to intakeSpike2 — spin up intake along the way
-                spinIntake(paths.scorePose2);
+                spinIntake(paths.scorePose2, 250);
                 break;
 
 
@@ -334,7 +415,7 @@ public class NavaleOffseasonAuto extends OpMode {
 
 
             case 6: // Driving to gate — spin up intake along the way
-                spinupIntake();
+                spinUpIntake();
                 if (!ran) ran = follower.isBusy(); // wait until we confirm path is running
                 if (ran && !follower.isBusy()) {
                     if(!happened){
@@ -356,7 +437,7 @@ public class NavaleOffseasonAuto extends OpMode {
 
 
             case 8: // Driving to intakeSpike3 — spin up intake along the way
-                spinIntake(paths.scorePoseFINAL);
+                spinIntake(paths.scorePoseFINAL, 42);
                 break;
 
 

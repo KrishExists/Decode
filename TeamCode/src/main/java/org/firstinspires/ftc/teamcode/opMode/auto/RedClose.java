@@ -45,10 +45,10 @@ public class RedClose extends OpMode {
     private final Pose scorePose = new Pose(84, 84, Math.toRadians(0));
     private final Pose scorePoseEnd = new Pose(90, 110, 0);
 
-    private final Pose Spike1End = new Pose(123.4, 83.472, 0);
+    private final Pose Spike1End = new Pose(124.2, 83.472, 0);
 
     private final Pose Bez2Control = new Pose(85, 60, 0);
-    private final Pose Spike2End = new Pose(133, 55, 0);
+    private final Pose Spike2End = new Pose(135, 55, 0);
 
     private final Pose Bez3Control = new Pose(66.32625189681336, 28.748103186646432, 0);
     private final Pose Spike3End = new Pose(133, 35, 0);
