@@ -174,7 +174,7 @@ public class RedClose extends OpMode {
         if (follower.isBusy()) {
                prepareToShoot();
         }
-        turret.auto(new Pose(130,144));
+        turret.auto(new Pose(144,144));
         if (!follower.isBusy()) {
             if(!skip){
                 //turret.auto(new Pose(144,144));
