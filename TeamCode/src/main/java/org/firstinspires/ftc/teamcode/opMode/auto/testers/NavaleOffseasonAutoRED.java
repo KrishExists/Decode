@@ -91,6 +91,7 @@ public class NavaleOffseasonAutoRED extends OpMode {
     }
     public void setPathState(int state) {
         pathState = state;
+        actionTimer.reset();
     }
     private void resetBooleans() {
         ran = false;
@@ -321,14 +322,15 @@ private void prepareToShoot() {
     private void shoot(PathChain nextPath, boolean skip) {
         if (follower.isBusy()) {
             prepareToShoot();
-            actionTimer.reset();
         }
         turret.auto(new Pose(144,144));
         if (!follower.isBusy()) {
             if(!skip){
-                //turret.auto(new Pose(144,144));
             }
-            if ((outtake.atSpeed(3350,3450)||happened) ) {
+            if ((outtake.atSpeed(3300,3500)||happened) ) {
+                if(!happened){
+                    actionTimer.reset();
+                }
                 happened = true;
                 spinUp(true);
                 if (actionTimer.milliseconds()>1200) {
@@ -337,7 +339,7 @@ private void prepareToShoot() {
                         return;
                     }
                     follower.followPath(nextPath,true);
-                    pathState++;
+                    setPathState(pathState+1);
                     resetBooleans();
                 }
             } else {
@@ -364,7 +366,7 @@ private void prepareToShoot() {
         }
         if (follower.getCurrentTValue()>0.98) {
             follower.followPath(path,true);
-            pathState++;
+            setPathState(pathState+1);
             resetBooleans();
         }
     }
