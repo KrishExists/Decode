@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.util.TeamConstants;
 
 @Autonomous
 @Config // Panels
-public class NavaleOffseasonAuto extends OpMode {
+public class NavaleOffseasonAutoRED extends OpMode {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
     public Follower follower; // Pedro Pathing follower instance
     private int pathState; // Current autonomous path state (state machine)
